@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portafolio de Desarrollo y Estrategia 2025-2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+            padding-top: 80px;
+            background-color: #0f172a; /* Slate 900 */
+            color: #f8fafc;
+        }
+
+        .glass-nav {
+            background: rgba(30, 27, 75, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .glass-card {
+            background: rgba(30, 27, 75, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .hover-scale {
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+        .hover-scale:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.5);
+            border-color: rgba(99, 102, 241, 0.5); /* Indigo 500 */
+        }
+
+        /* Modal Styles */
+        .modal {
+            transition: opacity 0.3s ease-in-out;
+            opacity: 0;
+            pointer-events: none;
+        }
+        .modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* Custom Scrollbar for Project Lists */
+        .custom-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 4px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: rgba(99, 102, 241, 0.3);
+            border-radius: 4px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background: rgba(99, 102, 241, 0.6);
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+
+    <!-- Navigation Menu -->
+    <nav class="glass-nav fixed w-full z-40 top-0 start-0 transition-all duration-300">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between p-4">
+            <a href="#" class="flex items-center space-x-3">
+                <span class="self-center text-xl font-bold whitespace-nowrap text-white">Process Automation<span class="text-indigo-400"> Team</span></span>
+            </a>
+            <div class="hidden w-full md:block md:w-auto" id="navbar-default">
+                <ul class="font-medium flex flex-col p-4 md:p-0 mt-4 rounded-lg md:flex-row md:space-x-8 md:mt-0 text-sm">
+                    <li><a href="#kpis" class="block py-2 px-3 text-slate-300 hover:text-white transition-colors">KPIs</a></li>
+                    <li><a href="#gallery" class="block py-2 px-3 text-slate-300 hover:text-white transition-colors">Galería Estrella</a></li>
+                    <li><a href="#projects" class="block py-2 px-3 text-slate-300 hover:text-white transition-colors">Catálogo Completo</a></li>
+                    <li><a href="#timeline" class="block py-2 px-3 text-slate-300 hover:text-white transition-colors">Timeline</a></li>
+                    <li><a href="#roadmap" class="block py-2 px-3 text-slate-300 hover:text-white transition-colors">Roadmap 2026</a></li>
+                </ul>
+            </div>
+            <!-- Mobile Menu Button -->
+            <button onclick="document.getElementById('navbar-default').classList.toggle('hidden')" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-400 rounded-lg md:hidden hover:bg-slate-800">
+                <i data-lucide="menu" class="w-6 h-6"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Header Section -->
+    <header class="relative bg-indigo-950 py-20 px-6 overflow-hidden border-b border-indigo-900/50">
+        <div class="absolute inset-0 opacity-20">
+            <div class="absolute top-[-10%] right-[-5%] w-96 h-96 bg-indigo-600 rounded-full blur-[100px]"></div>
+            <div class="absolute bottom-[-10%] left-[-5%] w-96 h-96 bg-purple-600 rounded-full blur-[100px]"></div>
+        </div>
+        
+        <div class="max-w-6xl mx-auto relative z-10 text-center">
+            <span class="inline-block px-4 py-1 rounded-full bg-indigo-500/20 text-indigo-300 text-sm font-semibold mb-4 border border-indigo-500/30">
+                Innovación | Operaciones | Finanzas
+            </span>
+            <h1 class="text-4xl md:text-6xl font-extrabold text-white mb-6 tracking-tight">
+                Portafolio de Desarrollo <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">2025-2026</span>
+            </h1>
+            <p class="text-slate-300 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed">
+                Informe de Entregas y Hoja de Ruta Estratégica. Transformando procesos complejos en soluciones digitales eficientes.
+            </p>
+            <p class="text-indigo-400 mt-6 font-semibold tracking-wide uppercase text-sm">Juan Parra Gonzalez</p>
+        </div>
+    </header>
+
+    <!-- KPI Dashboard -->
+    <section id="kpis" class="max-w-6xl mx-auto -mt-12 px-6 relative z-20 scroll-mt-24">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div class="glass-card p-6 rounded-2xl shadow-2xl border-t-4 border-indigo-500 flex flex-col items-center">
+                <i data-lucide="layers" class="text-indigo-400 mb-3 w-8 h-8"></i>
+                <span class="text-slate-400 text-[10px] font-bold uppercase tracking-[0.1em] text-center">Productos Listados</span>
+                <span class="text-4xl font-black mt-2 text-white">52</span>
+                <p class="text-indigo-200 text-[10px] mt-2 bg-indigo-500/10 px-2 py-1 rounded-full">Impacto 2025</p>
+            </div>
+            <div class="glass-card p-6 rounded-2xl shadow-2xl border-t-4 border-emerald-500 flex flex-col items-center">
+                <i data-lucide="check-circle-2" class="text-emerald-400 mb-3 w-8 h-8"></i>
+                <span class="text-slate-400 text-[10px] font-bold uppercase tracking-[0.1em] text-center">Cumplimiento Q4</span>
+                <span class="text-4xl font-black mt-2 text-white">100%</span>
+                <p class="text-emerald-200 text-[10px] mt-2 bg-emerald-500/10 px-2 py-1 rounded-full">Meta Lograda</p>
+            </div>
+            <div class="glass-card p-6 rounded-2xl shadow-2xl border-t-4 border-purple-500 flex flex-col items-center">
+                <i data-lucide="zap" class="text-purple-400 mb-3 w-8 h-8"></i>
+                <span class="text-slate-400 text-[10px] font-bold uppercase tracking-[0.1em] text-center">Automatización</span>
+                <span class="text-4xl font-black mt-2 text-white">54%</span>
+                <p class="text-purple-200 text-[10px] mt-2 bg-purple-500/10 px-2 py-1 rounded-full">Power Automate</p>
+            </div>
+            <div class="glass-card p-6 rounded-2xl shadow-2xl border-t-4 border-amber-500 flex flex-col items-center">
+                <i data-lucide="clock-4" class="text-amber-400 mb-3 w-8 h-8"></i>
+                <span class="text-slate-400 text-[10px] font-bold uppercase tracking-[0.1em] text-center">Horas Invertidas</span>
+                <span class="text-4xl font-black mt-2 text-white">+5.8K</span>
+                <p class="text-amber-200 text-[10px] mt-2 bg-amber-500/10 px-2 py-1 rounded-full">Desarrollo & Soporte</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto py-20 px-6">
+        
+        <!-- Technology Distribution Chart -->
+        <div id="tech" class="mb-24 scroll-mt-24">
+            <div class="flex flex-col lg:flex-row items-center gap-12 bg-slate-800/40 p-10 rounded-3xl border border-slate-700/50 shadow-xl">
+                <div class="w-full lg:w-1/2">
+                    <h2 class="text-3xl font-bold mb-4 text-white">Distribución por Tecnología 2025</h2>
+                    <p class="text-slate-400 mb-8 text-lg">
+                        Crecimiento de <span class="font-bold text-indigo-400">+25 proyectos</span> con relación al 2024, con un fuerte enfoque en la automatización backend.
+                    </p>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-4 bg-slate-800/50 p-3 rounded-lg border border-slate-700/50">
+                            <div class="w-12 h-12 rounded-lg bg-blue-500/20 flex items-center justify-center shrink-0">
+                                <i data-lucide="zap" class="text-blue-400"></i>
+                            </div>
+                            <div>
+                                <p class="text-white font-bold">Power Automate <span class="text-blue-400">(54%)</span></p>
+                                <p class="text-xs text-slate-400">23 Proyectos - Automatización de flujos</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4 bg-slate-800/50 p-3 rounded-lg border border-slate-700/50">
+                            <div class="w-12 h-12 rounded-lg bg-yellow-500/20 flex items-center justify-center shrink-0">
+                                <i data-lucide="bar-chart-2" class="text-yellow-400"></i>
+                            </div>
+                            <div>
+                                <p class="text-white font-bold">Power BI <span class="text-yellow-400">(21%)</span></p>
+                                <p class="text-xs text-slate-400">11 Proyectos - Análisis de datos</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4 bg-slate-800/50 p-3 rounded-lg border border-slate-700/50">
+                            <div class="w-12 h-12 rounded-lg bg-purple-500/20 flex items-center justify-center shrink-0">
+                                <i data-lucide="smartphone" class="text-purple-400"></i>
+                            </div>
+                            <div>
+                                <p class="text-white font-bold">Power Apps <span class="text-purple-400">(16%)</span></p>
+                                <p class="text-xs text-slate-400">10 Proyectos - Aplicaciones empresariales</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4 bg-slate-800/50 p-3 rounded-lg border border-slate-700/50">
+                            <div class="w-12 h-12 rounded-lg bg-slate-500/20 flex items-center justify-center shrink-0">
+                                <i data-lucide="bot" class="text-slate-400"></i>
+                            </div>
+                            <div>
+                                <p class="text-white font-bold">Bots / Otros <span class="text-slate-400">(9%)</span></p>
+                                <p class="text-xs text-slate-400">8 Proyectos - Herramientas varias</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-full lg:w-1/2 flex justify-center relative">
+                    <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                        <span class="text-5xl font-black text-white">52</span>
+                        <span class="text-xs text-slate-400 uppercase tracking-widest mt-1">Totales</span>
+                    </div>
+                    <div class="w-full max-w-[400px]">
+                        <canvas id="techChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- NEW: Portfolio Gallery Section (The 10 Star Projects with Modals) -->
+        <div id="gallery" class="mb-24 scroll-mt-24">
+            <h2 class="text-3xl font-extrabold mb-2 text-white">Galería de Productos Estrella</h2>
+            <div class="h-1 w-20 bg-indigo-500 rounded mb-8"></div>
+            
+            <p class="text-sm text-slate-400 mb-8 bg-slate-800/50 p-4 rounded-lg inline-block border border-slate-700/50">
+                <i data-lucide="info" class="inline w-4 h-4 mr-1 text-indigo-400"></i>
+                Las imágenes cargan desde Google Drive. Haz clic en la tarjeta o el botón para abrir el modal en alta resolución.
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                
+                <!-- 1. CentroCostos App -->
+                <div class="bg-slate-800/60 rounded-xl shadow-lg border border-slate-700/50 hover-scale overflow-hidden group cursor-pointer flex flex-col" onclick="openModal('https://lh3.googleusercontent.com/u/0/d/1fAVEBwGWAK2y9h037Sj388nc9IYgYgMC', 'CentroCostos App')">
+                    <div class="relative h-40 overflow-hidden bg-slate-900 flex-shrink-0">
+                        <div class="absolute inset-0 bg-indigo-900/40 group-hover:bg-indigo-900/10 transition-all z-10 flex items-center justify-center">
+                            <i data-lucide="maximize-2" class="text-white opacity-0 group-hover:opacity-100 transition-all transform scale-50 group-hover:scale-100 w-10 h-10 drop-shadow-md"></i>
+                        </div>
+                        <img src="https://lh3.googleusercontent.com/u/0/d/1m6s6IWHRHYvmenhUsTFLvq5m_A3QYMVo" alt="Centro Costos" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" onerror="this.src='https://placehold.co/600x400/8b5cf6/ffffff?text=CentroCostos+App'">
+                    </div>
+                    <div class="p-5 flex flex-col flex-grow justify-between">
+                        <div>
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="px-2 py-0.5 rounded bg-purple-500/20 text-purple-400 text-[10px] font-bold tracking-wider">Power App</span>
+                                <span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 text-[10px] font-bold tracking-wider">Top #1</span>
+                            </div>
+                            <h3 class="font-bold text-lg text-white mb-1">CentroCostos App</h3>
+                            <p class="text-xs text-slate-400">Aplicación financiera (800h+) para control presupuestal.</p>
+                        </div>
+                        <button class="mt-4 w-full py-2 bg-indigo-600/20 hover:bg-indigo-600/40 text-indigo-300 text-xs font-semibold rounded-lg transition-colors border border-indigo-500/30 flex justify-center items-center gap-2">
+                            <i data-lucide="eye" class="w-4 h-4"></i> Ver Desarrollo
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 2. Horarios Training App 
+                <div class="bg-slate-800/60 rounded-xl shadow-lg border border-slate-700/50 hover-scale overflow-hidden group cursor-pointer flex flex-col" onclick="openModal('https://lh3.googleusercontent.com/u/0/d/1TzgVokTcuep1-qyCIAUnKEFrPTO8PkCS', 'Horarios Training App')">
+                    <div class="relative h-40 overflow-hidden bg-slate-900 flex-shrink-0">
+                        <div class="absolute inset-0 bg-indigo-900/40 group-hover:bg-indigo-900/10 transition-all z-10 flex items-center justify-center">
+                            <i data-lucide="maximize-2" class="text-white opacity-0 group-hover:opacity-100 transition-all transform scale-50 group-hover:scale-100 w-10 h-10 drop-shadow-md"></i>
+                        </div>
+                        <img src="https://lh3.googleusercontent.com/u/0/d/1BvoNsQwWG9l7VhZELY1RHaPBgFfRqq8T" alt="Training" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" onerror="this.src='https://placehold.co/600x400/f59e0b/ffffff?text=Horarios+Training'">
+                    </div>
+                    <div class="p-5 flex flex-col flex-grow justify-between">
+                        <div>
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="px-2 py-0.5 rounded bg-purple-500/20 text-purple-400 text-[10px] font-bold tracking-wider">Power App</span>
+                            </div>
+                            <h3 class="font-bold text-lg text-white mb-1">Horarios Training App</h3>
+                            <p class="text-xs text-slate-400">Digitalización completa de mallas de entrenamiento.</p>
+                        </div>
+                        <button class="mt-4 w-full py-2 bg-indigo-600/20 hover:bg-indigo-600/40 text-indigo-300 text-xs font-semibold rounded-lg transition-colors border border-indigo-500/30 flex justify-center items-center gap-2">
+                            <i data-lucide="eye" class="w-4 h-4"></i> Ver Desarrollo
+                        </button>
+                    </div>
+                </div>-->
+
+                <!-- 3. TP Payroll App -->
+                <div class="bg-slate-800/60 rounded-xl shadow-lg border border-slate-700/50 hover-scale overflow-hidden group cursor-pointer flex flex-col" onclick="openModal('https://lh3.googleusercontent.com/u/0/d/1Pz_79Z8hb0QtdmBiHNPghPnjjtTXMB7e', 'TP Payroll App')">
+                    <div class="relative h-40 overflow-hidden bg-slate-900 flex-shrink-0">
+                        <div class="absolute inset-0 bg-indigo-900/40 group-hover:bg-indigo-900/10 transition-all z-10 flex items-center justify-center">
+                            <i data-lucide="maximize-2" class="text-white opacity-0 group-hover:opacity-100 transition-all transform scale-50 group-hover:scale-100 w-10 h-10 drop-shadow-md"></i>
+                        </div>
+                        <img src="https://lh3.googleusercontent.com/u/0/d/1Nzw4UtUIqc--dQazH9iOceLGvus97mxs" alt="Payroll" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" onerror="this.src='https://placehold.co/600x400/3b82f6/ffffff?text=TP+Payroll'">
+                    </div>
+                    <div class="p-5 flex flex-col flex-grow justify-between">
+                        <div>
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="px-2 py-0.5 rounded bg-purple-500/20 text-purple-400 text-[10px] font-bold tracking-wider">Power App</span>
+                            </div>
+                            <h3 class="font-bold text-lg text-white mb-1">TP Payroll App</h3>
+                            <p class="text-xs text-slate-400">Gestión de PQRs centralizada y soporte a nómina.</p>
+                        </div>
+                        <button class="mt-4 w-full py-2 bg-indigo-600/20 hover:bg-indigo-600/40 text-indigo-300 text-xs font-semibold rounded-lg transition-colors border border-indigo-500/30 flex justify-center items-center gap-2">
+                            <i data-lucide="eye" class="w-4 h-4"></i> Ver Desarrollo
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 4. Change Management App -->
+                <div class="bg-slate-800/60 rounded-xl shadow-lg border border-slate-700/50 hover-scale overflow-hidden group cursor-pointer flex flex-col" onclick="openModal('https://lh3.googleusercontent.com/u/0/d/15v3BfDK83UiS1_5sSQoHNgYsFyUAHsF1', 'Change Management App')">
+                    <div class="relative h-40 overflow-hidden bg-slate-900 flex-shrink-0">
+                        <div class="absolute inset-0 bg-indigo-900/40 group-hover:bg-indigo-900/10 transition-all z-10 flex items-center justify-center">
+                            <i data-lucide="maximize-2" class="text-white opacity-0 group-hover:opacity-100 transition-all transform scale-50 group-hover:scale-100 w-10 h-10 drop-shadow-md"></i>
+                        </div>
+                        <img src="https://lh3.googleusercontent.com/u/0/d/1cIMDyxQ34wSJyaEPMCc2K7V6yC4pDpGL" alt="Change Mgmt" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" onerror="this.src='https://placehold.co/600x400/ef4444/ffffff?text=Change+Mgmt'">
+                    </div>
+                    <div class="p-5 flex flex-col flex-grow justify-between">
+                        <div>
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="px-2 py-0.5 rounded bg-purple-500/20 text-purple-400 text-[10px] font-bold tracking-wider">Power App</span>
+                            </div>
+                            <h3 class="font-bold text-lg text-white mb-1">Change Management App</h3>
+                            <p class="text-xs text-slate-400">Gestión de cambios de IT y flujos de aprobación.</p>
+                        </div>
+                        <button class="mt-4 w-full py-2 bg-indigo-600/20 hover:bg-indigo-600/40 text-indigo-300 text-xs font-semibold rounded-lg transition-colors border border-indigo-500/30 flex justify-center items-center gap-2">
+                            <i data-lucide="eye" class="w-4 h-4"></i> Ver Desarrollo
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 5. NHA TP Client BI -->
+                <div class="bg-slate-800/60 rounded-xl shadow-lg border border-slate-700/50 hover-scale overflow-hidden group cursor-pointer flex flex-col" onclick="openModal('https://lh3.googleusercontent.com/u/0/d/1XXyKwBuIh05EhqYsTZ2f6ffGIBXYUJNG', 'NHA TP Client BI')">
+                    <div class="relative h-40 overflow-hidden bg-slate-900 flex-shrink-0">
+                        <div class="absolute inset-0 bg-indigo-900/40 group-hover:bg-indigo-900/10 transition-all z-10 flex items-center justify-center">
+                            <i data-lucide="maximize-2" class="text-white opacity-0 group-hover:opacity-100 transition-all transform scale-50 group-hover:scale-100 w-10 h-10 drop-shadow-md"></i>
+                        </div>
+                        <img src="https://lh3.googleusercontent.com/u/0/d/17WuiQwtJTFa1HqtOb1pgqpp208jRr6F9" alt="NHA TP Client" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" onerror="this.src='https://placehold.co/600x400/eab308/ffffff?text=NHA+TP+Client'">
+                    </div>
+                    <div class="p-5 flex flex-col flex-grow justify-between">
+                        <div>
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="px-2 py-0.5 rounded bg-yellow-500/20 text-yellow-400 text-[10px] font-bold tracking-wider">Power BI</span>
+                            </div>
+                            <h3 class="font-bold text-lg text-white mb-1">NHA TP Client BI</h3>
+                            <p class="text-xs text-slate-400">Visibilidad del proceso de nuevos ingresos.</p>
+                        </div>
+                        <button class="mt-4 w-full py-2 bg-indigo-600/20 hover:bg-indigo-600/40 text-indigo-300 text-xs font-semibold rounded-lg transition-colors border border-indigo-500/30 flex justify-center items-center gap-2">
+                            <i data-lucide="eye" class="w-4 h-4"></i> Ver Desarrollo
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 6. Alerta - OnTime -->
+                <div class="bg-slate-800/60 rounded-xl shadow-lg border border-slate-700/50 hover-scale overflow-hidden group cursor-pointer flex flex-col" onclick="openModal('https://lh3.googleusercontent.com/u/0/d/1aieAMCKkizIKtgGeuovigoUMTxcZymdi', 'Alerta - OnTime')">
+                    <div class="relative h-40 overflow-hidden bg-slate-900 flex-shrink-0">
+                        <div class="absolute inset-0 bg-indigo-900/40 group-hover:bg-indigo-900/10 transition-all z-10 flex items-center justify-center">
+                            <i data-lucide="maximize-2" class="text-white opacity-0 group-hover:opacity-100 transition-all transform scale-50 group-hover:scale-100 w-10 h-10 drop-shadow-md"></i>
+                        </div>
+                        <img src="https://lh3.googleusercontent.com/u/0/d/1XkTjI0fHkD2YBDLnyc7MPD4QSnLneRs2" alt="Alerta OnTime" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" onerror="this.src='https://placehold.co/600x400/6366f1/ffffff?text=Alerta+OnTime'">
+                    </div>
+                    <div class="p-5 flex flex-col flex-grow justify-between">
+                        <div>
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="px-2 py-0.5 rounded bg-blue-500/20 text-blue-400 text-[10px] font-bold tracking-wider">Automate</span>
+                            </div>
+                            <h3 class="font-bold text-lg text-white mb-1">Alerta - OnTime</h3>
+                            <p class="text-xs text-slate-400">Alertas automáticas de infracciones y novedades.</p>
+                        </div>
+                        <button class="mt-4 w-full py-2 bg-indigo-600/20 hover:bg-indigo-600/40 text-indigo-300 text-xs font-semibold rounded-lg transition-colors border border-indigo-500/30 flex justify-center items-center gap-2">
+                            <i data-lucide="eye" class="w-4 h-4"></i> Ver Desarrollo
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 7. Actas GS - Adobe Sign -->
+                <div class="bg-slate-800/60 rounded-xl shadow-lg border border-slate-700/50 hover-scale overflow-hidden group cursor-pointer flex flex-col" onclick="openModal('https://placehold.co/1200x800/ef4444/ffffff?text=Actas+GS+-+Adobe+Sign', 'Actas GS - Adobe Sign')">
+                    <div class="relative h-40 overflow-hidden bg-slate-900 flex-shrink-0">
+                        <div class="absolute inset-0 bg-indigo-900/40 group-hover:bg-indigo-900/10 transition-all z-10 flex items-center justify-center">
+                            <i data-lucide="maximize-2" class="text-white opacity-0 group-hover:opacity-100 transition-all transform scale-50 group-hover:scale-100 w-10 h-10 drop-shadow-md"></i>
+                        </div>
+                        <img src="https://placehold.co/600x400/ef4444/ffffff?text=Actas+GS+-+Adobe+Sign" alt="Adobe Sign" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    </div>
+                    <div class="p-5 flex flex-col flex-grow justify-between">
+                        <div>
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="px-2 py-0.5 rounded bg-blue-500/20 text-blue-400 text-[10px] font-bold tracking-wider">Automate / RPA</span>
+                            </div>
+                            <h3 class="font-bold text-lg text-white mb-1">Actas GS - Adobe Sign</h3>
+                            <p class="text-xs text-slate-400">Automatización de firmas digitales de bienes.</p>
+                        </div>
+                        <button class="mt-4 w-full py-2 bg-indigo-600/20 hover:bg-indigo-600/40 text-indigo-300 text-xs font-semibold rounded-lg transition-colors border border-indigo-500/30 flex justify-center items-center gap-2">
+                            <i data-lucide="eye" class="w-4 h-4"></i> Ver Desarrollo
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 8. Strategic Radar BI -->
+                <div class="bg-slate-800/60 rounded-xl shadow-lg border border-slate-700/50 hover-scale overflow-hidden group cursor-pointer flex flex-col" onclick="openModal('https://lh3.googleusercontent.com/u/0/d/1hqfTRkbu_BcwX7_Dw9A3K33xsq7hCZ3j', 'Strategic Radar BI')">
+                    <div class="relative h-40 overflow-hidden bg-slate-900 flex-shrink-0">
+                        <div class="absolute inset-0 bg-indigo-900/40 group-hover:bg-indigo-900/10 transition-all z-10 flex items-center justify-center">
+                            <i data-lucide="maximize-2" class="text-white opacity-0 group-hover:opacity-100 transition-all transform scale-50 group-hover:scale-100 w-10 h-10 drop-shadow-md"></i>
+                        </div>
+                        <img src="https://lh3.googleusercontent.com/u/0/d/1r_cFFngaV6HikbqnJ1MYvcFhvKIEA-7c" alt="Strategic Radar" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" onerror="this.src='https://placehold.co/600x400/eab308/ffffff?text=Strategic+Radar'">
+                    </div>
+                    <div class="p-5 flex flex-col flex-grow justify-between">
+                        <div>
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="px-2 py-0.5 rounded bg-yellow-500/20 text-yellow-400 text-[10px] font-bold tracking-wider">Power BI</span>
+                            </div>
+                            <h3 class="font-bold text-lg text-white mb-1">Strategic Radar BI</h3>
+                            <p class="text-xs text-slate-400">Dashboard ejecutivo de inteligencia de negocios.</p>
+                        </div>
+                        <button class="mt-4 w-full py-2 bg-indigo-600/20 hover:bg-indigo-600/40 text-indigo-300 text-xs font-semibold rounded-lg transition-colors border border-indigo-500/30 flex justify-center items-center gap-2">
+                            <i data-lucide="eye" class="w-4 h-4"></i> Ver Desarrollo
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 9. Sprint App -->
+                <div class="bg-slate-800/60 rounded-xl shadow-lg border border-slate-700/50 hover-scale overflow-hidden group cursor-pointer flex flex-col" onclick="openModal('https://lh3.googleusercontent.com/u/0/d/1fDmCd0-V79Y5F7wQU_VXruKDO0M3DKCw', 'Sprint App')">
+                    <div class="relative h-40 overflow-hidden bg-slate-900 flex-shrink-0">
+                        <div class="absolute inset-0 bg-indigo-900/40 group-hover:bg-indigo-900/10 transition-all z-10 flex items-center justify-center">
+                            <i data-lucide="maximize-2" class="text-white opacity-0 group-hover:opacity-100 transition-all transform scale-50 group-hover:scale-100 w-10 h-10 drop-shadow-md"></i>
+                        </div>
+                        <img src="https://lh3.googleusercontent.com/u/0/d/1z-jMi3b-nDe2lCqEMv1dZ--TbZVCw-_f" alt="Sprint App" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" onerror="this.src='https://placehold.co/600x400/10b981/ffffff?text=Sprint+App'">
+                    </div>
+                    <div class="p-5 flex flex-col flex-grow justify-between">
+                        <div>
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="px-2 py-0.5 rounded bg-purple-500/20 text-purple-400 text-[10px] font-bold tracking-wider">Power App</span>
+                            </div>
+                            <h3 class="font-bold text-lg text-white mb-1">PBI Sprint App</h3>
+                            <p class="text-xs text-slate-400">Control del backlog de desarrollo y gestión ágil.</p>
+                        </div>
+                        <button class="mt-4 w-full py-2 bg-indigo-600/20 hover:bg-indigo-600/40 text-indigo-300 text-xs font-semibold rounded-lg transition-colors border border-indigo-500/30 flex justify-center items-center gap-2">
+                            <i data-lucide="eye" class="w-4 h-4"></i> Ver Desarrollo
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 10. DCS App -->
+                <div class="bg-slate-800/60 rounded-xl shadow-lg border border-slate-700/50 hover-scale overflow-hidden group cursor-pointer flex flex-col" onclick="openModal('https://lh3.googleusercontent.com/u/0/d/1FOADANqhfF5_rvGNe_t98ZO17tRko_UO', 'DCS App')">
+                    <div class="relative h-40 overflow-hidden bg-slate-900 flex-shrink-0">
+                        <div class="absolute inset-0 bg-indigo-900/40 group-hover:bg-indigo-900/10 transition-all z-10 flex items-center justify-center">
+                            <i data-lucide="maximize-2" class="text-white opacity-0 group-hover:opacity-100 transition-all transform scale-50 group-hover:scale-100 w-10 h-10 drop-shadow-md"></i>
+                        </div>
+                        <img src="https://lh3.googleusercontent.com/u/0/d/16OWZds6besKlhMc0L_RBN83I8ZAUA6-E" alt="DCS App" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" onerror="this.src='https://placehold.co/600x400/4f46e5/ffffff?text=DCS+App'">
+                    </div>
+                    <div class="p-5 flex flex-col flex-grow justify-between">
+                        <div>
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="px-2 py-0.5 rounded bg-purple-500/20 text-purple-400 text-[10px] font-bold tracking-wider">Power App</span>
+                            </div>
+                            <h3 class="font-bold text-lg text-white mb-1">DCS App</h3>
+                            <p class="text-xs text-slate-400">Control documental y gestión de flujos de aprobación.</p>
+                        </div>
+                        <button class="mt-4 w-full py-2 bg-indigo-600/20 hover:bg-indigo-600/40 text-indigo-300 text-xs font-semibold rounded-lg transition-colors border border-indigo-500/30 flex justify-center items-center gap-2">
+                            <i data-lucide="eye" class="w-4 h-4"></i> Ver Desarrollo
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Data-Driven Projects Section (The 40 items) -->
+        <div id="projects" class="mb-24 scroll-mt-24">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 border-b border-slate-700/50 pb-4">
+                <div>
+                    <h2 class="text-3xl font-extrabold text-white">Catálogo Completo</h2>
+                    <p class="text-sm text-slate-400 mt-2">Detalle de todos los aplicativos desarrollados y en ciclo de soporte (Total: 40 Registros).</p>
+                </div>
+            </div>
+
+            <!-- TAB 1: Nuevos Desarrollos -->
+            <h3 class="text-xl font-bold text-indigo-300 mb-6 flex items-center gap-2">
+                <i data-lucide="folder-git-2"></i> Desarrollos (Activos & Entregados)
+            </h3>
+            
+            <div id="dev-projects-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-16 custom-scroll max-h-[600px] overflow-y-auto pr-2 pb-4">
+                <!-- Se inyectará vía JS -->
+            </div>
+
+            <!-- TAB 2: Soporte Operativo -->
+            <h3 class="text-xl font-bold text-emerald-400 mb-6 flex items-center gap-2 border-t border-slate-800 pt-8">
+                <i data-lucide="life-buoy"></i> Soporte Operativo
+            </h3>
+            
+            <div id="support-projects-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 custom-scroll max-h-[400px] overflow-y-auto pr-2 pb-4">
+                <!-- Se inyectará vía JS -->
+            </div>
+        </div>
+
+        <!-- Timeline of Deliveries Section -->
+        <!--<div id="timeline" class="mb-24 scroll-mt-24">
+            <h2 class="text-3xl font-extrabold mb-12 text-center text-white">Cronograma de Entregas Clave 2026</h2>
+            
+            <div class="relative max-w-4xl mx-auto">
+                <div class="absolute left-8 md:left-0 md:top-1/2 md:w-full md:h-1 w-1 top-0 bottom-0 bg-indigo-900/50 transform md:-translate-y-1/2 rounded-full overflow-hidden">
+                    <div class="h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-500 w-full opacity-50"></div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-4 relative z-10">
+                    
+                    <div class="relative pl-20 md:pl-0 text-left md:text-center">
+                        <div class="absolute left-0 md:left-1/2 md:top-1/2 w-12 h-12 bg-slate-900 rounded-full flex items-center justify-center text-white font-bold text-xs uppercase tracking-wider transform md:-translate-x-1/2 md:-translate-y-1/2 shadow-[0_0_15px_rgba(99,102,241,0.5)] border-4 border-indigo-500 z-10 transition-transform hover:scale-110">
+                            Ene
+                        </div>
+                        <div class="md:pb-16 md:pt-0 pt-2">
+                            <h3 class="text-lg font-bold text-blue-400 mb-2">Enero - Marzo</h3>
+                            <p class="text-xs text-slate-300 leading-relaxed">Payroll Retirados Colombia y Perú (Bots y flujos)<br><br>Actas GS - Adobe Sign (Colombia y Perú)</p>
+                        </div>
+                    </div>
+
+                    <div class="relative pl-20 md:pl-0 text-left md:text-center mt-6 md:mt-0">
+                        <div class="absolute left-0 md:left-1/2 md:top-1/2 w-12 h-12 bg-slate-900 rounded-full flex items-center justify-center text-white font-bold text-xs uppercase tracking-wider transform md:-translate-x-1/2 md:-translate-y-1/2 shadow-[0_0_15px_rgba(99,102,241,0.5)] border-4 border-indigo-500 z-10 transition-transform hover:scale-110">
+                            Abr
+                        </div>
+                        <div class="md:pt-16 md:pb-0 pt-2">
+                            <h3 class="text-lg font-bold text-blue-400 mb-2">Abril - Junio</h3>
+                            <p class="text-xs text-slate-300 leading-relaxed">Ordenes de Compra Goods Strategy Perú<br><br>OnTime - Reporte Post Payroll & Horas sin Justificar PBI</p>
+                        </div>
+                    </div>
+
+                    <div class="relative pl-20 md:pl-0 text-left md:text-center mt-6 md:mt-0">
+                        <div class="absolute left-0 md:left-1/2 md:top-1/2 w-12 h-12 bg-slate-900 rounded-full flex items-center justify-center text-white font-bold text-xs uppercase tracking-wider transform md:-translate-x-1/2 md:-translate-y-1/2 shadow-[0_0_15px_rgba(99,102,241,0.5)] border-4 border-indigo-500 z-10 transition-transform hover:scale-110">
+                            Jul
+                        </div>
+                        <div class="md:pb-16 md:pt-0 pt-2">
+                            <h3 class="text-lg font-bold text-blue-400 mb-2">Julio - Septiembre</h3>
+                            <p class="text-xs text-slate-300 leading-relaxed">NHA TPClient - PBI<br><br>DCS - PBI<br><br>OnTime - Cronograma App & Alerta Novedades Pendientes</p>
+                        </div>
+                    </div>
+
+                    <div class="relative pl-20 md:pl-0 text-left md:text-center mt-6 md:mt-0">
+                        <div class="absolute left-0 md:left-1/2 md:top-1/2 w-12 h-12 bg-slate-900 rounded-full flex items-center justify-center text-white font-bold text-xs uppercase tracking-wider transform md:-translate-x-1/2 md:-translate-y-1/2 shadow-[0_0_15px_rgba(99,102,241,0.5)] border-4 border-indigo-500 z-10 transition-transform hover:scale-110">
+                            Oct
+                        </div>
+                        <div class="md:pt-16 md:pb-0 pt-2">
+                            <h3 class="text-lg font-bold text-blue-400 mb-2">Octubre - Diciembre</h3>
+                            <p class="text-xs text-slate-300 leading-relaxed">CentroCostos App<br>Horarios Training App<br>Change Management App<br>Sprint App & PBI<br>Strategic Radar<br>Payroll App (Colombia)</p>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Hito Final Box -->
+                <!-- <div class="mt-12 bg-slate-800/80 border border-slate-700 backdrop-blur-md rounded-2xl p-6 relative z-10 shadow-2xl overflow-hidden group">
+                    <div class="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    <div class="flex items-start gap-4 relative z-10">
+                        <div class="bg-indigo-500/20 p-3 rounded-lg shrink-0 border border-indigo-500/30">
+                            <i data-lucide="flag" class="text-indigo-400 w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-bold mb-2 text-white">Hito de Fin de Año</h4>
+                            <p class="text-sm text-slate-300 mb-2 leading-relaxed">
+                                Cierre fuerte de año (Oct - Dic) con la entrega de herramientas estratégicas de BI (Strategic Radar) y aplicaciones de gran envergadura (CentroCostos/Sprint App/Payroll App/Change Management).
+                            </p>
+                            <p class="text-sm text-indigo-300 font-semibold">
+                                Proyección 2027 → Expansión de Facturación 365, automatizaciones de nómina y consolidación regional de aplicaciones.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+
+        <!-- Strategy 2026 Roadmap -->
+        <section id="roadmap" class="bg-slate-800/40 border border-slate-700/50 rounded-3xl p-10 md:p-14 relative overflow-hidden scroll-mt-24 shadow-2xl">
+            <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-[100px] pointer-events-none"></div>
+            
+            <div class="relative z-10">
+                <h2 class="text-3xl font-bold mb-10 text-center text-white">Ruta Estratégica 2026</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Column 1: Innovación -->
+                    <div class="flex flex-col gap-4">
+                        <h3 class="text-indigo-400 font-bold mb-2 flex items-center gap-2 bg-indigo-950/50 p-3 rounded-lg border border-indigo-500/20 justify-center">
+                            <i data-lucide="cpu" class="w-5 h-5"></i> Innovación & Tech
+                        </h3>
+                        
+                        <div class="bg-slate-800/80 p-5 rounded-xl border border-slate-700 hover:border-indigo-500/50 transition-colors">
+                            <h4 class="font-bold text-white text-sm mb-1">Django LunchApp</h4>
+                            <span class="inline-block px-2 py-0.5 bg-slate-700 text-slate-300 text-[10px] rounded font-mono mb-2">Q1 2026</span>
+                            <p class="text-xs text-slate-400">Nuevo framework web para gestión de breaks.</p>
+                        </div>
+                        <div class="bg-slate-800/80 p-5 rounded-xl border border-slate-700 hover:border-indigo-500/50 transition-colors">
+                            <h4 class="font-bold text-white text-sm mb-2">Innovación Django</h4>
+                            <p class="text-xs text-slate-400">R&D para migración a tecnologías open source.</p>
+                        </div>
+                        <div class="bg-slate-800/80 p-5 rounded-xl border border-slate-700 hover:border-indigo-500/50 transition-colors">
+                            <h4 class="font-bold text-white text-sm mb-1">YubiKey App</h4>
+                            <span class="inline-block px-2 py-0.5 bg-slate-700 text-slate-300 text-[10px] rounded font-mono mb-2">Ene 2026</span>
+                            <p class="text-xs text-slate-400">Gestión de activos de seguridad física.</p>
+                        </div>
+                        <div class="bg-slate-800/80 p-5 rounded-xl border border-slate-700 hover:border-indigo-500/50 transition-colors">
+                            <h4 class="font-bold text-white text-sm mb-1">DCS V2 App</h4>
+                            <span class="inline-block px-2 py-0.5 bg-slate-700 text-slate-300 text-[10px] rounded font-mono mb-2">2026</span>
+                            <p class="text-xs text-slate-400">Evolución mayor del sistema de control documental.</p>
+                        </div>
+                    </div>
+
+                    <!-- Column 2: Operaciones -->
+                    <div class="flex flex-col gap-4">
+                        <h3 class="text-emerald-400 font-bold mb-2 flex items-center gap-2 bg-emerald-950/30 p-3 rounded-lg border border-emerald-500/20 justify-center">
+                            <i data-lucide="briefcase" class="w-5 h-5"></i> Operaciones (WFM/PO)
+                        </h3>
+                        
+                        <div class="bg-slate-800/80 p-5 rounded-xl border border-slate-700 hover:border-emerald-500/50 transition-colors">
+                            <h4 class="font-bold text-white text-sm mb-1">GSTraining App</h4>
+                            <span class="inline-block px-2 py-0.5 bg-slate-700 text-slate-300 text-[10px] rounded font-mono mb-2">2026</span>
+                            <p class="text-xs text-slate-400">Logística y gestión de recursos de entrenamiento.</p>
+                        </div>
+                        <div class="bg-slate-800/80 p-5 rounded-xl border border-slate-700 hover:border-emerald-500/50 transition-colors">
+                            <h4 class="font-bold text-white text-sm mb-1">Adherence App - Admin</h4>
+                            <span class="inline-block px-2 py-0.5 bg-slate-700 text-slate-300 text-[10px] rounded font-mono mb-2">2026</span>
+                            <p class="text-xs text-slate-400">Extensión de adherencia a personal administrativo.</p>
+                        </div>
+                        <div class="bg-slate-800/80 p-5 rounded-xl border border-slate-700 hover:border-emerald-500/50 transition-colors">
+                            <h4 class="font-bold text-white text-sm mb-1">PBI Encuesta Satisfacción</h4>
+                            <span class="inline-block px-2 py-0.5 bg-slate-700 text-slate-300 text-[10px] rounded font-mono mb-2">Feb 2026</span>
+                            <p class="text-xs text-slate-400">Dashboard de KPIs de satisfacción de cliente interno.</p>
+                        </div>
+                        <div class="bg-slate-800/80 p-5 rounded-xl border border-slate-700 hover:border-emerald-500/50 transition-colors">
+                            <h4 class="font-bold text-white text-sm mb-1">Vacation Plan App</h4>
+                            <span class="inline-block px-2 py-0.5 bg-slate-700 text-slate-300 text-[10px] rounded font-mono mb-2">2026</span>
+                            <p class="text-xs text-slate-400">Gestión proactiva de planes de vacaciones.</p>
+                        </div>
+                    </div>
+
+                    <!-- Column 3: Nómina & Finanzas -->
+                    <div class="flex flex-col gap-4">
+                        <h3 class="text-amber-400 font-bold mb-2 flex items-center gap-2 bg-amber-950/30 p-3 rounded-lg border border-amber-500/20 justify-center">
+                            <i data-lucide="dollar-sign" class="w-5 h-5"></i> Nómina & Finanzas
+                        </h3>
+                        
+                        <div class="bg-slate-800/80 p-5 rounded-xl border border-slate-700 hover:border-amber-500/50 transition-colors">
+                            <h4 class="font-bold text-white text-sm mb-1">Facturación 365 App</h4>
+                            <span class="inline-block px-2 py-0.5 bg-slate-700 text-slate-300 text-[10px] rounded font-mono mb-2">2026</span>
+                            <p class="text-xs text-slate-400">Core financiero integrado a Dataverse (1000h+).</p>
+                        </div>
+                        <div class="bg-slate-800/80 p-5 rounded-xl border border-slate-700 hover:border-amber-500/50 transition-colors">
+                            <h4 class="font-bold text-white text-sm mb-1">TP Payroll Ayuda App</h4>
+                            <span class="inline-block px-2 py-0.5 bg-slate-700 text-slate-300 text-[10px] rounded font-mono mb-2">2026</span>
+                            <p class="text-xs text-slate-400">Consolidación del módulo de empleados activos.</p>
+                        </div>
+                        <div class="bg-slate-800/80 p-5 rounded-xl border border-slate-700 hover:border-amber-500/50 transition-colors">
+                            <h4 class="font-bold text-white text-sm mb-1">Excepcionales App</h4>
+                            <span class="inline-block px-2 py-0.5 bg-slate-700 text-slate-300 text-[10px] rounded font-mono mb-2">2026</span>
+                            <p class="text-xs text-slate-400">Control crítico de excepciones de pago.</p>
+                        </div>
+                        <div class="bg-slate-800/80 p-5 rounded-xl border border-slate-700 hover:border-amber-500/50 transition-colors">
+                            <h4 class="font-bold text-white text-sm mb-1">Alertas OnTime</h4>
+                            <span class="inline-block px-2 py-0.5 bg-slate-700 text-slate-300 text-[10px] rounded font-mono mb-2">2026</span>
+                            <p class="text-xs text-slate-400">Alertas horas altas, descuentos altos y excesos.</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-950 border-t border-slate-900 py-12 px-6 mt-10">
+        <div class="max-w-4xl mx-auto text-center">
+            <h3 class="text-xl font-bold text-white mb-2">Process Automation & Innovation</h3>
+            <p class="text-sm mb-8 text-slate-500">Transformando procesos complejos en soluciones digitales eficientes.</p>
+            <div class="inline-flex items-center gap-2 px-4 py-2 bg-slate-900 rounded-full border border-slate-800 text-slate-300">
+                <i data-lucide="mail" class="w-4 h-4 text-indigo-400"></i>
+                <span class="text-xs md:text-sm">juan.parragonzalez@teleperformance.com</span>
+            </div>
+            <p class="mt-8 text-xs text-slate-600">© 2026 Reporte Confidencial Interno</p>
+        </div>
+    </footer>
+
+    <!-- Image Modal for Gallery -->
+    <div id="imageModal" class="modal fixed inset-0 z-50 flex items-center justify-center bg-slate-900/95 backdrop-blur-sm p-4">
+        <button onclick="closeModal()" class="absolute top-6 right-6 text-slate-400 hover:text-white transition-colors bg-slate-800 hover:bg-slate-700 p-2 rounded-full border border-slate-600">
+            <i data-lucide="x" class="w-6 h-6"></i>
+        </button>
+        <div class="max-w-7xl max-h-[90vh] overflow-auto rounded-lg flex flex-col items-center">
+            <img id="modalImage" src="" alt="Full Project Preview" class="max-w-full h-auto max-h-[80vh] shadow-2xl rounded-lg border border-slate-700">
+            <p id="modalTitle" class="text-center text-white font-bold text-xl mt-6 bg-slate-800/80 px-6 py-2 rounded-full border border-slate-700/50"></p>
+        </div>
+    </div>
+
+    <script>
+        // Data Configuration for the 40 Projects
+        const devProjects = [
+            { name: "AI Plantillas financieras", phase: "4. Doing", phaseColor: "blue", type: "Otro", icon: "cpu", req: "4.3 Financial Planning", hrs: "182.2", prio: "Alta", owner: "Brian Arboleda B." },
+            { name: "TP Payroll Ayuda App", phase: "4. Doing", phaseColor: "blue", type: "Power App", icon: "smartphone", req: "4.5 Payroll", hrs: "803.6", prio: "Alta", owner: "Juan Parra G." },
+            { name: "Excepcionales App", phase: "4. Doing", phaseColor: "blue", type: "Power Automate", icon: "zap", req: "Payroll Controllers", hrs: "492.8", prio: "Alta", owner: "Daniela Rodriguez" },
+            { name: "YubiKey App", phase: "4. Doing", phaseColor: "blue", type: "Power Automate", icon: "zap", req: "8.5 Goods Strategy", hrs: "526", prio: "Alta", owner: "Julian Vahos L." },
+            { name: "AI Clients", phase: "4. Doing", phaseColor: "blue", type: "Programación", icon: "code", req: "8.3 Process Office", hrs: "48", prio: "Alta", owner: "Cynthia Pineda A." },
+            { name: "Extemporaneos App - 45Days", phase: "4. Doing", phaseColor: "blue", type: "Power App", icon: "smartphone", req: "Staffing & Sizing", hrs: "13.2", prio: "Media", owner: "Eduardo Mojica" },
+            { name: "DCS V2 App", phase: "4. Doing", phaseColor: "blue", type: "Power App", icon: "smartphone", req: "8.3 Process Office", hrs: "16", prio: "Media", owner: "Paola Albarracin" },
+            { name: "Django LunchApp", phase: "4. Doing", phaseColor: "blue", type: "Power App", icon: "smartphone", req: "Process Automation", hrs: "144.4", prio: "Media", owner: "Miguel Parra A." },
+            { name: "GSTraining App", phase: "7. Testing Client", phaseColor: "amber", type: "Power App", icon: "smartphone", req: "8.5 Goods Strategy", hrs: "33.5", prio: "Media", owner: "Rodrigo Sempertegui" },
+            { name: "OnTime - Comparativo Ajustes", phase: "7. Testing Client", phaseColor: "amber", type: "Power BI", icon: "bar-chart-2", req: "Payroll Controllers", hrs: "96", prio: "Media", owner: "Sergio Buitrago V." },
+            { name: "AI Financial Tracking", phase: "9. Done", phaseColor: "emerald", type: "Power App", icon: "smartphone", req: "8.3 Process Office", hrs: "409.5", prio: "Alta", owner: "Cynthia Pineda A." },
+            { name: "AI Insight HUB", phase: "9. Done", phaseColor: "emerald", type: "Power App", icon: "smartphone", req: "8.3 Process Office", hrs: "245", prio: "Alta", owner: "Cindy Mora E." },
+            { name: "AI Risk Management", phase: "9. Done", phaseColor: "emerald", type: "Power App", icon: "smartphone", req: "8.3 Process Office", hrs: "332.2", prio: "Alta", owner: "Cynthia Pineda A." },
+            { name: "AI Status CEO", phase: "9. Done", phaseColor: "emerald", type: "Power App", icon: "smartphone", req: "8.3 Process Office", hrs: "141.6", prio: "Alta", owner: "Cindy Mora E." },
+            { name: "CentroCostos App Fase II", phase: "9. Done", phaseColor: "emerald", type: "Power App", icon: "smartphone", req: "Process Improvement", hrs: "565.7", prio: "Alta", owner: "Daniela Rodriguez" },
+            { name: "Actas GS - RPA Qubic", phase: "9. Done", phaseColor: "emerald", type: "Power App", icon: "smartphone", req: "8.5 Goods Strategy", hrs: "7", prio: "Alta", owner: "Julian Vahos L." },
+            { name: "WFM - Automation (Tracker)", phase: "9. Done", phaseColor: "emerald", type: "Power Automate", icon: "zap", req: "Workforce Office", hrs: "11", prio: "Alta", owner: "Fabian Obando" },
+            { name: "WFM - TimeKeeper", phase: "9. Done", phaseColor: "emerald", type: "Power Automate", icon: "zap", req: "Real Time Mgmt", hrs: "0.5", prio: "Alta", owner: "Rodrigo Rivera" },
+            { name: "AI PBI Transformation Americas", phase: "9. Done", phaseColor: "emerald", type: "Power BI", icon: "bar-chart-2", req: "Corporate Compliance", hrs: "387", prio: "Alta", owner: "Cindy Mora E." },
+            { name: "AI PBI Bonos Manager", phase: "9. Done", phaseColor: "emerald", type: "Power BI", icon: "bar-chart-2", req: "Process Automation", hrs: "45", prio: "Alta", owner: "Cynthia Pineda A." },
+            { name: "PBI Sprint App", phase: "9. Done", phaseColor: "emerald", type: "Power BI", icon: "bar-chart-2", req: "Process Automation", hrs: "111.2", prio: "Alta", owner: "Miguel Parra A." },
+            { name: "OnTime - PBI BOT", phase: "9. Done", phaseColor: "emerald", type: "Power BI", icon: "bar-chart-2", req: "Payroll Controllers", hrs: "20", prio: "Media", owner: "Sergio Buitrago V." },
+            { name: "Novedades pendientes BMS", phase: "9. Done", phaseColor: "emerald", type: "Bot", icon: "bot", req: "Payroll Controllers", hrs: "151.7", prio: "Baja", owner: "Miguel Parra A." },
+            { name: "Change Management App", phase: "9. Done", phaseColor: "emerald", type: "Power App", icon: "smartphone", req: "Change Management", hrs: "187", prio: "Baja", owner: "Holman Murcia" },
+            { name: "Comunicaciones Perú", phase: "9. Done", phaseColor: "emerald", type: "Sql", icon: "database", req: "9.2 Perú", hrs: "8", prio: "Baja", owner: "Pamela Aguayo" }
+        ];
+
+        const supportProjects = [
+            { name: "AI Estatus CEO", phase: "4. Doing", phaseColor: "blue", type: "Power App", icon: "smartphone", req: "Workforce & Logistics", hrs: "24.5", prio: "Alta", owner: "Cynthia Pineda A." },
+            { name: "AI Financial Tracking", phase: "4. Doing", phaseColor: "blue", type: "Power App", icon: "smartphone", req: "8.3 Process Office", hrs: "16", prio: "Alta", owner: "Cynthia Pineda A." },
+            { name: "AI Document Control System", phase: "4. Doing", phaseColor: "blue", type: "Power App", icon: "smartphone", req: "8.3 Process Office", hrs: "25.3", prio: "Alta", owner: "Cynthia Pineda A." },
+            { name: "AI Risk Management", phase: "4. Doing", phaseColor: "blue", type: "Power App", icon: "smartphone", req: "8.3 Process Office", hrs: "6", prio: "Alta", owner: "Cynthia Pineda A." },
+            { name: "NHA II Toque", phase: "4. Doing", phaseColor: "blue", type: "Power App", icon: "smartphone", req: "Staffing & Sizing", hrs: "9.7", prio: "Media", owner: "Eduardo Mojica" },
+            { name: "Actas GS - RPA Qubic", phase: "9. Done", phaseColor: "emerald", type: "Power App", icon: "smartphone", req: "8.5 Goods Strategy", hrs: "13", prio: "Alta", owner: "Julian Vahos L." },
+            { name: "WFM - Automation", phase: "9. Done", phaseColor: "emerald", type: "Power Automate", icon: "zap", req: "Workforce Office", hrs: "11.01", prio: "Alta", owner: "Fabian Obando" },
+            { name: "PBI Sprint App", phase: "9. Done", phaseColor: "emerald", type: "Power BI", icon: "bar-chart-2", req: "Process Automation", hrs: "145.2", prio: "Alta", owner: "Miguel Parra A." },
+            { name: "Novedades pendientes BMS", phase: "9. Done", phaseColor: "emerald", type: "Bot", icon: "bot", req: "Payroll Controllers", hrs: "327", prio: "Baja", owner: "Miguel Parra A." },
+            { name: "Change Management App", phase: "9. Done", phaseColor: "emerald", type: "Power App", icon: "smartphone", req: "Change Management", hrs: "153.8", prio: "Baja", owner: "Holman Murcia" },
+            { name: "Comunicaciones Perú", phase: "9. Done", phaseColor: "emerald", type: "Sql", icon: "database", req: "9.2 Perú", hrs: "148.4", prio: "Baja", owner: "Pamela Aguayo" },
+            { name: "Strategic Radar", phase: "9. Done", phaseColor: "emerald", type: "Power BI", icon: "bar-chart-2", req: "Corporate Compliance", hrs: "101.3", prio: "Media", owner: "Cindy Mora E." },
+            { name: "OnTime - PBI BOT", phase: "9. Done", phaseColor: "emerald", type: "Power BI", icon: "bar-chart-2", req: "Payroll Controllers", hrs: "68.6", prio: "Media", owner: "Sergio Buitrago V." },
+            { name: "Actas y Compromisos App", phase: "4. Doing", phaseColor: "blue", type: "Power App", icon: "smartphone", req: "8.3 Process Office", hrs: "40", prio: "Media", owner: "Cynthia Pineda A." },
+            { name: "Extemporaneos App", phase: "4. Doing", phaseColor: "blue", type: "Power App", icon: "smartphone", req: "Staffing & Sizing", hrs: "40", prio: "Media", owner: "Eduardo Mojica" }
+        ];
+
+        function createProjectCard(p, isSupport = false) {
+            const typeColor = p.type === 'Power App' ? 'text-purple-400' : p.type === 'Power Automate' ? 'text-blue-400' : p.type === 'Power BI' ? 'text-yellow-400' : 'text-slate-400';
+            const prioColor = p.prio === 'Alta' ? 'text-red-400' : p.prio === 'Media' ? 'text-amber-400' : 'text-emerald-400';
+            const extraClasses = isSupport ? 'bg-slate-800/40 p-4 opacity-90 hover:opacity-100' : 'bg-slate-800/60 p-5';
+            
+            let html = `
+                <div class="${extraClasses} border border-slate-700/50 rounded-xl hover-scale flex flex-col justify-between group transition-all">
+                    <div>
+                        <div class="flex justify-between items-start mb-3">
+                            <div class="flex items-center gap-2 ${!isSupport ? 'bg-slate-900/50 px-2 py-1 rounded' : ''}">
+                                <i data-lucide="${p.icon}" class="${typeColor} w-4 h-4"></i>
+                                <span class="text-[10px] font-bold text-slate-300 uppercase tracking-wide">${p.type}</span>
+                            </div>
+                            <span class="text-[10px] font-bold px-2 py-1 rounded border bg-${p.phaseColor}-500/10 text-${p.phaseColor}-400 border-${p.phaseColor}-500/30 whitespace-nowrap">${p.phase}</span>
+                        </div>
+                        <h3 class="text-white font-bold text-sm mb-1 ${isSupport ? 'line-clamp-1' : 'line-clamp-2 leading-tight'} group-hover:text-indigo-300 transition-colors" title="${p.name}">${p.name}</h3>
+                        ${!isSupport ? `<p class="text-[11px] text-slate-400 mb-4 line-clamp-1"><i data-lucide="briefcase" class="inline w-3 h-3 mr-1"></i>${p.req}</p>` : ''}
+                    </div>
+                    
+                    <div class="${isSupport ? 'flex justify-between items-end mt-2 pt-2' : 'grid grid-cols-2 gap-2 mt-3 pt-3'} text-xs border-t border-slate-700/50">
+                        <div class="flex items-center gap-1.5 text-slate-300">
+                            <i data-lucide="clock" class="w-3.5 h-3.5 text-indigo-400"></i> ${p.hrs}h
+                        </div>
+                        <div class="flex items-center gap-1.5 text-slate-300">
+                            <i data-lucide="alert-circle" class="w-3.5 h-3.5 ${prioColor}"></i> Pri. ${p.prio}
+                        </div>
+                        ${!isSupport ? `
+                        <div class="flex items-center gap-1.5 text-slate-300 col-span-2 mt-1">
+                            <i data-lucide="user" class="w-3.5 h-3.5 text-slate-500"></i> <span class="truncate">${p.owner}</span>
+                        </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+            return html;
+        }
+
+        // Render projects
+        document.getElementById('dev-projects-container').innerHTML = devProjects.map(p => createProjectCard(p, false)).join('');
+        document.getElementById('support-projects-container').innerHTML = supportProjects.map(p => createProjectCard(p, true)).join('');
+
+        // Initialize Lucide Icons after dynamic rendering
+        lucide.createIcons();
+
+        // Chart.js Configuration
+        const ctx = document.getElementById('techChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Power Automate', 'Power BI', 'Power Apps', 'Bots / Otros'],
+                datasets: [{
+                    data: [54, 21, 16, 9],
+                    backgroundColor: [
+                        '#3b82f6', // Blue (Power Automate)
+                        '#eab308', // Yellow (Power BI)
+                        '#a855f7', // Purple (Power Apps)
+                        '#9ca3af'  // Gray (Bots/Others)
+                    ],
+                    borderWidth: 2,
+                    borderColor: '#1e293b',
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false 
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return ' ' + context.label + ': ' + context.raw + '%';
+                            }
+                        },
+                        backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                        titleColor: '#fff',
+                        bodyColor: '#cbd5e1',
+                        borderColor: 'rgba(255,255,255,0.1)',
+                        borderWidth: 1,
+                        padding: 10
+                    }
+                },
+                cutout: '70%'
+            }
+        });
+
+        // Modal Logic for Image Gallery
+        const modal = document.getElementById('imageModal');
+        const modalImg = document.getElementById('modalImage');
+        const modalTitle = document.getElementById('modalTitle');
+
+        function openModal(imageSrc, title) {
+            modalImg.src = imageSrc;
+            modalTitle.textContent = title;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Evita que se haga scroll detrás del modal
+        }
+
+        function closeModal() {
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto'; // Restaura el scroll
+            setTimeout(() => {
+                modalImg.src = '';
+            }, 300);
+        }
+
+        // Close modal on click outside
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+        
+        // Close modal on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === "Escape" && modal.classList.contains('active')) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
+```

@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIGA - Sistema Integral de Gestión</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            dark: '#0f172a',
+                            primary: '#1d4ed8',
+                            light: '#f8fafc'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom scrollbar for chat */
+        .chat-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .chat-scroll::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 10px;
+        }
+        /* Fade in animation */
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans h-screen flex overflow-hidden">
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-brand-dark text-white flex flex-col hidden md:flex">
+        <div class="h-16 flex items-center px-6 border-b border-gray-700">
+            <i class="fa-solid fa-shield-halved text-blue-400 text-xl mr-3"></i>
+            <span class="text-xl font-bold tracking-wide">NEXO<span class="font-light text-blue-400">Portal</span></span>
+        </div>
+        <nav class="flex-1 px-4 py-6 space-y-2">
+            <a href="#" class="flex items-center px-4 py-3 bg-blue-600 rounded-lg text-white font-medium transition">
+                <i class="fa-solid fa-chart-pie w-6"></i> Dashboard
+            </a>
+            <a href="#" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition">
+                <i class="fa-solid fa-video w-6"></i> Control de Activos
+            </a>
+            <a href="#" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition">
+                <i class="fa-solid fa-triangle-exclamation w-6"></i> Reporte Incidentes
+            </a>
+            <a href="#" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition">
+                <i class="fa-regular fa-folder-open w-6"></i> Repositorio
+            </a>
+        </nav>
+        <div class="p-4 border-t border-gray-700">
+            <a href="#" class="flex items-center px-4 py-2 text-gray-400 hover:text-white transition">
+                <i class="fa-solid fa-gear w-6"></i> Configuración
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-screen overflow-y-auto">
+        
+        <!-- Header -->
+        <header class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-8 shrink-0">
+            <h1 class="text-2xl font-semibold text-gray-800">Resumen Operativo</h1>
+            <div class="flex items-center space-x-4">
+                <button class="text-gray-400 hover:text-gray-600"><i class="fa-regular fa-bell text-xl"></i></button>
+                <div class="flex items-center space-x-2 border-l pl-4 border-gray-200">
+                    <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
+                        AD
+                    </div>
+                    <span class="text-sm font-medium text-gray-600">Admin</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Content Padding -->
+        <div class="p-8">
+            
+            <!-- KPI Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <!-- Card 1 -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-500 mb-1">Cámaras Activas</p>
+                        <h3 class="text-3xl font-bold text-gray-800">145<span class="text-lg text-gray-400 font-normal"> /150</span></h3>
+                    </div>
+                    <div class="w-12 h-12 bg-green-50 rounded-full flex items-center justify-center text-green-500 text-xl">
+                        <i class="fa-solid fa-video"></i>
+                    </div>
+                </div>
+                <!-- Card 2 -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-500 mb-1">Incidentes Abiertos</p>
+                        <h3 class="text-3xl font-bold text-gray-800">3</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center text-red-500 text-xl">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+                </div>
+                <!-- Card 3 -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-500 mb-1">Eficiencia de Respuesta</p>
+                        <h3 class="text-3xl font-bold text-gray-800">94%</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center text-blue-500 text-xl">
+                        <i class="fa-solid fa-stopwatch"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Main Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                <!-- Chart Section -->
+                <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                    <h2 class="text-lg font-semibold text-gray-800 mb-4">Tendencia de Incidentes (Mensual)</h2>
+                    <div class="relative h-72 w-full">
+                        <canvas id="incidentChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Asset List Section -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-0 overflow-hidden flex flex-col">
+                    <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+                        <h2 class="text-lg font-semibold text-gray-800">Estado de Activos</h2>
+                        <a href="#" class="text-sm text-blue-600 hover:underline">Ver todos</a>
+                    </div>
+                    <div class="p-0 overflow-y-auto max-h-72">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-gray-50 text-gray-500 sticky top-0">
+                                <tr>
+                                    <th class="px-6 py-3 font-medium">Dispositivo</th>
+                                    <th class="px-6 py-3 font-medium text-right">Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100">
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-6 py-3"><span class="block text-gray-800 font-medium">CAM-01</span><span class="block text-xs text-gray-500">Recepción Principal</span></td>
+                                    <td class="px-6 py-3 text-right"><span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">Operativo</span></td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-6 py-3"><span class="block text-gray-800 font-medium">ACC-04</span><span class="block text-xs text-gray-500">Puerta Servidores</span></td>
+                                    <td class="px-6 py-3 text-right"><span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">Operativo</span></td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-6 py-3"><span class="block text-gray-800 font-medium">CAM-12</span><span class="block text-xs text-gray-500">Pasillo Norte 2</span></td>
+                                    <td class="px-6 py-3 text-right"><span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700">Falla de Red</span></td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-6 py-3"><span class="block text-gray-800 font-medium">CAM-13</span><span class="block text-xs text-gray-500">Parqueadero</span></td>
+                                    <td class="px-6 py-3 text-right"><span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700">Mantenimiento</span></td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-6 py-3"><span class="block text-gray-800 font-medium">ACC-02</span><span class="block text-xs text-gray-500">Torniquete Entrada</span></td>
+                                    <td class="px-6 py-3 text-right"><span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">Operativo</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Chatbot Widget -->
+    <div class="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+        
+        <!-- Chat Window (Hidden by default) -->
+        <div id="chatWindow" class="hidden w-80 sm:w-96 bg-white rounded-2xl shadow-2xl border border-gray-200 mb-4 overflow-hidden flex flex-col fade-in" style="height: 500px;">
+            <!-- Chat Header -->
+            <div class="bg-brand-primary text-white p-4 flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center text-brand-primary">
+                        <i class="fa-solid fa-robot"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-sm">NexoBot</h4>
+                        <p class="text-xs text-blue-200">Asistente de Servicios TP</p>
+                    </div>
+                </div>
+                <button id="closeChatBtn" class="text-white hover:text-gray-200 focus:outline-none">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+            
+            <!-- Chat Messages Area -->
+            <div id="chatMessages" class="flex-1 p-4 overflow-y-auto chat-scroll bg-gray-50 space-y-4">
+                <!-- Bot Message -->
+                <div class="flex flex-col space-y-1">
+                    <div class="bg-white border border-gray-200 text-gray-700 p-3 rounded-2xl rounded-tl-none shadow-sm text-sm max-w-[85%]">
+                        ¡Hola! Soy el asistente virtual del área. ¿En qué te puedo ayudar hoy? Selecciona una opción o escribe tu consulta.
+                    </div>
+                    <!-- Quick Actions -->
+                    <div class="flex flex-wrap gap-2 pt-2">
+                        <button onclick="sendQuickReply('Solicitar formato de ingreso')" class="text-xs bg-blue-50 text-blue-600 border border-blue-200 px-3 py-1.5 rounded-full hover:bg-blue-100 transition">Solicitar formato de ingreso</button>
+                        <button onclick="sendQuickReply('Reportar falla de acceso')" class="text-xs bg-blue-50 text-blue-600 border border-blue-200 px-3 py-1.5 rounded-full hover:bg-blue-100 transition">Reportar falla de acceso</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Input -->
+            <div class="p-3 border-t border-gray-200 bg-white flex items-center space-x-2">
+                <input type="text" id="chatInput" placeholder="Escribe tu mensaje..." class="flex-1 bg-gray-100 border-transparent focus:bg-white focus:border-blue-500 focus:ring-0 rounded-full px-4 py-2 text-sm outline-none border transition">
+                <button id="sendMessageBtn" class="w-10 h-10 bg-brand-primary text-white rounded-full flex items-center justify-center hover:bg-blue-700 transition shadow-sm">
+                    <i class="fa-solid fa-paper-plane text-sm"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Chat Toggle Button -->
+        <button id="toggleChatBtn" class="w-14 h-14 bg-brand-primary text-white rounded-full shadow-lg hover:shadow-xl hover:bg-blue-700 transition transform hover:scale-105 flex items-center justify-center focus:outline-none">
+            <i class="fa-solid fa-message text-2xl"></i>
+        </button>
+    </div>
+
+    <script>
+        // Chart.js Initialization
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('incidentChart').getContext('2d');
+            
+            // Gradient for line chart
+            let gradient = ctx.createLinearGradient(0, 0, 0, 400);
+            gradient.addColorStop(0, 'rgba(29, 78, 216, 0.2)'); // brand-primary with opacity
+            gradient.addColorStop(1, 'rgba(29, 78, 216, 0)');
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Incidentes Reportados',
+                        data: [12, 19, 15, 8, 10, 3],
+                        borderColor: '#1d4ed8',
+                        backgroundColor: gradient,
+                        borderWidth: 2,
+                        pointBackgroundColor: '#ffffff',
+                        pointBorderColor: '#1d4ed8',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        fill: true,
+                        tension: 0.4 // Smooth curves
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                borderDash: [2, 4],
+                                color: '#f1f5f9',
+                                drawBorder: false,
+                            },
+                            ticks: { color: '#64748b' }
+                        },
+                        x: {
+                            grid: { display: false, drawBorder: false },
+                            ticks: { color: '#64748b' }
+                        }
+                    }
+                }
+            });
+        });
+
+        // Chatbot Interaction Logic (Vanilla JS)
+        const toggleChatBtn = document.getElementById('toggleChatBtn');
+        const closeChatBtn = document.getElementById('closeChatBtn');
+        const chatWindow = document.getElementById('chatWindow');
+        const chatInput = document.getElementById('chatInput');
+        const sendMessageBtn = document.getElementById('sendMessageBtn');
+        const chatMessages = document.getElementById('chatMessages');
+
+        // Toggle Chat Visibility
+        function toggleChat() {
+            if (chatWindow.classList.contains('hidden')) {
+                chatWindow.classList.remove('hidden');
+                // Hide badge or animate icon if necessary
+            } else {
+                chatWindow.classList.add('hidden');
+            }
+        }
+
+        toggleChatBtn.addEventListener('click', toggleChat);
+        closeChatBtn.addEventListener('click', toggleChat);
+
+        // Send Message Logic
+        function appendUserMessage(text) {
+            const msgHTML = `
+                <div class="flex flex-col items-end space-y-1 fade-in">
+                    <div class="bg-brand-primary text-white p-3 rounded-2xl rounded-tr-none shadow-sm text-sm max-w-[85%]">
+                        ${text}
+                    </div>
+                </div>
+            `;
+            chatMessages.insertAdjacentHTML('beforeend', msgHTML);
+            scrollToBottom();
+        }
+
+        function appendBotMessage(text, isLink = false) {
+            let content = text;
+            if(isLink) {
+                content = `
+                    <div class="flex items-center space-x-2">
+                        <i class="fa-solid fa-file-pdf text-red-500 text-lg"></i>
+                        <div>
+                            <p class="font-medium">Formato Solicitud</p>
+                            <a href="#" class="text-blue-600 hover:underline text-xs">Descargar PDF</a>
+                        </div>
+                    </div>
+                `;
+            }
+
+            const msgHTML = `
+                <div class="flex flex-col space-y-1 fade-in">
+                    <div class="bg-white border border-gray-200 text-gray-700 p-3 rounded-2xl rounded-tl-none shadow-sm text-sm max-w-[85%]">
+                        ${content}
+                    </div>
+                </div>
+            `;
+            chatMessages.insertAdjacentHTML('beforeend', msgHTML);
+            scrollToBottom();
+        }
+
+        function scrollToBottom() {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function handleSend() {
+            const text = chatInput.value.trim();
+            if (text === '') return;
+            
+            // Add user message
+            appendUserMessage(text);
+            chatInput.value = '';
+
+            // Simulate Bot Response based on keywords
+            setTimeout(() => {
+                const lowerText = text.toLowerCase();
+                if (lowerText.includes('formato') || lowerText.includes('ingreso')) {
+                    appendBotMessage('Claro, aquí tienes el formato estándar de solicitud de ingreso que necesitas diligenciar:', false);
+                    setTimeout(() => appendBotMessage('', true), 500); // Send the mock file
+                } else if (lowerText.includes('falla') || lowerText.includes('acceso')) {
+                    appendBotMessage('Entiendo. Por favor, indícame cuál es el identificador de la puerta o torniquete (Ej: ACC-02) para registrar el incidente en el sistema.');
+                } else {
+                    appendBotMessage('He recibido tu mensaje. Un miembro del equipo de operaciones revisará tu solicitud en breve.');
+                }
+            }, 800);
+        }
+
+        // Global function for quick replies to be called from inline onclick
+        window.sendQuickReply = function(text) {
+            appendUserMessage(text);
+            
+            // Simulate processing
+            setTimeout(() => {
+                if (text.includes('formato')) {
+                    appendBotMessage('Claro, aquí tienes el formato estándar de solicitud de ingreso que necesitas diligenciar:');
+                    setTimeout(() => appendBotMessage('', true), 500);
+                } else {
+                    appendBotMessage('Entiendo. Por favor, indícame cuál es el identificador de la puerta o torniquete para registrar el incidente.');
+                }
+            }, 600);
+        };
+
+        sendMessageBtn.addEventListener('click', handleSend);
+        chatInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') handleSend();
+        });
+
+    </script>
+</body>
+</html>

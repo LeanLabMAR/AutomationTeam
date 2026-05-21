@@ -123,7 +123,7 @@
             </div>
             <div class="glass-card p-6 rounded-2xl shadow-2xl border-t-4 border-emerald-500 flex flex-col items-center">
                 <i data-lucide="check-circle-2" class="text-emerald-400 mb-3 w-8 h-8"></i>
-                <span class="text-slate-400 text-[10px] font-bold uppercase tracking-[0.1em] text-center">Cumplimiento Q4</span>
+                <span class="text-slate-400 text-[10px] font-bold uppercase tracking-[0.1em] text-center">Cumplimiento Q1</span>
                 <span class="text-4xl font-black mt-2 text-white">100%</span>
                 <p class="text-emerald-200 text-[10px] mt-2 bg-emerald-500/10 px-2 py-1 rounded-full">Meta Lograda</p>
             </div>
@@ -496,14 +496,59 @@
                 </div>
             </div>
 
-            <!-- TAB 1: Nuevos Desarrollos -->
-            <h3 class="text-xl font-bold text-indigo-300 mb-6 flex items-center gap-2">
-                <i data-lucide="folder-git-2"></i> Desarrollos (Activos & Entregados)
-            </h3>
-            
-            <div id="dev-projects-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-16 custom-scroll max-h-[600px] overflow-y-auto pr-2 pb-4">
-                <!-- Se inyectará vía JS -->
+             <!-- DYNAMIC KPI CARDS FOR CATALOG (ALWAYS VISIBLE) -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                <div class="bg-slate-800/60 p-5 rounded-2xl border-t-4 border-amber-500 flex flex-col items-center shadow-lg hover-scale">
+                    <i data-lucide="clock" class="text-amber-400 mb-2 w-7 h-7"></i>
+                    <span class="text-slate-400 text-[10px] font-bold uppercase tracking-[0.1em] text-center">Horas Totales</span>
+                    <span id="cat-kpi-hrs" class="text-3xl font-black mt-1 text-white">0</span>
+                </div>
+                <div class="bg-slate-800/60 p-5 rounded-2xl border-t-4 border-emerald-500 flex flex-col items-center shadow-lg hover-scale">
+                    <i data-lucide="check-circle" class="text-emerald-400 mb-2 w-7 h-7"></i>
+                    <span class="text-slate-400 text-[10px] font-bold uppercase tracking-[0.1em] text-center">Finalizados (Done)</span>
+                    <span id="cat-kpi-done" class="text-3xl font-black mt-1 text-white">0</span>
+                </div>
+                <div class="bg-slate-800/60 p-5 rounded-2xl border-t-4 border-blue-500 flex flex-col items-center shadow-lg hover-scale">
+                    <i data-lucide="play-circle" class="text-blue-400 mb-2 w-7 h-7"></i>
+                    <span class="text-slate-400 text-[10px] font-bold uppercase tracking-[0.1em] text-center">En Proceso (Doing)</span>
+                    <span id="cat-kpi-doing" class="text-3xl font-black mt-1 text-white">0</span>
+                </div>
+                <div class="bg-slate-800/60 p-5 rounded-2xl border-t-4 border-yellow-500 flex flex-col items-center shadow-lg hover-scale">
+                    <i data-lucide="test-tube-2" class="text-yellow-400 mb-2 w-7 h-7"></i>
+                    <span class="text-slate-400 text-[10px] font-bold uppercase tracking-[0.1em] text-center">En Pruebas (Testing)</span>
+                    <span id="cat-kpi-testing" class="text-3xl font-black mt-1 text-white">0</span>
+                </div>
             </div>
+
+            <!-- TOGGLE BUTTON -->
+            <div class="flex justify-center mb-10">
+                <button onclick="toggleCatalog()" class="group flex items-center gap-3 px-8 py-3 bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 rounded-full text-indigo-300 font-semibold transition-all hover:scale-105 shadow-lg">
+                    <span id="toggleText">Ver detalle de los 40 aplicativos</span>
+                    <i data-lucide="chevron-down" id="toggleIcon" class="w-5 h-5 transition-transform duration-300 group-hover:translate-y-1"></i>
+                </button>
+            </div>
+
+            <!-- COLLAPSIBLE CATALOG CONTENT -->
+            <div id="catalogContent" class="hidden transition-all duration-500">
+                <!-- TAB 1: Nuevos Desarrollos -->
+                <h3 class="text-xl font-bold text-indigo-300 mb-6 flex items-center gap-2">
+                    <i data-lucide="folder-git-2"></i> Desarrollos (Activos & Entregados)
+                </h3>
+                
+                <div id="dev-projects-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-16 custom-scroll max-h-[600px] overflow-y-auto pr-2 pb-4">
+                    <!-- Se inyectará vía JS -->
+                </div>
+
+                <!-- TAB 2: Soporte Operativo -->
+                <h3 class="text-xl font-bold text-emerald-400 mb-6 flex items-center gap-2 border-t border-slate-800 pt-8">
+                    <i data-lucide="life-buoy"></i> Soporte Operativo
+                </h3>
+                
+                <div id="support-projects-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 custom-scroll max-h-[400px] overflow-y-auto pr-2 pb-4">
+                    <!-- Se inyectará vía JS -->
+                </div>
+            </div>
+        </div>
 
             <!-- TAB 2: Soporte Operativo -->
             <h3 class="text-xl font-bold text-emerald-400 mb-6 flex items-center gap-2 border-t border-slate-800 pt-8">
@@ -721,9 +766,9 @@
             { name: "Extemporaneos App - 45Days", phase: "4. Doing", phaseColor: "blue", type: "Power App", icon: "smartphone", req: "Staffing & Sizing", hrs: "13.2", prio: "Media", owner: "Eduardo Mojica" },
             { name: "DCS V2 App", phase: "4. Doing", phaseColor: "blue", type: "Power App", icon: "smartphone", req: "8.3 Process Office", hrs: "16", prio: "Media", owner: "Paola Albarracin" },
             { name: "Django LunchApp", phase: "4. Doing", phaseColor: "blue", type: "Power App", icon: "smartphone", req: "Process Automation", hrs: "144.4", prio: "Media", owner: "Miguel Parra A." },
-            { name: "GSTraining App", phase: "7. Testing Client", phaseColor: "amber", type: "Power App", icon: "smartphone", req: "8.5 Goods Strategy", hrs: "33.5", prio: "Media", owner: "Rodrigo Sempertegui" },
+            { name: "GSTraining App", phase: "7. Testing Client", phaseColor: "amber", type: "Power App", icon: "smartphone", req: "8.5 Goods Strategy", hrs: "33.1", prio: "Media", owner: "Rodrigo Sempertegui" },
             { name: "OnTime - Comparativo Ajustes", phase: "7. Testing Client", phaseColor: "amber", type: "Power BI", icon: "bar-chart-2", req: "Payroll Controllers", hrs: "96", prio: "Media", owner: "Sergio Buitrago V." },
-            { name: "AI Financial Tracking", phase: "9. Done", phaseColor: "emerald", type: "Power App", icon: "smartphone", req: "8.3 Process Office", hrs: "409.5", prio: "Alta", owner: "Cynthia Pineda A." },
+            { name: "AI Financial Tracking", phase: "9. Done", phaseColor: "emerald", type: "Power App", icon: "smartphone", req: "8.3 Process Office", hrs: "409", prio: "Alta", owner: "Cynthia Pineda A." },
             { name: "AI Insight HUB", phase: "9. Done", phaseColor: "emerald", type: "Power App", icon: "smartphone", req: "8.3 Process Office", hrs: "245", prio: "Alta", owner: "Cindy Mora E." },
             { name: "AI Risk Management", phase: "9. Done", phaseColor: "emerald", type: "Power App", icon: "smartphone", req: "8.3 Process Office", hrs: "332.2", prio: "Alta", owner: "Cynthia Pineda A." },
             { name: "AI Status CEO", phase: "9. Done", phaseColor: "emerald", type: "Power App", icon: "smartphone", req: "8.3 Process Office", hrs: "141.6", prio: "Alta", owner: "Cindy Mora E." },
@@ -758,6 +803,28 @@
             { name: "Extemporaneos App", phase: "4. Doing", phaseColor: "blue", type: "Power App", icon: "smartphone", req: "Staffing & Sizing", hrs: "40", prio: "Media", owner: "Eduardo Mojica" }
         ];
 
+        
+        // Calcular y Rellenar KPIs Dinámicamente para el Catálogo
+         const allProjects = [...devProjects, ...supportProjects];
+        let totalHrs = 0;
+        let totalDone = 0;
+        let totalDoing = 0;
+        let totalTesting = 0;
+
+        allProjects.forEach(p => {
+            totalHrs += parseFloat(p.hrs);
+            if(p.phase.includes("Done")) totalDone++;
+            if(p.phase.includes("Doing")) totalDoing++;
+            if(p.phase.includes("Testing")) totalTesting++;
+        });
+
+        // Formatear las horas para mostrarlas (Ej: 6,107.9h)
+        document.getElementById('cat-kpi-hrs').innerText = totalHrs.toLocaleString('en-US', {maximumFractionDigits: 1}) + 'h';
+        document.getElementById('cat-kpi-done').innerText = totalDone;
+        document.getElementById('cat-kpi-doing').innerText = totalDoing;
+        document.getElementById('cat-kpi-testing').innerText = totalTesting;
+
+        // Función para renderizar tarjetas de lista de proyectos
         function createProjectCard(p, isSupport = false) {
             const typeColor = p.type === 'Power App' ? 'text-purple-400' : p.type === 'Power Automate' ? 'text-blue-400' : p.type === 'Power BI' ? 'text-yellow-400' : 'text-slate-400';
             const prioColor = p.prio === 'Alta' ? 'text-red-400' : p.prio === 'Media' ? 'text-amber-400' : 'text-emerald-400';
@@ -845,6 +912,23 @@
                 cutout: '70%'
             }
         });
+
+        // Toggle Catalog Logic
+        function toggleCatalog() {
+            const content = document.getElementById('catalogContent');
+            const icon = document.getElementById('toggleIcon');
+            const text = document.getElementById('toggleText');
+
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                icon.style.transform = 'rotate(180deg)';
+                text.innerText = 'Ocultar detalle de aplicativos';
+            } else {
+                content.classList.add('hidden');
+                icon.style.transform = 'rotate(0deg)';
+                text.innerText = 'Ver detalle de los 40 aplicativos';
+            }
+        }
 
         // Modal Logic for Image Gallery
         const modal = document.getElementById('imageModal');

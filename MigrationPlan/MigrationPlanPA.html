@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plan de Migración Estratégica: Ecosistema Google Workspace & GCP</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --google-blue: #4285F4;
+            --google-red: #EA4335;
+            --google-yellow: #FBBC05;
+            --google-green: #34A853;
+            --dark-blue: #0b1c31; /* Added based on the new dark theme in slides */
+            --light-bg: #f8f9fa;
+        }
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--light-bg);
+            color: #333;
+        }
+        .navbar {
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .hero-section {
+            background: linear-gradient(135deg, var(--dark-blue) 0%, #1e3a5f 100%);
+            color: white;
+            padding: 80px 0;
+            border-bottom: 5px solid var(--google-blue);
+        }
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 24px;
+            transition: transform 0.2s;
+            height: 100%;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .card-header {
+            background-color: #fff;
+            border-bottom: 1px solid #eee;
+            font-weight: bold;
+            font-size: 1.1rem;
+            border-radius: 12px 12px 0 0 !important;
+        }
+        .icon-box {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            margin-right: 15px;
+            color: white;
+            font-size: 1.5rem;
+        }
+        .bg-blue { background-color: var(--google-blue); }
+        .bg-red { background-color: var(--google-red); }
+        .bg-green { background-color: var(--google-green); }
+        .bg-yellow { background-color: var(--google-yellow); color: #333; }
+        
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border-top: 4px solid var(--google-blue);
+        }
+        .stat-card h2 {
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 10px 0;
+            color: var(--dark-blue);
+        }
+        
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 4px;
+            height: 100%;
+            background: #dee2e6;
+            transform: translateX(-50%);
+        }
+        .timeline-item {
+            margin-bottom: 30px;
+            position: relative;
+        }
+        .timeline-content {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            width: 45%;
+        }
+        .timeline-item:nth-child(odd) .timeline-content {
+            margin-left: auto;
+        }
+        
+        .alert-stopper {
+            background-color: #f8d7da;
+            border-left: 5px solid var(--google-red);
+            color: #721c24;
+        }
+        
+        .table-responsive {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        .table thead th {
+            background-color: var(--dark-blue);
+            color: white;
+            border: none;
+        }
+        .btn-primary-custom {
+            background-color: var(--google-blue);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-weight: bold;
+        }
+        footer {
+            background-color: var(--dark-blue);
+            color: white;
+            padding: 40px 0;
+            margin-top: 60px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">
+                <i class="fab fa-google text-primary me-2"></i> Reporte Gerencial de Viabilidad
+            </a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section text-center">
+        <div class="container">
+            <h1 class="display-4 fw-bold mb-3">Plan de Migración Estratégica:<br>Ecosistema Google Workspace & GCP</h1>
+            <p class="lead mb-4">Hoja de ruta directiva, gestión de riesgos de continuidad y eficiencia financiera corporativa.</p>
+        </div>
+    </section>
+
+    <div class="container mt-5">
+
+        <!-- Síntesis Ejecutiva (KPIs) -->
+        <div class="row mb-5 g-4">
+            <div class="col-12">
+                <h3 class="fw-bold border-bottom pb-2 mb-4">Resumen Ejecutivo del Proyecto</h3>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card" style="border-top-color: var(--google-blue);">
+                    <i class="fas fa-layer-group fa-2x text-primary mb-2"></i>
+                    <h5 class="text-muted">Alcance</h5>
+                    <h2>86</h2>
+                    <p class="small mb-0">Desarrollos a migrar</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card" style="border-top-color: var(--google-yellow);">
+                    <i class="fas fa-users-cog fa-2x text-warning mb-2"></i>
+                    <h5 class="text-muted">Fuerza Operativa</h5>
+                    <h2>5</h2>
+                    <p class="small mb-0">Ingenieros</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card" style="border-top-color: var(--google-green);">
+                    <i class="fas fa-stopwatch fa-2x text-success mb-2"></i>
+                    <h5 class="text-muted">Tiempo de Ejecución</h5>
+                    <h2>11.5</h2>
+                    <p class="small mb-0">Meses netos</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card" style="border-top-color: var(--google-red);">
+                    <i class="fas fa-shield-alt fa-2x text-danger mb-2"></i>
+                    <h5 class="text-muted">Margen de Seguridad</h5>
+                    <h2>4.5</h2>
+                    <p class="small mb-0">Meses (Buffer)</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alerta Roja: Stopper -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="alert alert-stopper p-4 rounded shadow-sm d-flex align-items-center" role="alert">
+                    <i class="fas fa-radiation-alt fa-3x me-4"></i>
+                    <div>
+                        <h4 class="alert-heading fw-bold mb-2">ALERTA ROJA: Bloqueo Crítico (Stopper) Técnico de Infraestructura</h4>
+                        <p class="mb-1"><strong>Ausencia de Conectividad:</strong> Las herramientas de Google operan en la nube dinámica, pero no tienen ruta de acceso a nuestras bases de datos locales (SQL Server).</p>
+                        <p class="mb-1"><strong>Puertos Bloqueados:</strong> El puerto TCP/IP 1433 y 5081 (JDBC) se encuentra cerrado por firewall.</p>
+                        <hr>
+                        <p class="mb-0 fw-bold">Impacto Inmediato: Sin apertura de puertos, IPs y APIs, el cronograma de 11.5 meses no puede iniciar. La velocidad de desarrollo es cero el Día 1.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gráficos de Portafolio y Prioridad -->
+        <div class="row mb-5">
+            <div class="col-md-7">
+                <div class="card">
+                    <div class="card-header bg-light">
+                        <i class="fas fa-chart-pie text-primary me-2"></i> Radiografía del Portafolio: Alta Dependencia en Automatizaciones
+                    </div>
+                    <div class="card-body">
+                        <canvas id="portfolioChart"></canvas>
+                        <p class="text-muted small text-center mt-3">Casi la mitad de nuestra infraestructura actual depende de flujos de Power Automate. La migración requerirá reingeniería sustancial.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="card">
+                    <div class="card-header bg-light">
+                        <i class="fas fa-sort-amount-down text-danger me-2"></i> Matriz de Priorización Estratégica
+                    </div>
+                    <div class="card-body d-flex flex-column justify-content-center">
+                        <canvas id="priorityPyramidChart"></canvas>
+                        <p class="text-muted small text-center mt-3">El 43% de los desarrollos (37 productos) representan el núcleo operativo (nómina, helpdesk). Configuran la Fase 1 crítica.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Capacidad de Ejecución -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <h3 class="fw-bold border-bottom pb-2 mb-4">Capacidad de Ejecución Predecible</h3>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-light border-0">
+                    <div class="card-body text-center">
+                        <i class="fas fa-user-hard-hat fa-3x text-secondary mb-3"></i>
+                        <h5 class="fw-bold">Capacidad Individual</h5>
+                        <p class="mb-1">Carga simultánea: 3 desarrollos por ingeniero.</p>
+                        <p class="mb-1">Ciclo de vida: 2 meses por producto.</p>
+                        <p class="fw-bold text-primary mt-2">Rendimiento: 1.5 productos/mes por dev.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-light border-0">
+                    <div class="card-body text-center">
+                        <i class="fas fa-cogs fa-3x text-secondary mb-3"></i>
+                        <h5 class="fw-bold">Capacidad Conjunta (Burn-rate)</h5>
+                        <p class="mb-1">Equipo Total: 5 Desarrolladores.</p>
+                        <p class="fw-bold text-primary mt-2">Velocidad Constante: 7.5 productos terminados/mes.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-white" style="background-color: var(--dark-blue);">
+                    <div class="card-body text-center d-flex flex-column justify-content-center">
+                        <h5 class="fw-bold text-success mb-3">Proyección Matemática</h5>
+                        <h3 class="mb-3">86 Productos &divide; 7.5/Mes</h3>
+                        <h2 class="text-success fw-bold">= 11.5 Meses Netos</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hoja de Ruta (Timeline Simplificado) -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-light">
+                        <i class="fas fa-route text-success me-2"></i> Hoja de Ruta de Mitigación de Riesgos
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between text-center border-bottom pb-3 mb-3">
+                            <div style="width: 25%; background-color: #f8d7da; padding: 10px; border-radius: 5px;">
+                                <strong class="text-danger">Fase 1: Urgencia Alta (Protección Crítica)</strong><br>
+                                <small>Sept '26 - Ene '27 (~4.9 Meses)<br>37 Desarrollos.</small>
+                            </div>
+                            <div style="width: 25%; background-color: #fff3cd; padding: 10px; border-radius: 5px; margin: 0 10px;">
+                                <strong class="text-warning text-dark">Fase 2: Urgencia Media (Control)</strong><br>
+                                <small>Feb '27 - Abr '27 (~2.9 Meses)<br>22 Desarrollos.</small>
+                            </div>
+                            <div style="width: 25%; background-color: #d1ecf1; padding: 10px; border-radius: 5px; margin-right: 10px;">
+                                <strong class="text-info text-dark">Fase 3: Urgencia Baja (Soporte)</strong><br>
+                                <small>May '27 - Ago '27 (~3.6 Meses)<br>27 Desarrollos.</small>
+                            </div>
+                            <div style="width: 20%; background-color: #d4edda; padding: 10px; border-radius: 5px;">
+                                <strong class="text-success">Buffer Estratégico</strong><br>
+                                <small>Sept '27 - Dic '27<br>Garantía de Continuidad.</small>
+                            </div>
+                        </div>
+                        <p class="text-muted small"><em>* El Buffer de 4.5 meses es vital para absorción de choques operativos, gestión del cambio exhaustiva y pruebas de estrés en producción antes del límite de Diciembre 2027.</em></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Estrategia Financiera (Licenciamiento Asimétrico) -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <h3 class="fw-bold border-bottom pb-2 mb-4">Estrategia Financiera: Licenciamiento Asimétrico</h3>
+            </div>
+            <div class="col-md-6">
+                <div class="card border-success border-2 shadow-sm">
+                    <div class="card-header bg-success text-white fw-bold">
+                        Equipo de Tecnología (Fuerza Operativa) - 5 Usuarios
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Tipo de Licencia Requerida:</strong> Enterprise Standard o Enterprise Plus.</p>
+                        <p><strong>Capacidad Adquirida:</strong> Administración centralizada GCP, AppSheet Core, Prevención de Pérdida de Datos (DLP) en Bots, Cloud Run en red privada (VPC).</p>
+                        <div class="alert alert-success text-center mb-0 mt-3">
+                            <h5 class="fw-bold mb-0">Impacto Financiero Máximo:<br>~$155 a ~$200 USD / mes en total.</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card border-primary border-2 shadow-sm">
+                    <div class="card-header bg-primary text-white fw-bold">
+                        Resto de la Empresa - Miles de Usuarios Finales
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Tipo de Licencia Actual:</strong> Business Standard / Business Plus.</p>
+                        <p><strong>Capacidad Adquirida:</strong> Consumo total de todas las aplicaciones, portales y bots desarrollados internamente por el equipo TI.</p>
+                        <div class="alert alert-primary text-center mb-0 mt-3">
+                            <h5 class="fw-bold mb-0">Impacto Financiero: $0 de sobrecosto.<br>Consumen sin pagar licencias de desarrollador.</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 mt-3">
+                <p class="text-center text-muted"><strong>Conclusión Financiera:</strong> Una micro-inversión estratégica y contenida en el equipo núcleo (5 licencias) protege el presupuesto corporativo y evita escalar licencias premium indiscriminadamente.</p>
+            </div>
+        </div>
+
+        <!-- Matriz de Riesgos -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-dark text-white">
+                        <i class="fas fa-exclamation-triangle text-warning me-2"></i> Matriz de Riesgos de Continuidad Operativa
+                    </div>
+                    <div class="table-responsive m-0 rounded-0">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Amenaza Inherente</th>
+                                    <th>Impacto Empresarial</th>
+                                    <th>Mecanismo de Mitigación</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Riesgo Cultural:</strong> Resistencia al cambio (Teams a Google Chat).</td>
+                                    <td>Saturación del Helpdesk, ignorancia de alertas corporativas.</td>
+                                    <td><span class="text-success fw-bold">Aprovechamiento del Buffer (4.5 meses)</span> para adopción y rediseño UI/UX.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Riesgo Operativo:</strong> Falta de conexión oportuna a bases de datos.</td>
+                                    <td>Colapso en Nómina (TP Payroll), ceguera en Sprints y métricas.</td>
+                                    <td><span class="text-danger fw-bold">Priorización Agresiva (Fase 1).</span> Concentrar el 100% de ingeniería temprana aquí.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Riesgo Tecnológico:</strong> Límites de cuotas nativas (Apps Script).</td>
+                                    <td>Congelamiento de alertas, fallos sistémicos en procesamiento masivo.</td>
+                                    <td><span class="text-primary fw-bold">Licenciamiento Asimétrico (Enterprise).</span> Desbloquea arquitectura ilimitada en GCP.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Próximos Pasos (CTA) -->
+        <div class="row mb-5">
+            <div class="col-12 text-center">
+                <h3 class="fw-bold mb-4">Próximos Pasos y Decisiones Directivas Requeridas</h3>
+                <div class="d-flex justify-content-center gap-3 flex-wrap">
+                    <div class="card border-primary" style="width: 18rem;">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary"><i class="fas fa-file-invoice-dollar mb-2"></i><br>1. Aprobación Financiera</h5>
+                            <p class="card-text small">Autorizar la ampliación mensual (~$155-$200 USD) para las 5 licencias Enterprise del equipo núcleo.</p>
+                        </div>
+                    </div>
+                    <div class="card border-danger" style="width: 18rem;">
+                        <div class="card-body">
+                            <h5 class="card-title text-danger"><i class="fas fa-network-wired mb-2"></i><br>2. Desbloqueo Infraestructura</h5>
+                            <p class="card-text small fw-bold">Crítico: Apertura de puertos (1433/5081) hacia SQL Server e IPs estáticas.</p>
+                        </div>
+                    </div>
+                    <div class="card border-success" style="width: 18rem;">
+                        <div class="card-body">
+                            <h5 class="card-title text-success"><i class="fas fa-cloud mb-2"></i><br>3. Habilitación Entorno GCP</h5>
+                            <p class="card-text small">Creación de la Organización en GCP y dominios "OAuth scopes".</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <button class="btn btn-primary-custom text-white btn-lg shadow" onclick="alert('Solicitudes administrativas enviadas para habilitar el Kick-Off (Fase 1).')">
+                        <i class="fas fa-rocket me-2"></i> Autorizar Lanzamiento (Kick-Off)
+                    </button>
+                    <p class="text-muted small mt-2">El reloj de los 11.5 meses inicia en el momento en que se cumplan estas 3 condiciones.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center">
+        <div class="container">
+            <p class="mb-1 fw-bold">Andrés Felipe Guerrero Bohórquez</p>
+            <p class="text-muted small mb-3">Senior Developer & Project Manager | Process Automation</p>
+            <p class="mb-0 small" style="opacity: 0.5;">© 2026 Ecosistema Google Workspace & GCP - Dashboard Ejecutivo Confidencial.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts para Gráficos -->
+    <script>
+        Chart.register(ChartDataLabels);
+        const labelOptions = {
+            color: '#fff',
+            font: { weight: 'bold', size: 14 },
+            textShadowBlur: 4,
+            textShadowColor: 'rgba(0,0,0,0.5)'
+        };
+
+        // Radiografía del Portafolio
+        const ctxPortfolio = document.getElementById('portfolioChart').getContext('2d');
+        new Chart(ctxPortfolio, {
+            type: 'bar',
+            data: {
+                labels: ['Composición Actual'],
+                datasets: [
+                    { label: 'Power Automate (46.5%)', data: [40], backgroundColor: '#4285F4' },
+                    { label: 'Power Apps (24.4%)', data: [21], backgroundColor: '#FBBC05' },
+                    { label: 'Power BI (13.9%)', data: [12], backgroundColor: '#34A853' },
+                    { label: 'Otros (Bots, SQL) (15.1%)', data: [13], backgroundColor: '#9e9e9e' }
+                ]
+            },
+            options: {
+                responsive: true,
+                indexAxis: 'y', // Barra horizontal para simular el treemap
+                scales: { x: { stacked: true, display: false }, y: { stacked: true, display: false } },
+                plugins: {
+                    legend: { position: 'bottom' },
+                    datalabels: {
+                        color: 'white',
+                        font: { weight: 'bold' },
+                        formatter: (value, context) => context.dataset.data[0]
+                    }
+                }
+            }
+        });
+
+        // Pirámide de Prioridades (Representada como Doughnut para simplicidad en web)
+        const ctxPyramid = document.getElementById('priorityPyramidChart').getContext('2d');
+        new Chart(ctxPyramid, {
+            type: 'doughnut',
+            data: {
+                labels: ['Prioridad 01 (Alta) - 43%', 'Prioridad 02 (Media) - 26%', 'Prioridad 03 (Baja) - 31%'],
+                datasets: [{
+                    data: [37, 22, 27],
+                    backgroundColor: ['#EA4335', '#FBBC05', '#34A853'],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'right' },
+                    datalabels: {
+                        color: 'white',
+                        font: labelOptions.font,
+                        formatter: (value) => value
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

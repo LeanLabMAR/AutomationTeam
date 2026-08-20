@@ -190,6 +190,21 @@
             </div>
         </div>
 
+        <!-- Disclaimer: de Magnitud Operativa -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="alert alert-stopper p-4 rounded shadow-sm d-flex align-items-center" role="alert">
+                    <i class="fas fa-cogs fa-3x me-4"></i>
+                    <div>
+                        <h4 class="alert-heading fw-bold mb-2">Disclaimer: Magnitud Operativa</h4>
+                        <p class="mb-1">Es crucial destacar que cada "producto" contabilizado en este inventario representa una solución integral, no un desarrollo aislado. Al desglosar estos 86 aplicativos principales, la red de arquitectura subyacente supera los <strong>300 componentes interconectados</strong> (incluyendo flujos de automatización, procesos RPA, bots de atención y tableros de Power BI). Todos estos elementos se adhieren y complementan las interfaces principales (ej. Power Apps).</p>
+                        <hr>
+                        <p class="mb-0 fw-bold text-brand-accent">Consecuencia: La interrupción de un solo "producto" por falta de licenciamiento o conectividad desencadenará la caída en cascada de decenas de flujos de trabajo asociados.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Alerta Roja: Stopper -->
         <div class="row mb-5">
             <div class="col-12">
@@ -197,7 +212,7 @@
                     <i class="fas fa-database fa-3x me-4"></i>
                     <div>
                         <h4 class="alert-heading fw-bold mb-2">RIESGO CRÍTICO (Stopper): Conectividad Bases de Datos SQL</h4>
-                        <p class="mb-1">El nivel de licenciamiento <strong>Business</strong> no contempla infraestructura de red en la nube (VPC) para conectarnos a los servidores on-premise.</p>
+                        <p class="mb-1">El nivel de licenciamiento <strong>Business</strong> no contempla infraestructura de red en la nube (VPC) para conectarnos a los servidores.</p>
                         <hr>
                         <p class="mb-0 fw-bold text-brand-accent">Consecuencia: Sin la estructura de GCP Admin y licenciamiento Enterprise, aplicativos críticos como TP Payroll, OnTime y DCS App quedarán inoperativos en la transición.</p>
                     </div>
@@ -215,7 +230,8 @@
                     </div>
                     <div class="card-body">
                         <canvas id="inventoryChart"></canvas>
-                        <p class="text-muted small text-center mt-3">Fuerte dependencia en lógicas construidas sobre Power Automate (40 flujos) y Power Apps (21 apps).</p>
+                        <p class="text-muted small text-center mt-3">Fuerte dependencia en lógicas construidas sobre Power Automate (40 flujos) y Power Apps (21 apps). </p>
+                        <p class="text-muted small text-center mt-3">Más de 300 flujos asociados en los productos</p>
                     </div>
                 </div>
             </div>
@@ -293,7 +309,7 @@
                             <tr>
                                 <th>Funcionalidad / Herramienta</th>
                                 <th>Limitación Actual (Google Business)</th>
-                                <th>Solución (Google Enterprise + GCP Org)</th>
+                                <th>Solución (Google Enterprise Pro + GCP Org)</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -314,6 +330,32 @@
                             </tr>
                         </tbody>
                     </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Solución Estratégica: GCP -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="card shadow-sm border-0" style="border-left: 5px solid var(--brand-secondary) !important;">
+                    <div class="card-body p-4">
+                        <h4 class="fw-bold text-brand-secondary mb-3"><i class="fas fa-cloud me-2"></i> Solución Estratégica: Habilitación de Cuenta Organizacional en Google Cloud</h4>
+                        <p>Para mitigar el riesgo de usar "proyectos personales" aislados y resolver el bloqueo crítico de conexión a nuestras bases de datos SQL, la solución técnica requerida es la habilitación del nodo de <strong>Organización en Google Cloud Platform (GCP)</strong>.</p>
+                        
+                        <h5 class="fw-bold text-brand-primary mt-4">Estimación de Costos:</h5>
+                        <ul class="text-muted">
+                            <li>La creación de la jerarquía de la Organización y la facturación centralizada en GCP <strong>no tiene ningún costo base</strong>; el modelo de Google Cloud es estrictamente <em>pay-as-you-go</em> (pago por uso) sobre los recursos que se consuman (como capacidad de procesamiento en Cloud Run).</li>
+                            <li>Adicionalmente, Google Cloud ofrece un <strong>Free Tier</strong> (Capa Gratuita) que incluye el uso gratuito mensual de más de 20 productos y un crédito inicial de $300 USD (válido por 90 días). Esto nos permitirá absorber los costos de la fase de pruebas y configuración arquitectónica inicial sin impacto presupuestal.</li>
+                            <li>Por lo tanto, la única inversión fija requerida para habilitar esta arquitectura segura son las licencias <em>Enterprise</em> para los 5 miembros del equipo de desarrollo, como se solicitó previamente.</li>
+                        </ul>
+                        
+                        <h5 class="fw-bold text-brand-primary mt-4">¿Cómo nos ayuda esto a garantizar la migración?</h5>
+                        <ol class="text-muted mb-0">
+                            <li><strong>Desbloqueo de Conectividad (El Stopper):</strong> Nos permite crear una Red Privada Virtual (VPC) corporativa en la nube para establecer túneles seguros y directos hacia nuestros servidores SQL On-Premise.</li>
+                            <li><strong>Seguridad y Gobernanza (IAM & DLP):</strong> Podremos aplicar políticas de prevención de pérdida de datos y gestionar los accesos a los más de 300 flujos y bots desde un único panel de control directivo.</li>
+                            <li><strong>Facturación Centralizada:</strong> Elimina el riesgo operativo de depender de cuentas aisladas o de las cuotas limitadas de los entornos <em>Business</em>, garantizando escalabilidad ilimitada para los procesos pesados de la compañía.</li>
+                        </ol>
+                    </div>
                 </div>
             </div>
         </div>

@@ -92,7 +92,6 @@
             margin-bottom: 0;
             table-layout: auto; 
         }
-        /* Reseteamos cualquier display extraño que pueda estar afectando a las cabeceras */
         .table thead, .table tbody, .table tr {
             display: table-row-group;
         }
@@ -115,8 +114,8 @@
             vertical-align: middle; /* Alinea el contenido uniformemente */
             padding: 12px 15px !important;
         }
-        /* Fin del FIX */
 
+        /* Botones de Filtro */
         .filter-btn {
             background-color: white;
             color: var(--brand-secondary);
@@ -158,7 +157,7 @@
             padding: 4px 10px;
             font-size: 0.85rem;
             transition: 0.2s;
-            white-space: nowrap; /* Mantiene el icono y el texto juntos */
+            white-space: nowrap; 
         }
         .btn-view-risk:hover {
             background-color: var(--brand-accent);
@@ -181,6 +180,80 @@
             color: white;
         }
 
+        /* --- HOJA DE RUTA (TIMELINE) --- */
+        .roadmap-section {
+            background-color: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border-top: 4px solid var(--brand-primary);
+        }
+        .roadmap-timeline {
+            position: relative;
+            padding-top: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        @media (min-width: 992px) {
+            .roadmap-timeline {
+                flex-direction: row;
+                justify-content: space-between;
+            }
+            .roadmap-timeline::before {
+                content: '';
+                position: absolute;
+                top: 36px;
+                left: 2%;
+                right: 2%;
+                height: 4px;
+                background: #e9ecef;
+                z-index: 1;
+            }
+        }
+        .roadmap-step {
+            position: relative;
+            z-index: 2;
+            padding: 0 10px;
+            flex: 1;
+            margin-bottom: 20px;
+        }
+        .roadmap-marker {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin: 0 auto 15px auto;
+            border: 4px solid white;
+            background-color: var(--brand-secondary);
+            box-shadow: 0 0 0 3px #e9ecef;
+            font-size: 0.9rem;
+        }
+        .roadmap-content {
+            background: var(--brand-light-bg);
+            border-radius: 8px;
+            padding: 15px;
+            height: 100%;
+            border-top: 4px solid var(--brand-secondary);
+        }
+        
+        /* Colores específicos de las fases */
+        .step-1 .roadmap-marker { background-color: #EA4335; box-shadow: 0 0 0 3px rgba(234, 67, 53, 0.2); }
+        .step-1 .roadmap-content { border-top-color: #EA4335; }
+        
+        .step-2 .roadmap-marker { background-color: #FBBC05; box-shadow: 0 0 0 3px rgba(251, 188, 5, 0.2); }
+        .step-2 .roadmap-content { border-top-color: #FBBC05; }
+        
+        .step-3 .roadmap-marker { background-color: #4285F4; box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.2); }
+        .step-3 .roadmap-content { border-top-color: #4285F4; }
+        
+        .step-4 .roadmap-marker { background-color: #34A853; box-shadow: 0 0 0 3px rgba(52, 168, 83, 0.2); }
+        .step-4 .roadmap-content { border-top-color: #34A853; }
+        
+
         /* Indicador de que la gráfica es clickeable */
         canvas { cursor: pointer; }
         
@@ -195,7 +268,7 @@
 
         /* Clases para el control de idioma */
         .lang-en { display: none; }
-        .lang-es { display: inline; /* o block según corresponda */ }
+        .lang-es { display: inline; }
     </style>
 </head>
 <body>
@@ -216,7 +289,7 @@
         <div class="container">
             <h1 class="display-4 fw-bold mb-3 lang-es">Plan de Migración Estratégica:<br>Ecosistema Google Workspace & GCP</h1>
             <h1 class="display-4 fw-bold mb-3 lang-en">Strategic Migration Plan:<br>Google Workspace & GCP Ecosystem</h1>
-            <br>
+            
             <p class="lead mb-4 lang-es">Evaluación de impactos operativos, requerimientos de licenciamiento y análisis de riesgos (SQL / DLP).</p>
             <p class="lead mb-4 lang-en">Assessment of operational impacts, licensing requirements, and risk analysis (SQL / DLP).</p>
         </div>
@@ -305,7 +378,7 @@
                         <p class="mb-1 lang-en">The <strong>Business</strong> licensing level does not include cloud network infrastructure (VPC) to connect to our servers.</p>
                         
                         <hr>
-                        <p class="mb-0 fw-bold text-brand-accent lang-es">Consecuencia: Sin la estructura de GCP Admin y licenciamiento Enterprise,De no habilitarse esta arquitectura en el entorno de Google, más del 80% de nuestras aplicaciones y procesos actuales estarán inoperativos en la transición.</p>
+                        <p class="mb-0 fw-bold text-brand-accent lang-es">Consecuencia: Sin la estructura de GCP Admin y licenciamiento Enterprise, aplicativos críticos como TP Payroll, OnTime y DCS App quedarán inoperativos en la transición.</p>
                         <p class="mb-0 fw-bold text-brand-accent lang-en">Consequence: Without the GCP Admin structure and Enterprise licensing, critical applications like TP Payroll, OnTime, and DCS App will become inoperative during the transition.</p>
                     </div>
                 </div>
@@ -365,7 +438,7 @@
                                 <i class="fas fa-chevron-down me-1"></i> <span class="lang-es">Mostrar / Ocultar</span><span class="lang-en">Show / Hide</span>
                             </button>
                         </div>
-                        <div id="filter-buttons" class="d-flex flex-wrap justify-content-md-end">
+                        <div id="filter-buttons" class="d-flex flex-wrap justify-content-md-end mt-3 mt-md-0">
                             <button class="btn filter-btn active lang-es" onclick="applyFilter('Todos', this)">Todos</button>
                             <button class="btn filter-btn active lang-en" style="display:none;" onclick="applyFilter('Todos', this)">All</button>
                             
@@ -387,7 +460,6 @@
                     <!-- Contenido Desplegable (Collapse) -->
                     <div class="collapse show" id="collapseTableDetails">
                         <div class="card-body p-0">
-                            <!-- La clase table-responsive envuelve a la tabla para el scroll horizontal -->
                             <div class="table-responsive m-0 border-top">
                                 <table class="table table-hover align-middle mb-0">
                                     <thead>
@@ -395,15 +467,15 @@
                                             <!-- Encabezados ES -->
                                             <th class="ps-4 lang-es" style="width: 35%;">Nombre del Producto</th>
                                             <th class="lang-es text-center" style="width: 15%;">Tipo / Plataforma</th>
-                                            <th class="lang-es text-center" style="width: 15%;">Prioridad</th>
-                                            <th class="lang-es" style="width: 25%;">Tipo de Riesgo Identificado</th>
+                                            <th class="lang-es text-center" style="width: 10%;">Prioridad</th>
+                                            <th class="lang-es" style="width: 30%;">Tipo de Riesgo Identificado</th>
                                             <th class="lang-es text-center" style="width: 10%;">Acción</th>
                                             
                                             <!-- Encabezados EN -->
                                             <th class="ps-4 lang-en" style="width: 35%; display:none;">Product Name</th>
                                             <th class="lang-en text-center" style="width: 15%; display:none;">Type / Platform</th>
-                                            <th class="lang-en text-center" style="width: 15%; display:none;">Priority</th>
-                                            <th class="lang-en" style="width: 25%; display:none;">Identified Risk Type</th>
+                                            <th class="lang-en text-center" style="width: 10%; display:none;">Priority</th>
+                                            <th class="lang-en" style="width: 30%; display:none;">Identified Risk Type</th>
                                             <th class="lang-en text-center" style="width: 10%; display:none;">Action</th>
                                         </tr>
                                     </thead>
@@ -420,6 +492,82 @@
                         </div>
                     </div>
 
+                </div>
+            </div>
+        </div>
+
+        <!-- Nueva Sección: Hoja de Ruta (Timeline) -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="roadmap-section">
+                    <h3 class="fw-bold text-brand-primary text-center mb-1 lang-es"><i class="fas fa-map-signs me-2"></i> Hoja de Ruta de Mitigación de Riesgos</h3>
+                    <h3 class="fw-bold text-brand-primary text-center mb-1 lang-en" style="display:none;"><i class="fas fa-map-signs me-2"></i> Risk Mitigation Roadmap</h3>
+                    
+                    <p class="text-center text-muted mb-4 lang-es">Priorización secuencial para asegurar la operación de nómina y estrategia.</p>
+                    <p class="text-center text-muted mb-4 lang-en" style="display:none;">Sequential prioritization to ensure payroll and strategic operations.</p>
+                    
+                    <div class="roadmap-timeline">
+                        <!-- Step 1 -->
+                        <div class="roadmap-step step-1">
+                            <div class="roadmap-marker">1</div>
+                            <div class="roadmap-content">
+                                <h6 class="fw-bold mb-2 lang-es">Fase 1: Urgencia Alta</h6>
+                                <h6 class="fw-bold mb-2 lang-en" style="display:none;">Phase 1: High Urgency</h6>
+                                <p class="small text-muted mb-2"><i class="far fa-calendar-alt me-1"></i> Sept '26 - Ene '27 (~4.9 <span class="lang-es">Meses</span><span class="lang-en" style="display:none;">Months</span>)</p>
+                                <p class="small mb-2 fw-bold"><i class="fas fa-cubes me-1"></i> 37 <span class="lang-es">Desarrollos</span><span class="lang-en" style="display:none;">Developments</span></p>
+                                <p class="small mb-0">
+                                    <span class="lang-es"><strong>Hito:</strong> Riesgo empresarial máximo neutralizado al inicio del proyecto.</span>
+                                    <span class="lang-en" style="display:none;"><strong>Milestone:</strong> Maximum business risk neutralized at project start.</span>
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <!-- Step 2 -->
+                        <div class="roadmap-step step-2">
+                            <div class="roadmap-marker">2</div>
+                            <div class="roadmap-content">
+                                <h6 class="fw-bold mb-2 lang-es">Fase 2: Urgencia Media</h6>
+                                <h6 class="fw-bold mb-2 lang-en" style="display:none;">Phase 2: Medium Urgency</h6>
+                                <p class="small text-muted mb-2"><i class="far fa-calendar-alt me-1"></i> Feb '27 - Abr '27 (~2.9 <span class="lang-es">Meses</span><span class="lang-en" style="display:none;">Months</span>)</p>
+                                <p class="small mb-2 fw-bold"><i class="fas fa-cubes me-1"></i> 22 <span class="lang-es">Desarrollos</span><span class="lang-en" style="display:none;">Developments</span></p>
+                                <p class="small mb-0">
+                                    <span class="lang-es"><strong>Hito:</strong> Estabilización de reportes corporativos y métricas de desempeño.</span>
+                                    <span class="lang-en" style="display:none;"><strong>Milestone:</strong> Stabilization of corporate reports and performance metrics.</span>
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Step 3 -->
+                        <div class="roadmap-step step-3">
+                            <div class="roadmap-marker">3</div>
+                            <div class="roadmap-content">
+                                <h6 class="fw-bold mb-2 lang-es">Fase 3: Urgencia Baja</h6>
+                                <h6 class="fw-bold mb-2 lang-en" style="display:none;">Phase 3: Low Urgency</h6>
+                                <p class="small text-muted mb-2"><i class="far fa-calendar-alt me-1"></i> May '27 - Ago '27 (~3.6 <span class="lang-es">Meses</span><span class="lang-en" style="display:none;">Months</span>)</p>
+                                <p class="small mb-2 fw-bold"><i class="fas fa-cubes me-1"></i> 27 <span class="lang-es">Desarrollos</span><span class="lang-en" style="display:none;">Developments</span></p>
+                                <p class="small mb-0">
+                                    <span class="lang-es"><strong>Hito Final:</strong> Agosto 2027. El portafolio completo está operativo.</span>
+                                    <span class="lang-en" style="display:none;"><strong>Final Milestone:</strong> August 2027. The entire portfolio is operational.</span>
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Step 4 -->
+                        <div class="roadmap-step step-4">
+                            <div class="roadmap-marker"><i class="fas fa-check"></i></div>
+                            <div class="roadmap-content text-white" style="background-color: var(--brand-neutral); border-top: none;">
+                                <h6 class="fw-bold mb-2 lang-es">Buffer Estratégico</h6>
+                                <h6 class="fw-bold mb-2 lang-en" style="display:none;">Strategic Buffer</h6>
+                                <p class="small mb-2" style="color:#e9ecef;"><i class="far fa-calendar-alt me-1"></i> Sept '27 - Dic '27</p>
+                                <p class="small mb-0 fw-bold">
+                                    <i class="fas fa-shield-alt me-1"></i>
+                                    <span class="lang-es">Garantía de Seguridad Operativa y Pruebas.</span>
+                                    <span class="lang-en" style="display:none;">Operational Security and Testing Guarantee.</span>
+                                </p>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
             </div>
         </div>
@@ -483,7 +631,6 @@
             </div>
         </div>
         
-         
         <!-- Solución Estratégica: GCP -->
         <div class="row mb-5">
             <div class="col-12">
@@ -771,63 +918,36 @@
             bsCollapse.show();
         }
 
-        // Manejador principal de los filtros
+        // Manejador principal de los filtros (FIX para el bug de botones activos simultáneamente)
         function applyFilter(filterWord, buttonElement) {
-            if(buttonElement) {
-                const langClass = currentLang === 'es' ? '.lang-es' : '.lang-en';
-                document.querySelectorAll(`.filter-btn${langClass}`).forEach(btn => btn.classList.remove('active'));
-                
-                buttonElement.classList.add('active');
-                
-                // Mapeo de equivalencias para sincronizar botones entre idiomas
-                let equivalentWordEs = filterWord;
-                let equivalentWordEn = filterWord;
-
-                if (filterWord === 'All') equivalentWordEs = 'Todos';
-                if (filterWord === 'Todos') equivalentWordEn = 'All';
-                
-                if (filterWord === 'Financial Risk') equivalentWordEs = 'Riesgo Financiero';
-                if (filterWord === 'Riesgo Financiero') equivalentWordEn = 'Financial Risk';
-
-                if (filterWord === 'Strategic Risk') equivalentWordEs = 'Riesgo Estratégico';
-                if (filterWord === 'Riesgo Estratégico') equivalentWordEn = 'Strategic Risk';
-
-                if (filterWord === 'Legal Risk') equivalentWordEs = 'Riesgo Legal';
-                if (filterWord === 'Riesgo Legal') equivalentWordEn = 'Legal Risk';
-
-                const otherLangClass = currentLang === 'es' ? '.lang-en' : '.lang-es';
-                const equivalentWord = currentLang === 'es' ? equivalentWordEn : equivalentWordEs;
-                
-                document.querySelectorAll(`.filter-btn${otherLangClass}`).forEach(btn => {
-                    btn.classList.remove('active');
-                    if(btn.innerText === equivalentWord) btn.classList.add('active');
-                });
-                
-            } else {
-                document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-                
-                let filterWordForBtnEs = filterWord;
-                let filterWordForBtnEn = filterWord;
-
-                if (filterWord === 'All') filterWordForBtnEs = 'Todos';
-                if (filterWord === 'Financial Risk') filterWordForBtnEs = 'Riesgo Financiero';
-                if (filterWord === 'Strategic Risk') filterWordForBtnEs = 'Riesgo Estratégico';
-                if (filterWord === 'Legal Risk') filterWordForBtnEs = 'Riesgo Legal';
-
-                if (filterWord === 'Todos') filterWordForBtnEn = 'All';
-                if (filterWord === 'Riesgo Financiero') filterWordForBtnEn = 'Financial Risk';
-                if (filterWord === 'Riesgo Estratégico') filterWordForBtnEn = 'Strategic Risk';
-                if (filterWord === 'Riesgo Legal') filterWordForBtnEn = 'Legal Risk';
-
-
-                document.querySelectorAll('.filter-btn.lang-es').forEach(btn => {
-                     if(btn.innerText === filterWordForBtnEs) btn.classList.add('active');
-                });
-                document.querySelectorAll('.filter-btn.lang-en').forEach(btn => {
-                     if(btn.innerText === filterWordForBtnEn) btn.classList.add('active');
-                });
-            }
+            // 1. Limpiar SIEMPRE todos los botones en ambos idiomas
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
             
+            // 2. Determinar la palabra equivalente en el otro idioma
+            let equivalentWordEs = filterWord;
+            let equivalentWordEn = filterWord;
+
+            if (filterWord === 'All') equivalentWordEs = 'Todos';
+            if (filterWord === 'Todos') equivalentWordEn = 'All';
+            
+            if (filterWord === 'Financial Risk') equivalentWordEs = 'Riesgo Financiero';
+            if (filterWord === 'Riesgo Financiero') equivalentWordEn = 'Financial Risk';
+
+            if (filterWord === 'Strategic Risk') equivalentWordEs = 'Riesgo Estratégico';
+            if (filterWord === 'Riesgo Estratégico') equivalentWordEn = 'Strategic Risk';
+
+            if (filterWord === 'Legal Risk') equivalentWordEs = 'Riesgo Legal';
+            if (filterWord === 'Riesgo Legal') equivalentWordEn = 'Legal Risk';
+
+            // 3. Activar los botones correspondientes
+            document.querySelectorAll('.filter-btn.lang-es').forEach(btn => {
+                 if(btn.innerText.trim() === equivalentWordEs) btn.classList.add('active');
+            });
+            document.querySelectorAll('.filter-btn.lang-en').forEach(btn => {
+                 if(btn.innerText.trim() === equivalentWordEn) btn.classList.add('active');
+            });
+            
+            // 4. Mapear para filtrar los datos internos
             const internalFilterWord = (filterWord === 'All' || filterWord === 'Todos') ? 'Todos' : 
                                      (filterWord === 'Financial Risk' ? 'Riesgo Financiero' : 
                                      (filterWord === 'Strategic Risk' ? 'Riesgo Estratégico' : 

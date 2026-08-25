@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validación Ratios LATAM - Executive Dashboard</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --brand-primary: #311C54;
+            --brand-secondary: #4A2B7B;
+            --brand-accent: #00D1B2;
+            --bg-light: #F8F9FA;
+            --text-dark: #2D3748;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+        }
+
+        .navbar-custom {
+            background-color: var(--brand-primary);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .card-custom {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.04);
+            background: #FFFFFF;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .card-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+        }
+
+        .kpi-title {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #718096;
+            font-weight: 600;
+        }
+
+        .kpi-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--brand-primary);
+        }
+
+        .table-custom thead {
+            background-color: var(--brand-primary);
+            color: #FFFFFF;
+        }
+
+        .table-custom th {
+            font-weight: 600;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom py-3">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand fw-bold d-flex align-items-center" href="#">
+                <i class="fas fa-chart-line me-2 text-warning"></i>
+                Validación Ratios LATAM
+            </a>
+            <span class="navbar-text text-light small d-none d-md-inline">
+                Status Actual de Revisión Posiciones Contractuales por Cliente
+            </span>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <div class="container-fluid px-4 py-4">
+
+        <!-- Filters Section -->
+        <div class="card card-custom p-3 mb-4">
+            <div class="row g-3 align-items-center">
+                <div class="col-md-3">
+                    <label class="form-label small fw-bold text-muted mb-1">Región</label>
+                    <select class="form-select" id="filter-region" onchange="onRegionChange()">
+                        <option value="All">Todas las Regiones</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label small fw-bold text-muted mb-1">Subregión</label>
+                    <select class="form-select" id="filter-subregion" onchange="onSubregionChange()">
+                        <option value="All">Todas las Subregiones</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label small fw-bold text-muted mb-1">País</label>
+                    <select class="form-select" id="filter-country" onchange="applyFilters()">
+                        <option value="All">Todos los Países</option>
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button class="btn btn-outline-secondary w-100" onclick="resetFilters()">
+                        <i class="fas fa-undo me-1"></i> Restablecer Filtros
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- KPI Metrics & Overview -->
+        <div class="row g-4 mb-4">
+            <div class="col-lg-4">
+                <div class="card card-custom p-4 h-100 text-center">
+                    <span class="kpi-title">% de Avance General</span>
+                    <div class="kpi-value my-2" id="kpi-avance">0%</div>
+                    <div style="max-height: 180px;" class="d-flex justify-content-center">
+                        <canvas id="gaugeChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card card-custom p-4 h-100">
+                    <span class="kpi-title mb-3">% de Avance por Subregión</span>
+                    <canvas id="subregionChart"></canvas>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card card-custom p-4 h-100">
+                    <span class="kpi-title mb-3">Top 5 Países Menor Avance</span>
+                    <canvas id="lowestAvanceChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Table Section -->
+        <div class="card card-custom p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="fw-bold m-0" style="color: var(--brand-primary);">
+                    <i class="fas fa-list-check me-2"></i>Detalle de Posiciones por Cliente
+                </h5>
+                <span class="badge bg-secondary">Mostrando <span id="count-display">0</span> clientes en total</span>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover table-custom align-middle">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="ps-3">Subregión</th>
+                            <th scope="col">País</th>
+                            <th scope="col">Cliente</th>
+                            <th scope="col" class="text-center">Total Posiciones</th>
+                            <th scope="col" style="width: 30%;">% de Avance</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+                        <!-- Dynamic Injection -->
+                    </tbody>
+                </table>
+            </div>
+            <!-- Contenedor de Paginación -->
+            <div id="pagination-container" class="d-flex justify-content-end mt-3"></div>
+        </div>
+    </div>
+
+    <script>
+const API_URL = 'https://script.google.com/macros/s/AKfycbwVUik6H0co6eABeWkCFAWzku1-Mtwj16Ue9W8o-fcsd3m5id9w4Jose6TthHdmkAn6/exec';
+
+let rawData = [];
+let gaugeChart, subregionChart, lowestAvanceChart;
+
+// Variables para Paginación
+let currentGroupedData = [];
+let currentPage = 1;
+const ROWS_PER_PAGE = 10;
+
+document.addEventListener('DOMContentLoaded', () => {
+    initCharts();
+    loadDataFromSheet();
+});
+
+async function loadDataFromSheet() {
+    try {
+        const response = await fetch(API_URL, { redirect: 'follow' });
+        rawData = await response.json();
+        
+        updateCascadeDropdowns();
+        applyFilters();
+    } catch (error) {
+        console.error('Error cargando los datos:', error);
+    }
+}
+
+// Búsqueda de valores según las claves reales recibidas
+function getVal(item, possibleKeys) {
+    if (!item) return '';
+    const itemKeys = Object.keys(item);
+    
+    for (let k of possibleKeys) {
+        const cleanK = k.trim().toLowerCase();
+        const foundKey = itemKeys.find(ik => ik.trim().toLowerCase() === cleanK);
+        if (foundKey && item[foundKey] !== undefined && item[foundKey] !== null && item[foundKey] !== '') {
+            return item[foundKey];
+        }
+    }
+    return '';
+}
+
+// Evalúa si la fila cuenta como validada/completada (1 o 0)
+function isRowCompleted(item) {
+    const val = getVal(item, ['Check', 'Validacion', 'Avance', 'Estatus']);
+    
+    if (val === undefined || val === null || val === '') return 0;
+
+    if (typeof val === 'boolean') return val ? 1 : 0;
+    
+    const strVal = String(val).trim().toLowerCase();
+    
+    const num = parseFloat(strVal.replace(',', '.'));
+    if (!isNaN(num) && num > 0) return 1;
+
+    const positiveValues = [
+        'completo', 'completado', 'si', 'sí', 'true', 
+        'validado', 'ok', 'cumple', 'c', 'check', 'v'
+    ];
+    
+    return positiveValues.includes(strVal) ? 1 : 0;
+}
+
+// Evalúa el estado de la fila: 
+// Retorna 1 si está completada, 0 si está pendiente, y -1 si debe EXCLUIRSE (Cuenta Cerrada)
+function getRowStatus(item) {
+    const val = getVal(item, ['Check', 'Validacion', 'Avance', 'Estatus', 'Comentario', 'comment']);
+    
+    if (val === undefined || val === null || val === '') return 0;
+
+    const strVal = String(val).trim().toLowerCase();
+
+    // 1. Detectar Cuentas Cerradas / Inactivas (Devuelve -1 para excluir)
+    const closedKeywords = [
+        'Cuenta cerrada', 'cerrada', 'cerrado', 'closed', 
+        'offboarding', 'baja', 'inactiva', 'inactivo', 'n/a'
+    ];
+    if (closedKeywords.some(keyword => strVal.includes(keyword))) {
+        return -1; 
+    }
+
+    // 2. Evaluar Si está Validada/Completada (Devuelve 1)
+    if (typeof val === 'boolean') return val ? 1 : 0;
+    
+    const num = parseFloat(strVal.replace(',', '.'));
+    if (!isNaN(num) && num > 0) return 1;
+
+    const positiveValues = [
+        'completo', 'completado', 'si', 'sí', 'true', 
+        'validado', 'ok', 'cumple', 'c', 'check', 'v'
+    ];
+    
+    return positiveValues.includes(strVal) ? 1 : 0;
+}
+
+// Agrupa las filas ignorando por completo las Cuentas Cerradas
+function processAndGroupData(filteredRawRows) {
+    if (!filteredRawRows || !filteredRawRows.length) return [];
+
+    const groups = {};
+
+    filteredRawRows.forEach(item => {
+        const status = getRowStatus(item);
+
+        // Si la cuenta está CERRADA (-1), la ignoramos del cálculo
+        if (status === -1) return;
+
+        const reg = getVal(item, ['Region', 'StrategicRegion']) || 'LATAM';
+        const sub = getVal(item, ['Subregion', 'SubRegion']) || 'Sin Subregión';
+        const country = getVal(item, ['Country', 'Pais', 'País']) || 'Sin País';
+        const client = getVal(item, ['Client', 'Cliente']) || 'Sin Cliente';
+
+        const key = `${sub}|${country}|${client}`;
+
+        if (!groups[key]) {
+            groups[key] = {
+                region: reg,
+                subregion: sub,
+                country: country,
+                client: client,
+                totalPuestos: 0,
+                validadas: 0
+            };
+        }
+
+        groups[key].totalPuestos += 1;
+        groups[key].validadas += status; // Suma 1 si está validado, 0 si está pendiente
+    });
+
+    return Object.values(groups);
+}
+
+// Desplegables en cascada alineados con la estructura real
+function updateCascadeDropdowns() {
+    const selectedRegion = document.getElementById('filter-region').value.toLowerCase();
+    const selectedSubregion = document.getElementById('filter-subregion').value.toLowerCase();
+
+    const regions = new Set();
+    const subregions = new Set();
+    const countries = new Set();
+
+    rawData.forEach(item => {
+        const reg = String(getVal(item, ['Region', 'StrategicRegion'])).trim();
+        const sub = String(getVal(item, ['Subregion', 'SubRegion'])).trim();
+        const country = String(getVal(item, ['Country', 'Pais', 'País'])).trim();
+
+        if (reg) regions.add(reg);
+
+        const matchRegion = (selectedRegion === 'all' || reg.toLowerCase() === selectedRegion);
+        if (matchRegion && sub) {
+            subregions.add(sub);
+        }
+
+        const matchSub = (selectedSubregion === 'all' || sub.toLowerCase() === selectedSubregion);
+        if (matchRegion && matchSub && country) {
+            countries.add(country);
+        }
+    });
+
+    populateSelect('filter-region', Array.from(regions).sort(), 'Todas las Regiones');
+    populateSelect('filter-subregion', Array.from(subregions).sort(), 'Todas las Subregiones');
+    populateSelect('filter-country', Array.from(countries).sort(), 'Todos los Países');
+}
+
+function populateSelect(elementId, optionsArray, defaultText) {
+    const select = document.getElementById(elementId);
+    const currentValue = select.value;
+    
+    let html = `<option value="All">${defaultText}</option>`;
+    optionsArray.forEach(opt => {
+        html += `<option value="${opt}">${opt}</option>`;
+    });
+    select.innerHTML = html;
+
+    if (optionsArray.includes(currentValue)) {
+        select.value = currentValue;
+    } else {
+        select.value = 'All';
+    }
+}
+
+function onRegionChange() {
+    document.getElementById('filter-subregion').value = 'All';
+    document.getElementById('filter-country').value = 'All';
+    updateCascadeDropdowns();
+    applyFilters();
+}
+
+function onSubregionChange() {
+    document.getElementById('filter-country').value = 'All';
+    updateCascadeDropdowns();
+    applyFilters();
+}
+
+function applyFilters() {
+    const regFilter = document.getElementById('filter-region').value.toLowerCase();
+    const subFilter = document.getElementById('filter-subregion').value.toLowerCase();
+    const countryFilter = document.getElementById('filter-country').value.toLowerCase();
+
+    const filteredRaw = rawData.filter(item => {
+        const itemReg = String(getVal(item, ['Region', 'StrategicRegion'])).toLowerCase();
+        const itemSub = String(getVal(item, ['Subregion', 'SubRegion'])).toLowerCase();
+        const itemCountry = String(getVal(item, ['Country', 'Pais', 'País'])).toLowerCase();
+
+        const matchReg = (regFilter === 'all' || itemReg === regFilter);
+        const matchSub = (subFilter === 'all' || itemSub === subFilter);
+        const matchCountry = (countryFilter === 'all' || itemCountry === countryFilter);
+
+        return matchReg && matchSub && matchCountry;
+    });
+
+    currentGroupedData = processAndGroupData(filteredRaw);
+    currentPage = 1; // Reiniciar a la primera página cuando cambian los filtros
+
+    renderTable();
+    updateDashboardMetrics(currentGroupedData);
+}
+
+function resetFilters() {
+    document.getElementById('filter-region').value = 'All';
+    document.getElementById('filter-subregion').value = 'All';
+    document.getElementById('filter-country').value = 'All';
+    updateCascadeDropdowns();
+    applyFilters();
+}
+
+function updateDashboardMetrics(groupedData) {
+    if (!groupedData || !groupedData.length) {
+        document.getElementById('kpi-avance').innerText = '0%';
+        if (gaugeChart) {
+            gaugeChart.data.datasets[0].data = [0, 100];
+            gaugeChart.update();
+        }
+        return;
+    }
+
+    let totalPuestos = 0;
+    let totalValidadas = 0;
+
+    groupedData.forEach(item => {
+        totalPuestos += item.totalPuestos;
+        totalValidadas += item.validadas;
+    });
+
+    const avgAvance = totalPuestos > 0 ? Math.round((totalValidadas / totalPuestos) * 100) : 0;
+    document.getElementById('kpi-avance').innerText = `${avgAvance}%`;
+    
+    if (gaugeChart) {
+        gaugeChart.data.datasets[0].data = [avgAvance, Math.max(0, 100 - avgAvance)];
+        gaugeChart.update();
+    }
+
+    // Subregiones (Ordenadas Descendentemente)
+    const subTotals = {};
+    const subValidadas = {};
+
+    groupedData.forEach(item => {
+        const sub = item.subregion;
+        subTotals[sub] = (subTotals[sub] || 0) + item.totalPuestos;
+        subValidadas[sub] = (subValidadas[sub] || 0) + item.validadas;
+    });
+
+    const subList = Object.keys(subTotals).map(s => ({
+        subregion: s,
+        avg: subTotals[s] > 0 ? Math.round((subValidadas[s] / subTotals[s]) * 100) : 0
+    }));
+
+    subList.sort((a, b) => b.avg - a.avg);
+
+    if (subregionChart) {
+        subregionChart.data.labels = subList.map(item => item.subregion);
+        subregionChart.data.datasets[0].data = subList.map(item => item.avg);
+        subregionChart.update();
+    }
+
+    // Top 5 Países Menor Avance
+    const countryTotals = {};
+    const countryValidadas = {};
+
+    groupedData.forEach(item => {
+        const c = item.country;
+        countryTotals[c] = (countryTotals[c] || 0) + item.totalPuestos;
+        countryValidadas[c] = (countryValidadas[c] || 0) + item.validadas;
+    });
+
+    const countryAvgList = Object.keys(countryTotals).map(c => ({
+        country: c,
+        avg: countryTotals[c] > 0 ? Math.round((countryValidadas[c] / countryTotals[c]) * 100) : 0
+    }));
+
+    countryAvgList.sort((a, b) => a.avg - b.avg);
+    const lowest5 = countryAvgList.slice(0, 5);
+
+    if (lowestAvanceChart) {
+        lowestAvanceChart.data.labels = lowest5.map(c => c.country);
+        lowestAvanceChart.data.datasets[0].data = lowest5.map(c => c.avg);
+        lowestAvanceChart.update();
+    }
+}
+
+// Función modificada para soportar paginación
+function renderTable() {
+    const tbody = document.getElementById('table-body');
+    const paginationContainer = document.getElementById('pagination-container');
+    let htmlBuffer = '';
+
+    if (!currentGroupedData || !currentGroupedData.length) {
+        tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-muted">No se encontraron registros para los filtros seleccionados.</td></tr>`;
+        document.getElementById('count-display').innerText = 0;
+        paginationContainer.innerHTML = ''; // Esconder paginación
+        return;
+    }
+
+    // Lógica Matemática de Paginación
+    const totalPages = Math.ceil(currentGroupedData.length / ROWS_PER_PAGE);
+    const startIndex = (currentPage - 1) * ROWS_PER_PAGE;
+    const endIndex = startIndex + ROWS_PER_PAGE;
+    
+    // Obtener solo las filas correspondientes a la página actual
+    const paginatedData = currentGroupedData.slice(startIndex, endIndex);
+
+    paginatedData.forEach(item => {
+        const avanceNum = item.totalPuestos > 0 ? Math.round((item.validadas / item.totalPuestos) * 100) : 0;
+        const barColor = avanceNum === 100 ? 'bg-success' : avanceNum >= 50 ? 'bg-primary' : 'bg-warning';
+
+        htmlBuffer += `
+            <tr>
+                <td class="ps-3 fw-semibold">${item.subregion}</td>
+                <td>${item.country}</td>
+                <td>${item.client}</td>
+                <td class="text-center">${item.totalPuestos}</td>
+                <td>
+                    <div class="d-flex align-items-center">
+                        <span class="me-2 small fw-bold" style="width: 40px;">${avanceNum}%</span>
+                        <div class="progress flex-grow-1" style="height: 8px;">
+                            <div class="progress-bar ${barColor}" role="progressbar" style="width: ${avanceNum}%;"></div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        `;
+    });
+
+    tbody.innerHTML = htmlBuffer;
+    document.getElementById('count-display').innerText = currentGroupedData.length;
+
+    renderPaginationControls(totalPages);
+}
+
+// Renderiza los botones para navegar
+function renderPaginationControls(totalPages) {
+    const container = document.getElementById('pagination-container');
+    
+    if (totalPages <= 1) {
+        container.innerHTML = '';
+        return;
+    }
+
+    let paginationHtml = '<ul class="pagination pagination-sm m-0">';
+    
+    // Botón Anterior
+    paginationHtml += `<li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+        <a class="page-link" href="javascript:void(0)" onclick="changePage(${currentPage - 1})">Anterior</a>
+    </li>`;
+
+    // Indicador de página
+    paginationHtml += `<li class="page-item disabled"><span class="page-link text-dark">Página ${currentPage} de ${totalPages}</span></li>`;
+
+    // Botón Siguiente
+    paginationHtml += `<li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+        <a class="page-link" href="javascript:void(0)" onclick="changePage(${currentPage + 1})">Siguiente</a>
+    </li>`;
+
+    paginationHtml += '</ul>';
+    container.innerHTML = paginationHtml;
+}
+
+// Función para cambiar de página y volver a renderizar
+function changePage(pageNumber) {
+    const totalPages = Math.ceil(currentGroupedData.length / ROWS_PER_PAGE);
+    
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+        currentPage = pageNumber;
+        renderTable();
+    }
+}
+
+function initCharts() {
+    const ctxGauge = document.getElementById('gaugeChart').getContext('2d');
+    gaugeChart = new Chart(ctxGauge, {
+        type: 'doughnut',
+        data: {
+            datasets: [{
+                data: [0, 100],
+                backgroundColor: ['#311C54', '#E2E8F0'],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            rotation: -90,
+            circumference: 180,
+            cutout: '75%',
+            plugins: { tooltip: { enabled: false } }
+        }
+    });
+
+    const ctxSub = document.getElementById('subregionChart').getContext('2d');
+    subregionChart = new Chart(ctxSub, {
+        type: 'bar',
+        data: {
+            labels: [],
+            datasets: [{
+                label: '% de Avance',
+                data: [],
+                backgroundColor: '#311C54',
+                borderRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: { y: { max: 100, ticks: { callback: v => v + '%' } } }
+        }
+    });
+
+    const ctxLow = document.getElementById('lowestAvanceChart').getContext('2d');
+    lowestAvanceChart = new Chart(ctxLow, {
+        type: 'bar',
+        data: {
+            labels: [],
+            datasets: [{
+                label: '% de Avance',
+                data: [],
+                backgroundColor: '#FFA500',
+                borderRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: { y: { max: 100, ticks: { callback: v => v + '%' } } }
+        }
+    });
+}
+</script>
+</body>
+</html>

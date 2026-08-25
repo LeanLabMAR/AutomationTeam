@@ -149,26 +149,26 @@
                 <h5 class="fw-bold m-0" style="color: var(--brand-primary);">
                     <i class="fas fa-list-check me-2"></i>Detalle de Posiciones por Cliente
                 </h5>
-                <span class="badge bg-secondary">Mostrando <span id="count-display">0</span> clientes en total</span>
+                <input type="text" id="search-client" class="form-control form-control-sm" style="width: 200px;" placeholder="Buscar cliente...">
+                <span class="badge bg-secondary">Mostrando <span id="count-display">0</span> clientes</span>
             </div>
             <div class="table-responsive">
                 <table class="table table-hover table-custom align-middle">
                     <thead>
-                        <tr>
-                            <th scope="col" class="ps-3">Subregión</th>
-                            <th scope="col">País</th>
-                            <th scope="col">Cliente</th>
-                            <th scope="col" class="text-center">Total Posiciones</th>
-                            <th scope="col" style="width: 30%;">% de Avance</th>
-                        </tr>
-                    </thead>
+    <tr>
+        <th data-sort="subregion">Subregión ↕</th>
+        <th data-sort="country">País ↕</th>
+        <th data-sort="client">Cliente ↕</th>
+        <th data-sort="totalPuestos" class="text-center">Total Puestos ↕</th>
+        <th data-sort="avance">Avance (%) ↕</th>
+    </tr>
+</thead>
                     <tbody id="table-body">
                         <!-- Dynamic Injection -->
                     </tbody>
                 </table>
             </div>
-            <!-- Contenedor de Paginación -->
-            <div id="pagination-container" class="d-flex justify-content-end mt-3"></div>
+            <div id="pagination-controls"></div>
         </div>
     </div>
 
@@ -176,16 +176,19 @@
 const API_URL = 'https://script.google.com/macros/s/AKfycbwVUik6H0co6eABeWkCFAWzku1-Mtwj16Ue9W8o-fcsd3m5id9w4Jose6TthHdmkAn6/exec';
 
 let rawData = [];
-let gaugeChart, subregionChart, lowestAvanceChart;
-
-// Variables para Paginación
 let currentGroupedData = [];
+let sortConfig = { column: null, direction: 'asc' };
+
+// Paginación
 let currentPage = 1;
-const ROWS_PER_PAGE = 10;
+const rowsPerPage = 15;
+
+let gaugeChart, subregionChart, lowestAvanceChart;
 
 document.addEventListener('DOMContentLoaded', () => {
     initCharts();
     loadDataFromSheet();
+    setupTableInteractivity();
 });
 
 async function loadDataFromSheet() {
@@ -200,7 +203,6 @@ async function loadDataFromSheet() {
     }
 }
 
-// Búsqueda de valores según las claves reales recibidas
 function getVal(item, possibleKeys) {
     if (!item) return '';
     const itemKeys = Object.keys(item);
@@ -215,60 +217,26 @@ function getVal(item, possibleKeys) {
     return '';
 }
 
-// Evalúa si la fila cuenta como validada/completada (1 o 0)
-function isRowCompleted(item) {
-    const val = getVal(item, ['Check', 'Validacion', 'Avance', 'Estatus']);
-    
-    if (val === undefined || val === null || val === '') return 0;
-
-    if (typeof val === 'boolean') return val ? 1 : 0;
-    
-    const strVal = String(val).trim().toLowerCase();
-    
-    const num = parseFloat(strVal.replace(',', '.'));
-    if (!isNaN(num) && num > 0) return 1;
-
-    const positiveValues = [
-        'completo', 'completado', 'si', 'sí', 'true', 
-        'validado', 'ok', 'cumple', 'c', 'check', 'v'
-    ];
-    
-    return positiveValues.includes(strVal) ? 1 : 0;
-}
-
-// Evalúa el estado de la fila: 
-// Retorna 1 si está completada, 0 si está pendiente, y -1 si debe EXCLUIRSE (Cuenta Cerrada)
 function getRowStatus(item) {
     const val = getVal(item, ['Check', 'Validacion', 'Avance', 'Estatus', 'Comentario', 'comment']);
-    
     if (val === undefined || val === null || val === '') return 0;
 
     const strVal = String(val).trim().toLowerCase();
 
-    // 1. Detectar Cuentas Cerradas / Inactivas (Devuelve -1 para excluir)
-    const closedKeywords = [
-        'Cuenta cerrada', 'cerrada', 'cerrado', 'closed', 
-        'offboarding', 'baja', 'inactiva', 'inactivo', 'n/a'
-    ];
+    const closedKeywords = ['cuenta cerrada', 'cerrada', 'cerrado', 'closed', 'offboarding', 'baja', 'inactiva', 'inactivo', 'n/a'];
     if (closedKeywords.some(keyword => strVal.includes(keyword))) {
         return -1; 
     }
 
-    // 2. Evaluar Si está Validada/Completada (Devuelve 1)
     if (typeof val === 'boolean') return val ? 1 : 0;
     
     const num = parseFloat(strVal.replace(',', '.'));
     if (!isNaN(num) && num > 0) return 1;
 
-    const positiveValues = [
-        'completo', 'completado', 'si', 'sí', 'true', 
-        'validado', 'ok', 'cumple', 'c', 'check', 'v'
-    ];
-    
+    const positiveValues = ['completo', 'completado', 'si', 'sí', 'true', 'validado', 'ok', 'cumple', 'c', 'check', 'v'];
     return positiveValues.includes(strVal) ? 1 : 0;
 }
 
-// Agrupa las filas ignorando por completo las Cuentas Cerradas
 function processAndGroupData(filteredRawRows) {
     if (!filteredRawRows || !filteredRawRows.length) return [];
 
@@ -276,8 +244,6 @@ function processAndGroupData(filteredRawRows) {
 
     filteredRawRows.forEach(item => {
         const status = getRowStatus(item);
-
-        // Si la cuenta está CERRADA (-1), la ignoramos del cálculo
         if (status === -1) return;
 
         const reg = getVal(item, ['Region', 'StrategicRegion']) || 'LATAM';
@@ -299,13 +265,165 @@ function processAndGroupData(filteredRawRows) {
         }
 
         groups[key].totalPuestos += 1;
-        groups[key].validadas += status; // Suma 1 si está validado, 0 si está pendiente
+        groups[key].validadas += status;
     });
 
     return Object.values(groups);
 }
 
-// Desplegables en cascada alineados con la estructura real
+function setupTableInteractivity() {
+    const clientSearchInput = document.getElementById('search-client');
+    if (clientSearchInput) {
+        clientSearchInput.addEventListener('input', applyFilters);
+    }
+
+    document.querySelectorAll('th[data-sort]').forEach(th => {
+        th.style.cursor = 'pointer';
+        th.addEventListener('click', () => {
+            const col = th.getAttribute('data-sort');
+            if (sortConfig.column === col) {
+                sortConfig.direction = sortConfig.direction === 'asc' ? 'desc' : 'asc';
+            } else {
+                sortConfig.column = col;
+                sortConfig.direction = 'asc';
+            }
+            updateSortIcons(th);
+            renderTable();
+        });
+    });
+}
+
+function updateSortIcons(activeTh) {
+    document.querySelectorAll('th[data-sort]').forEach(th => {
+        th.classList.remove('text-primary');
+    });
+    activeTh.classList.add('text-primary');
+}
+
+function applyFilters() {
+    currentPage = 1; // Reiniciar a la página 1 al filtrar
+    const regFilter = document.getElementById('filter-region').value.toLowerCase();
+    const subFilter = document.getElementById('filter-subregion').value.toLowerCase();
+    const countryFilter = document.getElementById('filter-country').value.toLowerCase();
+    
+    const clientSearchInput = document.getElementById('search-client');
+    const clientSearch = clientSearchInput ? clientSearchInput.value.toLowerCase().trim() : '';
+
+    const filteredRaw = rawData.filter(item => {
+        const itemReg = String(getVal(item, ['Region', 'StrategicRegion'])).toLowerCase();
+        const itemSub = String(getVal(item, ['Subregion', 'SubRegion'])).toLowerCase();
+        const itemCountry = String(getVal(item, ['Country', 'Pais', 'País'])).toLowerCase();
+        const itemClient = String(getVal(item, ['Client', 'Cliente'])).toLowerCase();
+
+        const matchReg = (regFilter === 'all' || itemReg === regFilter);
+        const matchSub = (subFilter === 'all' || itemSub === subFilter);
+        const matchCountry = (countryFilter === 'all' || itemCountry === countryFilter);
+        const matchClient = (!clientSearch || itemClient.includes(clientSearch));
+
+        return matchReg && matchSub && matchCountry && matchClient;
+    });
+
+    currentGroupedData = processAndGroupData(filteredRaw);
+
+    renderTable();
+    updateDashboardMetrics(currentGroupedData);
+}
+
+function sortData(data) {
+    if (!sortConfig.column) return data;
+
+    return [...data].sort((a, b) => {
+        let valA, valB;
+
+        if (sortConfig.column === 'avance') {
+            valA = a.totalPuestos > 0 ? (a.validadas / a.totalPuestos) : 0;
+            valB = b.totalPuestos > 0 ? (b.validadas / b.totalPuestos) : 0;
+        } else {
+            valA = String(a[sortConfig.column] || '').toLowerCase();
+            valB = String(b[sortConfig.column] || '').toLowerCase();
+        }
+
+        if (valA < valB) return sortConfig.direction === 'asc' ? -1 : 1;
+        if (valA > valB) return sortConfig.direction === 'asc' ? 1 : -1;
+        return 0;
+    });
+}
+
+function renderTable() {
+    const tbody = document.getElementById('table-body');
+    let htmlBuffer = '';
+
+    const sortedData = sortData(currentGroupedData);
+
+    if (!sortedData || !sortedData.length) {
+        tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-muted">No se encontraron registros.</td></tr>`;
+        document.getElementById('count-display').innerText = 0;
+        renderPaginationControls(0);
+        return;
+    }
+
+    // Paginación: Cortar los 15 registros según la página actual
+    const startIndex = (currentPage - 1) * rowsPerPage;
+    const endIndex = startIndex + rowsPerPage;
+    const paginatedData = sortedData.slice(startIndex, endIndex);
+
+    paginatedData.forEach(item => {
+        const avanceNum = item.totalPuestos > 0 ? Math.round((item.validadas / item.totalPuestos) * 100) : 0;
+        const barColor = avanceNum === 100 ? 'bg-success' : avanceNum >= 50 ? 'bg-primary' : 'bg-warning';
+
+        htmlBuffer += `
+            <tr>
+                <td class="ps-3 fw-semibold">${item.subregion}</td>
+                <td>${item.country}</td>
+                <td>${item.client}</td>
+                <td class="text-center">${item.totalPuestos}</td>
+                <td>
+                    <div class="d-flex align-items-center">
+                        <span class="me-2 small fw-bold" style="width: 40px;">${avanceNum}%</span>
+                        <div class="progress flex-grow-1" style="height: 8px;">
+                            <div class="progress-bar ${barColor}" role="progressbar" style="width: ${avanceNum}%;"></div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        `;
+    });
+
+    tbody.innerHTML = htmlBuffer;
+    document.getElementById('count-display').innerText = sortedData.length;
+
+    renderPaginationControls(sortedData.length);
+}
+
+function renderPaginationControls(totalRows) {
+    const paginationContainer = document.getElementById('pagination-controls');
+    if (!paginationContainer) return;
+
+    const totalPages = Math.ceil(totalRows / rowsPerPage);
+
+    if (totalPages <= 1) {
+        paginationContainer.innerHTML = '';
+        return;
+    }
+
+    paginationContainer.innerHTML = `
+        <div class="d-flex justify-content-between align-items-center mt-3">
+            <span class="small text-muted">
+                Página ${currentPage} de ${totalPages}
+            </span>
+            <div class="btn-group btn-group-sm">
+                <button class="btn btn-outline-secondary" ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(-1)">Anterior</button>
+                <button class="btn btn-outline-secondary" ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage(1)">Siguiente</button>
+            </div>
+        </div>
+    `;
+}
+
+function changePage(direction) {
+    currentPage += direction;
+    renderTable();
+}
+
 function updateCascadeDropdowns() {
     const selectedRegion = document.getElementById('filter-region').value.toLowerCase();
     const selectedSubregion = document.getElementById('filter-subregion').value.toLowerCase();
@@ -322,14 +440,10 @@ function updateCascadeDropdowns() {
         if (reg) regions.add(reg);
 
         const matchRegion = (selectedRegion === 'all' || reg.toLowerCase() === selectedRegion);
-        if (matchRegion && sub) {
-            subregions.add(sub);
-        }
+        if (matchRegion && sub) subregions.add(sub);
 
         const matchSub = (selectedSubregion === 'all' || sub.toLowerCase() === selectedSubregion);
-        if (matchRegion && matchSub && country) {
-            countries.add(country);
-        }
+        if (matchRegion && matchSub && country) countries.add(country);
     });
 
     populateSelect('filter-region', Array.from(regions).sort(), 'Todas las Regiones');
@@ -367,34 +481,15 @@ function onSubregionChange() {
     applyFilters();
 }
 
-function applyFilters() {
-    const regFilter = document.getElementById('filter-region').value.toLowerCase();
-    const subFilter = document.getElementById('filter-subregion').value.toLowerCase();
-    const countryFilter = document.getElementById('filter-country').value.toLowerCase();
-
-    const filteredRaw = rawData.filter(item => {
-        const itemReg = String(getVal(item, ['Region', 'StrategicRegion'])).toLowerCase();
-        const itemSub = String(getVal(item, ['Subregion', 'SubRegion'])).toLowerCase();
-        const itemCountry = String(getVal(item, ['Country', 'Pais', 'País'])).toLowerCase();
-
-        const matchReg = (regFilter === 'all' || itemReg === regFilter);
-        const matchSub = (subFilter === 'all' || itemSub === subFilter);
-        const matchCountry = (countryFilter === 'all' || itemCountry === countryFilter);
-
-        return matchReg && matchSub && matchCountry;
-    });
-
-    currentGroupedData = processAndGroupData(filteredRaw);
-    currentPage = 1; // Reiniciar a la primera página cuando cambian los filtros
-
-    renderTable();
-    updateDashboardMetrics(currentGroupedData);
-}
-
 function resetFilters() {
     document.getElementById('filter-region').value = 'All';
     document.getElementById('filter-subregion').value = 'All';
     document.getElementById('filter-country').value = 'All';
+    const clientSearchInput = document.getElementById('search-client');
+    if (clientSearchInput) clientSearchInput.value = '';
+    
+    sortConfig = { column: null, direction: 'asc' };
+    currentPage = 1;
     updateCascadeDropdowns();
     applyFilters();
 }
@@ -425,7 +520,6 @@ function updateDashboardMetrics(groupedData) {
         gaugeChart.update();
     }
 
-    // Subregiones (Ordenadas Descendentemente)
     const subTotals = {};
     const subValidadas = {};
 
@@ -448,7 +542,6 @@ function updateDashboardMetrics(groupedData) {
         subregionChart.update();
     }
 
-    // Top 5 Países Menor Avance
     const countryTotals = {};
     const countryValidadas = {};
 
@@ -470,93 +563,6 @@ function updateDashboardMetrics(groupedData) {
         lowestAvanceChart.data.labels = lowest5.map(c => c.country);
         lowestAvanceChart.data.datasets[0].data = lowest5.map(c => c.avg);
         lowestAvanceChart.update();
-    }
-}
-
-// Función modificada para soportar paginación
-function renderTable() {
-    const tbody = document.getElementById('table-body');
-    const paginationContainer = document.getElementById('pagination-container');
-    let htmlBuffer = '';
-
-    if (!currentGroupedData || !currentGroupedData.length) {
-        tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-muted">No se encontraron registros para los filtros seleccionados.</td></tr>`;
-        document.getElementById('count-display').innerText = 0;
-        paginationContainer.innerHTML = ''; // Esconder paginación
-        return;
-    }
-
-    // Lógica Matemática de Paginación
-    const totalPages = Math.ceil(currentGroupedData.length / ROWS_PER_PAGE);
-    const startIndex = (currentPage - 1) * ROWS_PER_PAGE;
-    const endIndex = startIndex + ROWS_PER_PAGE;
-    
-    // Obtener solo las filas correspondientes a la página actual
-    const paginatedData = currentGroupedData.slice(startIndex, endIndex);
-
-    paginatedData.forEach(item => {
-        const avanceNum = item.totalPuestos > 0 ? Math.round((item.validadas / item.totalPuestos) * 100) : 0;
-        const barColor = avanceNum === 100 ? 'bg-success' : avanceNum >= 50 ? 'bg-primary' : 'bg-warning';
-
-        htmlBuffer += `
-            <tr>
-                <td class="ps-3 fw-semibold">${item.subregion}</td>
-                <td>${item.country}</td>
-                <td>${item.client}</td>
-                <td class="text-center">${item.totalPuestos}</td>
-                <td>
-                    <div class="d-flex align-items-center">
-                        <span class="me-2 small fw-bold" style="width: 40px;">${avanceNum}%</span>
-                        <div class="progress flex-grow-1" style="height: 8px;">
-                            <div class="progress-bar ${barColor}" role="progressbar" style="width: ${avanceNum}%;"></div>
-                        </div>
-                    </div>
-                </td>
-            </tr>
-        `;
-    });
-
-    tbody.innerHTML = htmlBuffer;
-    document.getElementById('count-display').innerText = currentGroupedData.length;
-
-    renderPaginationControls(totalPages);
-}
-
-// Renderiza los botones para navegar
-function renderPaginationControls(totalPages) {
-    const container = document.getElementById('pagination-container');
-    
-    if (totalPages <= 1) {
-        container.innerHTML = '';
-        return;
-    }
-
-    let paginationHtml = '<ul class="pagination pagination-sm m-0">';
-    
-    // Botón Anterior
-    paginationHtml += `<li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
-        <a class="page-link" href="javascript:void(0)" onclick="changePage(${currentPage - 1})">Anterior</a>
-    </li>`;
-
-    // Indicador de página
-    paginationHtml += `<li class="page-item disabled"><span class="page-link text-dark">Página ${currentPage} de ${totalPages}</span></li>`;
-
-    // Botón Siguiente
-    paginationHtml += `<li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
-        <a class="page-link" href="javascript:void(0)" onclick="changePage(${currentPage + 1})">Siguiente</a>
-    </li>`;
-
-    paginationHtml += '</ul>';
-    container.innerHTML = paginationHtml;
-}
-
-// Función para cambiar de página y volver a renderizar
-function changePage(pageNumber) {
-    const totalPages = Math.ceil(currentGroupedData.length / ROWS_PER_PAGE);
-    
-    if (pageNumber >= 1 && pageNumber <= totalPages) {
-        currentPage = pageNumber;
-        renderTable();
     }
 }
 

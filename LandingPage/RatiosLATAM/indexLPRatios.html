@@ -6,623 +6,839 @@
     <title>Validación Ratios LATAM - Executive Dashboard</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- FontAwesome Icons -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Plugin para mostrar etiquetas de datos fijas -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+    
+    
     <style>
         :root {
-            --brand-primary: #311C54;
-            --brand-secondary: #4A2B7B;
-            --brand-accent: #00D1B2;
+            --primary-color: #311C54;
+            --primary-light: #4A2E7B;
+            --accent-color: #FFA500;
             --bg-light: #F8F9FA;
-            --text-dark: #2D3748;
+            --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
 
         body {
-            font-family: 'Inter', sans-serif;
             background-color: var(--bg-light);
-            color: var(--text-dark);
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: #333;
         }
 
         .navbar-custom {
-            background-color: var(--brand-primary);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            background-color: var(--primary-color);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
         }
 
         .card-custom {
             border: none;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.04);
-            background: #FFFFFF;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border-radius: 10px;
+            background: #ffffff;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 1.5rem;
+            transition: transform 0.2s ease;
         }
 
-        .card-custom:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.08);
-        }
-
-        .kpi-title {
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: #718096;
-            font-weight: 600;
-        }
-
-        .kpi-value {
-            font-size: 2.2rem;
+        .card-header-custom {
+            background: transparent;
+            border-bottom: 2px solid #F0F2F5;
+            padding: 1rem 1.25rem;
             font-weight: 700;
-            color: var(--brand-primary);
+            color: var(--primary-color);
         }
 
-        .table-custom thead {
-            background-color: var(--brand-primary);
-            color: #FFFFFF;
+        /* Checkboxes tipo Cards/Boxes para Subregión */
+        .subregion-boxes-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            max-height: 110px;
+            overflow-y: auto;
+            padding: 4px;
         }
 
-        .table-custom th {
+        .subregion-box {
+            position: relative;
+        }
+
+        .subregion-box input[type="checkbox"] {
+            display: none;
+        }
+
+        .subregion-box label {
+            display: inline-block;
+            padding: 6px 14px;
+            background-color: #EFEFF4;
+            color: #444;
+            font-size: 0.85rem;
             font-weight: 600;
-            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+        }
+
+        .subregion-box input[type="checkbox"]:checked + label {
+            background-color: var(--primary-color);
+            color: #ffffff;
+            box-shadow: 0 2px 6px rgba(49, 28, 84, 0.3);
+        }
+
+        .subregion-box label:hover {
+            border-color: var(--primary-color);
+        }
+
+        /* Tablas compactas y pulidas */
+        .table-custom {
+            margin-bottom: 0;
+            font-size: 0.88rem;
+        }
+
+        .table-custom thead th {
+            background-color: #F4F5F8;
+            color: var(--primary-color);
+            font-weight: 700;
+            border-bottom: 2px solid #E2E8F0;
+            white-space: nowrap;
+        }
+
+        .table-custom tbody tr:hover {
+            background-color: #F8F6FC;
+        }
+
+        .scrollable-table {
+            max-height: 280px;
+            overflow-y: auto;
+        }
+
+        .gauge-container {
+            position: relative;
+            height: 140px;
+        }
+
+        .gauge-kpi-text {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--primary-color);
         }
     </style>
 </head>
 <body>
 
-    <!-- Header Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom py-3">
+    <!-- NAV BAR -->
+    <nav class="navbar navbar-custom navbar-dark mb-4">
         <div class="container-fluid px-4">
-            <a class="navbar-brand fw-bold d-flex align-items-center" href="#">
-                <i class="fas fa-chart-line me-2 text-warning"></i>
-                Validación Ratios LATAM
-            </a>
-            <span class="navbar-text text-light small d-none d-md-inline">
-                Status Actual de Revisión Posiciones Contractuales por Cliente
-            </span>
+            <span class="navbar-brand mb-0 h1 fw-bold">Validación Ratios LATAM — Dashboard Ejecutivo</span>
+            <button class="btn btn-outline-light btn-sm" onclick="resetFilters()">Restablecer Filtros</button>
         </div>
     </nav>
 
-    <!-- Main Content Container -->
-    <div class="container-fluid px-4 py-4">
-
-        <!-- Filters Section -->
-        <div class="card card-custom p-3 mb-4">
-            <div class="row g-3 align-items-center">
-                <div class="col-md-3">
-                    <label class="form-label small fw-bold text-muted mb-1">Región</label>
-                    <select class="form-select" id="filter-region" onchange="onRegionChange()">
-                        <option value="All">Todas las Regiones</option>
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label small fw-bold text-muted mb-1">Subregión</label>
-                    <select class="form-select" id="filter-subregion" onchange="onSubregionChange()">
-                        <option value="All">Todas las Subregiones</option>
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label small fw-bold text-muted mb-1">País</label>
-                    <select class="form-select" id="filter-country" onchange="applyFilters()">
-                        <option value="All">Todos los Países</option>
-                    </select>
-                </div>
-                <div class="col-md-3 d-flex align-items-end">
-                    <button class="btn btn-outline-secondary w-100" onclick="resetFilters()">
-                        <i class="fas fa-undo me-1"></i> Restablecer Filtros
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- KPI Metrics & Overview -->
-        <div class="row g-4 mb-4">
-            <div class="col-lg-4">
-                <div class="card card-custom p-4 h-100 text-center">
-                    <span class="kpi-title">% de Avance General</span>
-                    <div class="kpi-value my-2" id="kpi-avance">0%</div>
-                    <div style="max-height: 180px;" class="d-flex justify-content-center">
-                        <canvas id="gaugeChart"></canvas>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4">
-                <div class="card card-custom p-4 h-100">
-                    <span class="kpi-title mb-3">% de Avance por Subregión</span>
-                    <canvas id="subregionChart"></canvas>
-                </div>
-            </div>
-            <div class="col-lg-4">
-                <div class="card card-custom p-4 h-100">
-                    <span class="kpi-title mb-3">Top 5 Países Menor Avance</span>
-                    <canvas id="lowestAvanceChart"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <!-- Data Table Section -->
-        <div class="card card-custom p-4">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h5 class="fw-bold m-0" style="color: var(--brand-primary);">
-                    <i class="fas fa-list-check me-2"></i>Detalle de Posiciones por Cliente
-                </h5>
-                <input type="text" id="search-client" class="form-control form-control-sm" style="width: 200px;" placeholder="Buscar cliente...">
-                <span class="badge bg-secondary">Mostrando <span id="count-display">0</span> clientes</span>
-            </div>
-            <div class="table-responsive">
-                <table class="table table-hover table-custom align-middle">
-                    <thead>
-    <tr>
-        <th data-sort="subregion">Subregión ↕</th>
-        <th data-sort="country">País ↕</th>
-        <th data-sort="client">Cliente ↕</th>
-        <th data-sort="totalPuestos" class="text-center">Total Puestos ↕</th>
-        <th data-sort="avance">Avance (%) ↕</th>
-    </tr>
-</thead>
-                    <tbody id="table-body">
-                        <!-- Dynamic Injection -->
-                    </tbody>
-                </table>
-            </div>
-            <div id="pagination-controls"></div>
-        </div>
-    </div>
-
-    <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbwVUik6H0co6eABeWkCFAWzku1-Mtwj16Ue9W8o-fcsd3m5id9w4Jose6TthHdmkAn6/exec';
-
-let rawData = [];
-let currentGroupedData = [];
-let sortConfig = { column: null, direction: 'asc' };
-
-// Paginación
-let currentPage = 1;
-const rowsPerPage = 15;
-
-let gaugeChart, subregionChart, lowestAvanceChart;
-
-document.addEventListener('DOMContentLoaded', () => {
-    initCharts();
-    loadDataFromSheet();
-    setupTableInteractivity();
-});
-
-async function loadDataFromSheet() {
-    try {
-        const response = await fetch(API_URL, { redirect: 'follow' });
-        rawData = await response.json();
+    <div class="container-fluid px-4">
         
-        updateCascadeDropdowns();
-        applyFilters();
-    } catch (error) {
-        console.error('Error cargando los datos:', error);
-    }
-}
-
-function getVal(item, possibleKeys) {
-    if (!item) return '';
-    const itemKeys = Object.keys(item);
-    
-    for (let k of possibleKeys) {
-        const cleanK = k.trim().toLowerCase();
-        const foundKey = itemKeys.find(ik => ik.trim().toLowerCase() === cleanK);
-        if (foundKey && item[foundKey] !== undefined && item[foundKey] !== null && item[foundKey] !== '') {
-            return item[foundKey];
-        }
-    }
-    return '';
-}
-
-function getRowStatus(item) {
-    const val = getVal(item, ['Check', 'Validacion', 'Avance', 'Estatus', 'Comentario', 'comment']);
-    if (val === undefined || val === null || val === '') return 0;
-
-    const strVal = String(val).trim().toLowerCase();
-
-    const closedKeywords = ['cuenta cerrada', 'cerrada', 'cerrado', 'closed', 'offboarding', 'baja', 'inactiva', 'inactivo', 'n/a'];
-    if (closedKeywords.some(keyword => strVal.includes(keyword))) {
-        return -1; 
-    }
-
-    if (typeof val === 'boolean') return val ? 1 : 0;
-    
-    const num = parseFloat(strVal.replace(',', '.'));
-    if (!isNaN(num) && num > 0) return 1;
-
-    const positiveValues = ['completo', 'completado', 'si', 'sí', 'true', 'validado', 'ok', 'cumple', 'c', 'check', 'v'];
-    return positiveValues.includes(strVal) ? 1 : 0;
-}
-
-function processAndGroupData(filteredRawRows) {
-    if (!filteredRawRows || !filteredRawRows.length) return [];
-
-    const groups = {};
-
-    filteredRawRows.forEach(item => {
-        const status = getRowStatus(item);
-        if (status === -1) return;
-
-        const reg = getVal(item, ['Region', 'StrategicRegion']) || 'LATAM';
-        const sub = getVal(item, ['Subregion', 'SubRegion']) || 'Sin Subregión';
-        const country = getVal(item, ['Country', 'Pais', 'País']) || 'Sin País';
-        const client = getVal(item, ['Client', 'Cliente']) || 'Sin Cliente';
-
-        const key = `${sub}|${country}|${client}`;
-
-        if (!groups[key]) {
-            groups[key] = {
-                region: reg,
-                subregion: sub,
-                country: country,
-                client: client,
-                totalPuestos: 0,
-                validadas: 0
-            };
-        }
-
-        groups[key].totalPuestos += 1;
-        groups[key].validadas += status;
-    });
-
-    return Object.values(groups);
-}
-
-function setupTableInteractivity() {
-    const clientSearchInput = document.getElementById('search-client');
-    if (clientSearchInput) {
-        clientSearchInput.addEventListener('input', applyFilters);
-    }
-
-    document.querySelectorAll('th[data-sort]').forEach(th => {
-        th.style.cursor = 'pointer';
-        th.addEventListener('click', () => {
-            const col = th.getAttribute('data-sort');
-            if (sortConfig.column === col) {
-                sortConfig.direction = sortConfig.direction === 'asc' ? 'desc' : 'asc';
-            } else {
-                sortConfig.column = col;
-                sortConfig.direction = 'asc';
-            }
-            updateSortIcons(th);
-            renderTable();
-        });
-    });
-}
-
-function updateSortIcons(activeTh) {
-    document.querySelectorAll('th[data-sort]').forEach(th => {
-        th.classList.remove('text-primary');
-    });
-    activeTh.classList.add('text-primary');
-}
-
-function applyFilters() {
-    currentPage = 1; // Reiniciar a la página 1 al filtrar
-    const regFilter = document.getElementById('filter-region').value.toLowerCase();
-    const subFilter = document.getElementById('filter-subregion').value.toLowerCase();
-    const countryFilter = document.getElementById('filter-country').value.toLowerCase();
-    
-    const clientSearchInput = document.getElementById('search-client');
-    const clientSearch = clientSearchInput ? clientSearchInput.value.toLowerCase().trim() : '';
-
-    const filteredRaw = rawData.filter(item => {
-        const itemReg = String(getVal(item, ['Region', 'StrategicRegion'])).toLowerCase();
-        const itemSub = String(getVal(item, ['Subregion', 'SubRegion'])).toLowerCase();
-        const itemCountry = String(getVal(item, ['Country', 'Pais', 'País'])).toLowerCase();
-        const itemClient = String(getVal(item, ['Client', 'Cliente'])).toLowerCase();
-
-        const matchReg = (regFilter === 'all' || itemReg === regFilter);
-        const matchSub = (subFilter === 'all' || itemSub === subFilter);
-        const matchCountry = (countryFilter === 'all' || itemCountry === countryFilter);
-        const matchClient = (!clientSearch || itemClient.includes(clientSearch));
-
-        return matchReg && matchSub && matchCountry && matchClient;
-    });
-
-    currentGroupedData = processAndGroupData(filteredRaw);
-
-    renderTable();
-    updateDashboardMetrics(currentGroupedData);
-}
-
-function sortData(data) {
-    if (!sortConfig.column) return data;
-
-    return [...data].sort((a, b) => {
-        let valA, valB;
-
-        if (sortConfig.column === 'avance') {
-            valA = a.totalPuestos > 0 ? (a.validadas / a.totalPuestos) : 0;
-            valB = b.totalPuestos > 0 ? (b.validadas / b.totalPuestos) : 0;
-        } else {
-            valA = String(a[sortConfig.column] || '').toLowerCase();
-            valB = String(b[sortConfig.column] || '').toLowerCase();
-        }
-
-        if (valA < valB) return sortConfig.direction === 'asc' ? -1 : 1;
-        if (valA > valB) return sortConfig.direction === 'asc' ? 1 : -1;
-        return 0;
-    });
-}
-
-function renderTable() {
-    const tbody = document.getElementById('table-body');
-    let htmlBuffer = '';
-
-    const sortedData = sortData(currentGroupedData);
-
-    if (!sortedData || !sortedData.length) {
-        tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-muted">No se encontraron registros.</td></tr>`;
-        document.getElementById('count-display').innerText = 0;
-        renderPaginationControls(0);
-        return;
-    }
-
-    // Paginación: Cortar los 15 registros según la página actual
-    const startIndex = (currentPage - 1) * rowsPerPage;
-    const endIndex = startIndex + rowsPerPage;
-    const paginatedData = sortedData.slice(startIndex, endIndex);
-
-    paginatedData.forEach(item => {
-        const avanceNum = item.totalPuestos > 0 ? Math.round((item.validadas / item.totalPuestos) * 100) : 0;
-        const barColor = avanceNum === 100 ? 'bg-success' : avanceNum >= 50 ? 'bg-primary' : 'bg-warning';
-
-        htmlBuffer += `
-            <tr>
-                <td class="ps-3 fw-semibold">${item.subregion}</td>
-                <td>${item.country}</td>
-                <td>${item.client}</td>
-                <td class="text-center">${item.totalPuestos}</td>
-                <td>
-                    <div class="d-flex align-items-center">
-                        <span class="me-2 small fw-bold" style="width: 40px;">${avanceNum}%</span>
-                        <div class="progress flex-grow-1" style="height: 8px;">
-                            <div class="progress-bar ${barColor}" role="progressbar" style="width: ${avanceNum}%;"></div>
+        <!-- SECCIÓN SUPERIOR: FILTROS + GAUGE DE AVANCE GENERAL -->
+        <div class="row">
+            <!-- FILTROS -->
+            <div class="col-lg-8">
+                <div class="card card-custom p-3">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="filter-region" class="form-label fw-bold text-secondary small">REGIÓN</label>
+                            <select id="filter-region" class="form-select form-select-sm" onchange="onRegionChange()">
+                                <option value="All">Todas las Regiones</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="filter-country" class="form-label fw-bold text-secondary small">PAÍS</label>
+                            <select id="filter-country" class="form-select form-select-sm" onchange="applyFilters()">
+                                <option value="All">Todos los Países</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-bold text-secondary small d-block mb-1">SUBREGIÓN (Selección múltiple)</label>
+                            <div id="subregion-boxes-container" class="subregion-boxes-container">
+                                <!-- Generado dinámicamente -->
+                            </div>
                         </div>
                     </div>
-                </td>
-            </tr>
-        `;
-    });
+                </div>
+            </div>
 
-    tbody.innerHTML = htmlBuffer;
-    document.getElementById('count-display').innerText = sortedData.length;
-
-    renderPaginationControls(sortedData.length);
-}
-
-function renderPaginationControls(totalRows) {
-    const paginationContainer = document.getElementById('pagination-controls');
-    if (!paginationContainer) return;
-
-    const totalPages = Math.ceil(totalRows / rowsPerPage);
-
-    if (totalPages <= 1) {
-        paginationContainer.innerHTML = '';
-        return;
-    }
-
-    paginationContainer.innerHTML = `
-        <div class="d-flex justify-content-between align-items-center mt-3">
-            <span class="small text-muted">
-                Página ${currentPage} de ${totalPages}
-            </span>
-            <div class="btn-group btn-group-sm">
-                <button class="btn btn-outline-secondary" ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(-1)">Anterior</button>
-                <button class="btn btn-outline-secondary" ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage(1)">Siguiente</button>
+            <!-- GAUGE KPI -->
+            <div class="col-lg-4">
+                <div class="card card-custom p-3 text-center">
+                    <div class="fw-bold text-secondary small mb-1">AVANCE GENERAL</div>
+                    <div class="gauge-container">
+                        <canvas id="gaugeChart"></canvas>
+                        <div id="kpi-avance" class="gauge-kpi-text">0%</div>
+                    </div>
+                </div>
             </div>
         </div>
-    `;
-}
 
-function changePage(direction) {
-    currentPage += direction;
-    renderTable();
-}
+        <!-- NIVEL 1: SUBREGIÓN (TABLA Y GRÁFICO) -->
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="card card-custom">
+                    <div class="card-header-custom">Avance por Subregión</div>
+                    <div class="card-body p-0 scrollable-table">
+                        <table class="table table-custom align-middle">
+                            <thead>
+                                <tr>
+                                    <th class="ps-3">Subregión</th>
+                                    <th class="text-center">Total Puestos</th>
+                                    <th>Avance (%)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody-subregion"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card card-custom">
+                    <div class="card-header-custom">Gráfico por Subregión</div>
+                    <div class="card-body p-3" style="height: 310px;">
+                        <canvas id="subregionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-function updateCascadeDropdowns() {
-    const selectedRegion = document.getElementById('filter-region').value.toLowerCase();
-    const selectedSubregion = document.getElementById('filter-subregion').value.toLowerCase();
+        <!-- NIVEL 2: PAÍS (TABLA Y GRÁFICO) -->
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="card card-custom">
+                    <div class="card-header-custom">Avance por País</div>
+                    <div class="card-body p-0 scrollable-table">
+                        <table class="table table-custom align-middle">
+                            <thead>
+                                <tr>
+                                    <th class="ps-3">País</th>
+                                    <th class="text-center">Total Puestos</th>
+                                    <th>Avance (%)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody-country"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card card-custom">
+                    <div class="card-header-custom">Gráfico por País</div>
+                    <div class="card-body p-3" style="height: 310px;">
+                        <canvas id="countryChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    const regions = new Set();
-    const subregions = new Set();
-    const countries = new Set();
+        <!-- NIVEL 3: CLIENTE (DETALLE CON BUSCADOR Y PAGINACIÓN) -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card card-custom">
+                    <div class="card-header-custom d-flex justify-content-between align-items-center">
+                        <span>Detalle de Posiciones por Cliente (<span id="count-display">0</span>)</span>
+                        <div style="width: 250px;">
+                            <input type="text" id="search-client" class="form-control form-control-sm" placeholder="Buscar cliente...">
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-custom align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th data-sort="subregion" class="ps-3">Subregión ↕</th>
+                                        <th data-sort="country">País ↕</th>
+                                        <th data-sort="client">Cliente ↕</th>
+                                        <th data-sort="totalPuestos" class="text-center">Total Puestos ↕</th>
+                                        <th data-sort="avance">Avance (%) ↕</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbody-client"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-white border-0 py-2">
+                        <div id="pagination-controls"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    rawData.forEach(item => {
-        const reg = String(getVal(item, ['Region', 'StrategicRegion'])).trim();
-        const sub = String(getVal(item, ['Subregion', 'SubRegion'])).trim();
-        const country = String(getVal(item, ['Country', 'Pais', 'País'])).trim();
+    </div>
 
-        if (reg) regions.add(reg);
+    <!-- LOGICA JAVASCRIPT -->
+    <script>
+        Chart.register(ChartDataLabels);
+       const SPREADSHEET_ID = '1ZLnchNd79ZTGCqAYN5vxwwFvmo7qNovbiO1sePOlmOo'; 
+const SHEET_NAME = encodeURIComponent('Base Consolidada');
+const API_KEY = 'AIzaSyB-WjtRpfMeRq0Hz3FOX5oMuHwi7v9m-Yo'; 
 
-        const matchRegion = (selectedRegion === 'all' || reg.toLowerCase() === selectedRegion);
-        if (matchRegion && sub) subregions.add(sub);
+const API_URL = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${SHEET_NAME}?key=${API_KEY}`;
 
-        const matchSub = (selectedSubregion === 'all' || sub.toLowerCase() === selectedSubregion);
-        if (matchRegion && matchSub && country) countries.add(country);
-    });
+        let rawData = [];
+        let currentGroupedData = [];
+        let sortConfig = { column: null, direction: 'asc' };
 
-    populateSelect('filter-region', Array.from(regions).sort(), 'Todas las Regiones');
-    populateSelect('filter-subregion', Array.from(subregions).sort(), 'Todas las Subregiones');
-    populateSelect('filter-country', Array.from(countries).sort(), 'Todos los Países');
-}
+        // Paginación Tabla Clientes
+        let currentPage = 1;
+        const rowsPerPage = 15;
 
-function populateSelect(elementId, optionsArray, defaultText) {
-    const select = document.getElementById(elementId);
-    const currentValue = select.value;
-    
-    let html = `<option value="All">${defaultText}</option>`;
-    optionsArray.forEach(opt => {
-        html += `<option value="${opt}">${opt}</option>`;
-    });
-    select.innerHTML = html;
+        // Gráficos
+        let gaugeChart, subregionChart, countryChart;
 
-    if (optionsArray.includes(currentValue)) {
-        select.value = currentValue;
-    } else {
-        select.value = 'All';
-    }
-}
+        document.addEventListener('DOMContentLoaded', () => {
+            initCharts();
+            loadDataFromSheet();
+            setupTableInteractivity();
+        });
 
-function onRegionChange() {
-    document.getElementById('filter-subregion').value = 'All';
-    document.getElementById('filter-country').value = 'All';
-    updateCascadeDropdowns();
-    applyFilters();
-}
-
-function onSubregionChange() {
-    document.getElementById('filter-country').value = 'All';
-    updateCascadeDropdowns();
-    applyFilters();
-}
-
-function resetFilters() {
-    document.getElementById('filter-region').value = 'All';
-    document.getElementById('filter-subregion').value = 'All';
-    document.getElementById('filter-country').value = 'All';
-    const clientSearchInput = document.getElementById('search-client');
-    if (clientSearchInput) clientSearchInput.value = '';
-    
-    sortConfig = { column: null, direction: 'asc' };
-    currentPage = 1;
-    updateCascadeDropdowns();
-    applyFilters();
-}
-
-function updateDashboardMetrics(groupedData) {
-    if (!groupedData || !groupedData.length) {
-        document.getElementById('kpi-avance').innerText = '0%';
-        if (gaugeChart) {
-            gaugeChart.data.datasets[0].data = [0, 100];
-            gaugeChart.update();
+        async function loadDataFromSheet() {
+    try {
+        const response = await fetch(API_URL);
+        const result = await response.json();
+        
+        if (!result.values || result.values.length === 0) {
+            console.warn('No se encontraron datos en la hoja.');
+            return;
         }
-        return;
-    }
 
-    let totalPuestos = 0;
-    let totalValidadas = 0;
+        // Toma la primera fila como encabezados de columna
+        const headers = result.values[0];
+        const rows = result.values.slice(1);
 
-    groupedData.forEach(item => {
-        totalPuestos += item.totalPuestos;
-        totalValidadas += item.validadas;
-    });
+        // Convierte las filas en objetos JSON compatibles con tus filtros existentes
+        rawData = rows.map(row => {
+            let obj = {};
+            headers.forEach((header, index) => {
+                obj[header] = row[index] !== undefined ? row[index] : '';
+            });
+            return obj;
+        });
 
-    const avgAvance = totalPuestos > 0 ? Math.round((totalValidadas / totalPuestos) * 100) : 0;
-    document.getElementById('kpi-avance').innerText = `${avgAvance}%`;
-    
-    if (gaugeChart) {
-        gaugeChart.data.datasets[0].data = [avgAvance, Math.max(0, 100 - avgAvance)];
-        gaugeChart.update();
-    }
+        // Ejecuta tus funciones de renderizado actuales
+        updateCascadeDropdowns();
+        applyFilters();
 
-    const subTotals = {};
-    const subValidadas = {};
-
-    groupedData.forEach(item => {
-        const sub = item.subregion;
-        subTotals[sub] = (subTotals[sub] || 0) + item.totalPuestos;
-        subValidadas[sub] = (subValidadas[sub] || 0) + item.validadas;
-    });
-
-    const subList = Object.keys(subTotals).map(s => ({
-        subregion: s,
-        avg: subTotals[s] > 0 ? Math.round((subValidadas[s] / subTotals[s]) * 100) : 0
-    }));
-
-    subList.sort((a, b) => b.avg - a.avg);
-
-    if (subregionChart) {
-        subregionChart.data.labels = subList.map(item => item.subregion);
-        subregionChart.data.datasets[0].data = subList.map(item => item.avg);
-        subregionChart.update();
-    }
-
-    const countryTotals = {};
-    const countryValidadas = {};
-
-    groupedData.forEach(item => {
-        const c = item.country;
-        countryTotals[c] = (countryTotals[c] || 0) + item.totalPuestos;
-        countryValidadas[c] = (countryValidadas[c] || 0) + item.validadas;
-    });
-
-    const countryAvgList = Object.keys(countryTotals).map(c => ({
-        country: c,
-        avg: countryTotals[c] > 0 ? Math.round((countryValidadas[c] / countryTotals[c]) * 100) : 0
-    }));
-
-    countryAvgList.sort((a, b) => a.avg - b.avg);
-    const lowest5 = countryAvgList.slice(0, 5);
-
-    if (lowestAvanceChart) {
-        lowestAvanceChart.data.labels = lowest5.map(c => c.country);
-        lowestAvanceChart.data.datasets[0].data = lowest5.map(c => c.avg);
-        lowestAvanceChart.update();
+    } catch (error) {
+        console.error('Error cargando los datos desde Google Sheets API:', error);
     }
 }
 
-function initCharts() {
-    const ctxGauge = document.getElementById('gaugeChart').getContext('2d');
-    gaugeChart = new Chart(ctxGauge, {
-        type: 'doughnut',
-        data: {
-            datasets: [{
-                data: [0, 100],
-                backgroundColor: ['#311C54', '#E2E8F0'],
-                borderWidth: 0
-            }]
+        function getVal(item, possibleKeys) {
+            if (!item) return '';
+            const itemKeys = Object.keys(item);
+            
+            for (let k of possibleKeys) {
+                const cleanK = k.trim().toLowerCase();
+                const foundKey = itemKeys.find(ik => ik.trim().toLowerCase() === cleanK);
+                if (foundKey && item[foundKey] !== undefined && item[foundKey] !== null && item[foundKey] !== '') {
+                    return item[foundKey];
+                }
+            }
+            return '';
+        }
+
+        function getRowStatus(item) {
+            const val = getVal(item, ['Check', 'Validacion', 'Avance', 'Estatus', 'Comentario', 'comment']);
+            if (val === undefined || val === null || val === '') return 0;
+
+            const strVal = String(val).trim().toLowerCase();
+
+            const closedKeywords = ['cuenta cerrada', 'cerrada', 'cerrado', 'closed', 'offboarding', 'baja', 'inactiva', 'inactivo', 'n/a'];
+            if (closedKeywords.some(keyword => strVal.includes(keyword))) {
+                return -1; 
+            }
+
+            if (typeof val === 'boolean') return val ? 1 : 0;
+            
+            const num = parseFloat(strVal.replace(',', '.'));
+            if (!isNaN(num) && num > 0) return 1;
+
+            const positiveValues = ['completo', 'completado', 'si', 'sí', 'true', 'validado', 'ok', 'cumple', 'c', 'check', 'v'];
+            return positiveValues.includes(strVal) ? 1 : 0;
+        }
+
+        function processAndGroupData(filteredRawRows) {
+            if (!filteredRawRows || !filteredRawRows.length) return [];
+
+            const groups = {};
+
+            filteredRawRows.forEach(item => {
+                const status = getRowStatus(item);
+                if (status === -1) return;
+
+                const reg = getVal(item, ['Region', 'StrategicRegion']) || 'LATAM';
+                const sub = getVal(item, ['Subregion', 'SubRegion']) || 'Sin Subregión';
+                const country = getVal(item, ['Country', 'Pais', 'País']) || 'Sin País';
+                const client = getVal(item, ['Client', 'Cliente']) || 'Sin Cliente';
+
+                const key = `${sub}|${country}|${client}`;
+
+                if (!groups[key]) {
+                    groups[key] = {
+                        region: reg,
+                        subregion: sub,
+                        country: country,
+                        client: client,
+                        totalPuestos: 0,
+                        validadas: 0
+                    };
+                }
+
+                groups[key].totalPuestos += 1;
+                groups[key].validadas += status;
+            });
+
+            return Object.values(groups);
+        }
+
+        function updateCascadeDropdowns() {
+            const selectedRegion = document.getElementById('filter-region').value.toLowerCase();
+
+            const regions = new Set();
+            const subregions = new Set();
+            const countries = new Set();
+
+            rawData.forEach(item => {
+                const reg = String(getVal(item, ['Region', 'StrategicRegion'])).trim();
+                const sub = String(getVal(item, ['Subregion', 'SubRegion'])).trim();
+                const country = String(getVal(item, ['Country', 'Pais', 'País'])).trim();
+
+                if (reg) regions.add(reg);
+
+                const matchRegion = (selectedRegion === 'all' || reg.toLowerCase() === selectedRegion);
+                if (matchRegion && sub) subregions.add(sub);
+                if (matchRegion && country) countries.add(country);
+            });
+
+            populateSelect('filter-region', Array.from(regions).sort(), 'Todas las Regiones');
+            populateSelect('filter-country', Array.from(countries).sort(), 'Todos los Países');
+            renderSubregionBoxes(Array.from(subregions).sort());
+        }
+
+        function populateSelect(elementId, optionsArray, defaultText) {
+            const select = document.getElementById(elementId);
+            const currentValue = select.value;
+            
+            let html = `<option value="All">${defaultText}</option>`;
+            optionsArray.forEach(opt => {
+                html += `<option value="${opt}">${opt}</option>`;
+            });
+            select.innerHTML = html;
+
+            if (optionsArray.includes(currentValue)) {
+                select.value = currentValue;
+            } else {
+                select.value = 'All';
+            }
+        }
+
+        function renderSubregionBoxes(subregionList) {
+            const container = document.getElementById('subregion-boxes-container');
+            let html = '';
+
+            subregionList.forEach((sub, index) => {
+                const id = `chk-sub-${index}`;
+                html += `
+                    <div class="subregion-box">
+                        <input type="checkbox" id="${id}" value="${sub}" onchange="applyFilters()">
+                        <label for="${id}">${sub}</label>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html || '<span class="text-muted small">No hay subregiones</span>';
+        }
+
+        function getSelectedSubregions() {
+            const checkboxes = document.querySelectorAll('#subregion-boxes-container input[type="checkbox"]:checked');
+            return Array.from(checkboxes).map(cb => cb.value.toLowerCase());
+        }
+
+        function onRegionChange() {
+            document.getElementById('filter-country').value = 'All';
+            updateCascadeDropdowns();
+            applyFilters();
+        }
+
+        function applyFilters() {
+            currentPage = 1;
+            const regFilter = document.getElementById('filter-region').value.toLowerCase();
+            const countryFilter = document.getElementById('filter-country').value.toLowerCase();
+            const selectedSubregions = getSelectedSubregions();
+            
+            const clientSearchInput = document.getElementById('search-client');
+            const clientSearch = clientSearchInput ? clientSearchInput.value.toLowerCase().trim() : '';
+
+            const filteredRaw = rawData.filter(item => {
+                const itemReg = String(getVal(item, ['Region', 'StrategicRegion'])).toLowerCase();
+                const itemSub = String(getVal(item, ['Subregion', 'SubRegion'])).toLowerCase();
+                const itemCountry = String(getVal(item, ['Country', 'Pais', 'País'])).toLowerCase();
+                const itemClient = String(getVal(item, ['Client', 'Cliente'])).toLowerCase();
+
+                const matchReg = (regFilter === 'all' || itemReg === regFilter);
+                const matchCountry = (countryFilter === 'all' || itemCountry === countryFilter);
+                const matchSub = (selectedSubregions.length === 0 || selectedSubregions.includes(itemSub));
+                const matchClient = (!clientSearch || itemClient.includes(clientSearch));
+
+                return matchReg && matchCountry && matchSub && matchClient;
+            });
+
+            currentGroupedData = processAndGroupData(filteredRaw);
+
+            renderAllTables();
+            updateDashboardMetrics(currentGroupedData);
+        }
+
+        function renderAllTables() {
+            renderSubregionTable();
+            renderCountryTable();
+            renderClientTable();
+        }
+
+        function renderSubregionTable() {
+            const tbody = document.getElementById('tbody-subregion');
+            const subTotals = {}, subValidadas = {};
+
+            currentGroupedData.forEach(item => {
+                const sub = item.subregion;
+                subTotals[sub] = (subTotals[sub] || 0) + item.totalPuestos;
+                subValidadas[sub] = (subValidadas[sub] || 0) + item.validadas;
+            });
+
+            const subList = Object.keys(subTotals).map(s => ({
+                subregion: s,
+                total: subTotals[s],
+                avg: subTotals[s] > 0 ? Math.round((subValidadas[s] / subTotals[s]) * 100) : 0
+            })).sort((a, b) => b.avg - a.avg);
+
+            let html = '';
+            subList.forEach(item => {
+                const barColor = item.avg === 100 ? 'bg-success' : item.avg >= 50 ? 'bg-primary' : 'bg-warning';
+                html += `
+                    <tr>
+                        <td class="ps-3 fw-semibold">${item.subregion}</td>
+                        <td class="text-center">${item.total}</td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <span class="me-2 small fw-bold" style="width: 35px;">${item.avg}%</span>
+                                <div class="progress flex-grow-1" style="height: 6px;">
+                                    <div class="progress-bar ${barColor}" style="width: ${item.avg}%;"></div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html || '<tr><td colspan="3" class="text-center py-3 text-muted">Sin datos</td></tr>';
+
+            // Actualizar Gráfico Subregión
+            if (subregionChart) {
+                subregionChart.data.labels = subList.map(i => i.subregion);
+                subregionChart.data.datasets[0].data = subList.map(i => i.avg);
+                subregionChart.update();
+            }
+        }
+
+        function renderCountryTable() {
+            const tbody = document.getElementById('tbody-country');
+            const countryTotals = {}, countryValidadas = {};
+
+            currentGroupedData.forEach(item => {
+                const c = item.country;
+                countryTotals[c] = (countryTotals[c] || 0) + item.totalPuestos;
+                countryValidadas[c] = (countryValidadas[c] || 0) + item.validadas;
+            });
+
+            const countryList = Object.keys(countryTotals).map(c => ({
+                country: c,
+                total: countryTotals[c],
+                avg: countryTotals[c] > 0 ? Math.round((countryValidadas[c] / countryTotals[c]) * 100) : 0
+            })).sort((a, b) => b.avg - a.avg);
+
+            let html = '';
+            countryList.forEach(item => {
+                const barColor = item.avg === 100 ? 'bg-success' : item.avg >= 50 ? 'bg-primary' : 'bg-warning';
+                html += `
+                    <tr>
+                        <td class="ps-3 fw-semibold">${item.country}</td>
+                        <td class="text-center">${item.total}</td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <span class="me-2 small fw-bold" style="width: 35px;">${item.avg}%</span>
+                                <div class="progress flex-grow-1" style="height: 6px;">
+                                    <div class="progress-bar ${barColor}" style="width: ${item.avg}%;"></div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html || '<tr><td colspan="3" class="text-center py-3 text-muted">Sin datos</td></tr>';
+
+            // Actualizar Gráfico País
+            if (countryChart) {
+                countryChart.data.labels = countryList.map(i => i.country);
+                countryChart.data.datasets[0].data = countryList.map(i => i.avg);
+                countryChart.update();
+            }
+        }
+
+        function renderClientTable() {
+            const tbody = document.getElementById('tbody-client');
+            const sortedData = sortData(currentGroupedData);
+
+            if (!sortedData || !sortedData.length) {
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-muted">No se encontraron registros.</td></tr>`;
+                document.getElementById('count-display').innerText = 0;
+                renderPaginationControls(0);
+                return;
+            }
+
+            const startIndex = (currentPage - 1) * rowsPerPage;
+            const endIndex = startIndex + rowsPerPage;
+            const paginatedData = sortedData.slice(startIndex, endIndex);
+
+            let html = '';
+            paginatedData.forEach(item => {
+                const avanceNum = item.totalPuestos > 0 ? Math.round((item.validadas / item.totalPuestos) * 100) : 0;
+                const barColor = avanceNum === 100 ? 'bg-success' : avanceNum >= 50 ? 'bg-primary' : 'bg-warning';
+
+                html += `
+                    <tr>
+                        <td class="ps-3 fw-semibold">${item.subregion}</td>
+                        <td>${item.country}</td>
+                        <td>${item.client}</td>
+                        <td class="text-center">${item.totalPuestos}</td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <span class="me-2 small fw-bold" style="width: 40px;">${avanceNum}%</span>
+                                <div class="progress flex-grow-1" style="height: 8px;">
+                                    <div class="progress-bar ${barColor}" style="width: ${avanceNum}%;"></div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html;
+            document.getElementById('count-display').innerText = sortedData.length;
+            renderPaginationControls(sortedData.length);
+        }
+
+        function sortData(data) {
+            if (!sortConfig.column) return data;
+
+            return [...data].sort((a, b) => {
+                let valA, valB;
+
+                if (sortConfig.column === 'avance') {
+                    valA = a.totalPuestos > 0 ? (a.validadas / a.totalPuestos) : 0;
+                    valB = b.totalPuestos > 0 ? (b.validadas / b.totalPuestos) : 0;
+                } else {
+                    valA = String(a[sortConfig.column] || '').toLowerCase();
+                    valB = String(b[sortConfig.column] || '').toLowerCase();
+                }
+
+                if (valA < valB) return sortConfig.direction === 'asc' ? -1 : 1;
+                if (valA > valB) return sortConfig.direction === 'asc' ? 1 : -1;
+                return 0;
+            });
+        }
+
+        function setupTableInteractivity() {
+            const clientSearchInput = document.getElementById('search-client');
+            if (clientSearchInput) {
+                clientSearchInput.addEventListener('input', applyFilters);
+            }
+
+            document.querySelectorAll('th[data-sort]').forEach(th => {
+                th.style.cursor = 'pointer';
+                th.addEventListener('click', () => {
+                    const col = th.getAttribute('data-sort');
+                    if (sortConfig.column === col) {
+                        sortConfig.direction = sortConfig.direction === 'asc' ? 'desc' : 'asc';
+                    } else {
+                        sortConfig.column = col;
+                        sortConfig.direction = 'asc';
+                    }
+                    renderClientTable();
+                });
+            });
+        }
+
+        function renderPaginationControls(totalRows) {
+            const paginationContainer = document.getElementById('pagination-controls');
+            if (!paginationContainer) return;
+
+            const totalPages = Math.ceil(totalRows / rowsPerPage);
+
+            if (totalPages <= 1) {
+                paginationContainer.innerHTML = '';
+                return;
+            }
+
+            paginationContainer.innerHTML = `
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="small text-muted">Página ${currentPage} de ${totalPages}</span>
+                    <div class="btn-group btn-group-sm">
+                        <button class="btn btn-outline-secondary" ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(-1)">Anterior</button>
+                        <button class="btn btn-outline-secondary" ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage(1)">Siguiente</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function changePage(direction) {
+            currentPage += direction;
+            renderClientTable();
+        }
+
+        function resetFilters() {
+            document.getElementById('filter-region').value = 'All';
+            document.getElementById('filter-country').value = 'All';
+            const clientSearchInput = document.getElementById('search-client');
+            if (clientSearchInput) clientSearchInput.value = '';
+            
+            document.querySelectorAll('#subregion-boxes-container input[type="checkbox"]').forEach(cb => cb.checked = false);
+
+            sortConfig = { column: null, direction: 'asc' };
+            currentPage = 1;
+            updateCascadeDropdowns();
+            applyFilters();
+        }
+
+        function updateDashboardMetrics(groupedData) {
+            if (!groupedData || !groupedData.length) {
+                document.getElementById('kpi-avance').innerText = '0%';
+                if (gaugeChart) {
+                    gaugeChart.data.datasets[0].data = [0, 100];
+                    gaugeChart.update();
+                }
+                return;
+            }
+
+            let totalPuestos = 0, totalValidadas = 0;
+
+            groupedData.forEach(item => {
+                totalPuestos += item.totalPuestos;
+                totalValidadas += item.validadas;
+            });
+
+            const avgAvance = totalPuestos > 0 ? Math.round((totalValidadas / totalPuestos) * 100) : 0;
+            document.getElementById('kpi-avance').innerText = `${avgAvance}%`;
+            
+            if (gaugeChart) {
+                gaugeChart.data.datasets[0].data = [avgAvance, Math.max(0, 100 - avgAvance)];
+                gaugeChart.update();
+            }
+        }
+
+        function initCharts() {
+            // Gauge Avance General
+            const ctxGauge = document.getElementById('gaugeChart').getContext('2d');
+            gaugeChart = new Chart(ctxGauge, {
+                type: 'doughnut',
+                data: {
+                    datasets: [{
+                        data: [0, 100],
+                        backgroundColor: ['#311C54', '#E2E8F0'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    rotation: -90,
+                    circumference: 180,
+                    cutout: '75%',
+                    plugins: { tooltip: { enabled: false },
+                datalabels: { display: false } }
+                }
+            });
+
+            // Chart Subregión
+const ctxSub = document.getElementById('subregionChart').getContext('2d');
+subregionChart = new Chart(ctxSub, {
+    type: 'bar',
+    data: {
+        labels: [],
+        datasets: [{
+            label: '% de Avance',
+            data: [],
+            backgroundColor: '#311C54',
+            borderRadius: 4
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { 
+            legend: { display: false },
+            datalabels: {
+                anchor: 'end',
+                align: 'top',
+                color: '#311C54',
+                font: { weight: 'bold', size: 12 },
+                formatter: (value) => value + '%'
+            }
         },
-        options: {
-            rotation: -90,
-            circumference: 180,
-            cutout: '75%',
-            plugins: { tooltip: { enabled: false } }
+        scales: { 
+            y: { 
+                max: 115, // Espacio extra arriba para que el texto no se corte
+                ticks: { callback: v => v + '%' } 
+            } 
         }
-    });
+    }
+});
 
-    const ctxSub = document.getElementById('subregionChart').getContext('2d');
-    subregionChart = new Chart(ctxSub, {
-        type: 'bar',
-        data: {
-            labels: [],
-            datasets: [{
-                label: '% de Avance',
-                data: [],
-                backgroundColor: '#311C54',
-                borderRadius: 4
-            }]
+// Chart País
+const ctxCountry = document.getElementById('countryChart').getContext('2d');
+countryChart = new Chart(ctxCountry, {
+    type: 'bar',
+    data: {
+        labels: [],
+        datasets: [{
+            label: '% de Avance',
+            data: [],
+            backgroundColor: '#4A2E7B',
+            borderRadius: 4
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { 
+            legend: { display: false },
+            datalabels: {
+                anchor: 'end',
+                align: 'top',
+                color: '#4A2E7B',
+                font: { weight: 'bold', size: 12 },
+                formatter: (value) => value + '%'
+            }
         },
-        options: {
-            responsive: true,
-            plugins: { legend: { display: false } },
-            scales: { y: { max: 100, ticks: { callback: v => v + '%' } } }
+        scales: { 
+            y: { 
+                max: 115, 
+                ticks: { callback: v => v + '%' } 
+            } 
         }
-    });
-
-    const ctxLow = document.getElementById('lowestAvanceChart').getContext('2d');
-    lowestAvanceChart = new Chart(ctxLow, {
-        type: 'bar',
-        data: {
-            labels: [],
-            datasets: [{
-                label: '% de Avance',
-                data: [],
-                backgroundColor: '#FFA500',
-                borderRadius: 4
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: { legend: { display: false } },
-            scales: { y: { max: 100, ticks: { callback: v => v + '%' } } }
+    }
+});
         }
-    });
-}
-</script>
+    </script>
 </body>
 </html>

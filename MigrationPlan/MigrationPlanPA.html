@@ -8,7 +8,10 @@
     <!-- Se agrega el script de Bootstrap para permitir los componentes desplegables y modales (Collapse/Modal) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Plugin de DataLabels -->
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+    <!-- Adaptador de fecha para Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
@@ -163,6 +166,23 @@
             background-color: var(--brand-accent);
             color: white;
         }
+        
+        /* Botón general (Details modal) */
+        .btn-view-general {
+            background-color: var(--brand-secondary);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 20px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            transition: 0.2s;
+            white-space: nowrap; 
+            margin-top: 15px;
+        }
+        .btn-view-general:hover {
+            background-color: var(--brand-primary);
+        }
 
         /* Botón de Idioma en el Header */
         .lang-toggle-btn {
@@ -269,6 +289,48 @@
         /* Clases para el control de idioma */
         .lang-en { display: none; }
         .lang-es { display: inline; }
+
+        /* Paginación Carrusel */
+        .pagination-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            padding: 10px 0;
+            background-color: #f8f9fa;
+        }
+        .btn-page {
+            background-color: white;
+            border: 1px solid var(--brand-highlight);
+            color: var(--brand-primary);
+            border-radius: 5px;
+            padding: 5px 12px;
+            transition: all 0.2s;
+        }
+        .btn-page:hover:not(:disabled) {
+            background-color: var(--brand-highlight);
+            color: white;
+        }
+        .btn-page:disabled {
+            border-color: #ccc;
+            color: #ccc;
+            cursor: not-allowed;
+        }
+        #page-indicator {
+            font-weight: bold;
+            color: var(--brand-primary);
+        }
+        
+        /* Contenedor del Gantt */
+        .gantt-container {
+            height: 600px; /* Incrementado para 20 registros */
+            width: 100%;
+        }
+        
+        /* Modal general de todos los productos */
+        .modal-xl {
+            max-width: 95%;
+        }
     </style>
 </head>
 <body>
@@ -289,7 +351,7 @@
         <div class="container">
             <h1 class="display-4 fw-bold mb-3 lang-es">Plan de Migración Estratégica:<br>Ecosistema Google Workspace & GCP</h1>
             <h1 class="display-4 fw-bold mb-3 lang-en">Strategic Migration Plan:<br>Google Workspace & GCP Ecosystem</h1>
-            
+            <p></p>
             <p class="lead mb-4 lang-es">Evaluación de impactos operativos, requerimientos de licenciamiento y análisis de riesgos (SQL / DLP).</p>
             <p class="lead mb-4 lang-en">Assessment of operational impacts, licensing requirements, and risk analysis (SQL / DLP).</p>
         </div>
@@ -431,8 +493,8 @@
                     <!-- Cabecera y Controles -->
                     <div class="card-header bg-white d-flex flex-column flex-md-row justify-content-between align-items-md-center p-4">
                         <div class="d-flex align-items-center mb-3 mb-md-0">
-                            <h4 class="fw-bold text-brand-primary mb-0 me-3 lang-es"><i class="fas fa-list-ul me-2"></i> Desglose de Portafolio (Alta Prioridad)</h4>
-                            <h4 class="fw-bold text-brand-primary mb-0 me-3 lang-en"><i class="fas fa-list-ul me-2"></i> Portfolio Breakdown (High Priority)</h4>
+                            <h4 class="fw-bold text-brand-primary mb-0 me-3 lang-es"><i class="fas fa-list-ul me-2"></i> Desglose de Portafolio</h4>
+                            <h4 class="fw-bold text-brand-primary mb-0 me-3 lang-en"><i class="fas fa-list-ul me-2"></i> Portfolio Breakdown</h4>
                             <!-- Botón para desplegar/contraer -->
                             <button class="btn-toggle-table" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTableDetails" aria-expanded="true" aria-controls="collapseTableDetails">
                                 <i class="fas fa-chevron-down me-1"></i> <span class="lang-es">Mostrar / Ocultar</span><span class="lang-en">Show / Hide</span>
@@ -484,6 +546,14 @@
                                     </tbody>
                                 </table>
                             </div>
+                            
+                            <!-- Paginación / Carrusel -->
+                            <div class="pagination-controls border-top">
+                                <button class="btn-page" id="btn-prev" onclick="prevPage()"><i class="fas fa-chevron-left"></i> <span class="lang-es">Anterior</span><span class="lang-en" style="display:none;">Previous</span></button>
+                                <span id="page-indicator">Página 1 / 1</span>
+                                <button class="btn-page" id="btn-next" onclick="nextPage()"><span class="lang-es">Siguiente</span><span class="lang-en" style="display:none;">Next</span> <i class="fas fa-chevron-right"></i></button>
+                            </div>
+
                             <div class="p-3 text-center text-muted small bg-light rounded-bottom" id="table-footer-info">
                                 <span class="lang-es">Mostrando</span><span class="lang-en">Showing</span> 
                                 <span id="count-display" class="fw-bold">0</span> 
@@ -491,7 +561,12 @@
                             </div>
                         </div>
                     </div>
-
+                </div>
+                <!-- Botón para ver TODOS los productos en un Modal -->
+                <div class="text-center">
+                    <button class="btn-view-general shadow-sm" onclick="openAllProductsModal()">
+                        <i class="fas fa-th-list me-2"></i> <span class="lang-es">Ver Todos los Detalles de Productos</span><span class="lang-en" style="display:none;">View All Product Details</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -572,7 +647,27 @@
             </div>
         </div>
 
-        <!-- Tabla de Requerimientos vs Carencias -->
+        <!-- Nueva Sección: Cronograma Gantt de Migración -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="card shadow-sm border-0" style="border-top: 4px solid var(--brand-highlight) !important;">
+                    <div class="card-header bg-white p-4">
+                        <h4 class="fw-bold text-brand-primary mb-0 lang-es"><i class="fas fa-tasks me-2"></i> Cronograma de Migración (Gantt)</h4>
+                        <h4 class="fw-bold text-brand-primary mb-0 lang-en" style="display:none;"><i class="fas fa-tasks me-2"></i> Migration Schedule (Gantt)</h4>
+                    </div>
+                    <div class="card-body p-4">
+                        <p class="text-muted small mb-4 lang-es">Visualización de las fechas tentativas de inicio y fin para los desarrollos en proceso de migración hacia Google Workspace.</p>
+                        <p class="text-muted small mb-4 lang-en" style="display:none;">Visualization of tentative start and end dates for developments migrating to Google Workspace.</p>
+                        
+                        <div class="gantt-container">
+                            <canvas id="ganttChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla de Requerimientos vs Carencias
         <div class="row mb-5">
             <div class="col-12">
                 <h3 class="fw-bold border-bottom pb-2 mb-4 text-brand-primary lang-es">Matriz de Carencias Nivel Business vs Requerimiento Enterprise</h3>
@@ -629,23 +724,21 @@
                     </table>
                 </div>
             </div>
-        </div>
+        </div> -->
         
-        <!-- Solución Estratégica: GCP -->
+        <!-- Solución Estratégica: GCP 
         <div class="row mb-5">
             <div class="col-12">
                 <div class="card shadow-sm border-0" style="border-left: 5px solid var(--brand-secondary) !important;">
                     <div class="card-body p-4">
                         <h4 class="fw-bold text-brand-secondary mb-3 lang-es"><i class="fas fa-cloud me-2"></i> Solución Estratégica: Habilitación de Cuenta Organizacional en Google Cloud</h4>
                         <h4 class="fw-bold text-brand-secondary mb-3 lang-en" style="display:none;"><i class="fas fa-cloud me-2"></i> Strategic Solution: Enablement of Organizational Account in Google Cloud</h4>
-                        <br>
+                        
                         <p class="lang-es">Para mitigar el riesgo de usar "proyectos personales" aislados y resolver el bloqueo crítico de conexión a nuestras bases de datos SQL, la solución técnica requerida es la habilitación del nodo de <strong>Organización en Google Cloud Platform (GCP)</strong>.</p>
                         <p class="lang-en" style="display:none;">To mitigate the risk of using isolated "personal projects" and resolve the critical block of connecting to our SQL databases, the required technical solution is the enablement of the <strong>Organization node in Google Cloud Platform (GCP)</strong>.</p>
-                        <br>
-                        <br>
+                        
                         <h5 class="fw-bold text-brand-primary mt-4 lang-es">Estimación de Costos:</h5>
                         <h5 class="fw-bold text-brand-primary mt-4 lang-en" style="display:none;">Cost Estimation:</h5>
-                        <br>
                         <ul class="text-muted lang-es">
                             <li>La creación de la jerarquía de la Organización y la facturación centralizada en GCP <strong>no tiene ningún costo base</strong>; el modelo de Google Cloud es estrictamente <em>pay-as-you-go</em> (pago por uso) sobre los recursos que se consuman (como capacidad de procesamiento en Cloud Run).</li>
                             <li>Adicionalmente, Google Cloud ofrece un <strong>Free Tier</strong> (Capa Gratuita) que incluye el uso gratuito mensual de más de 20 productos y un crédito inicial de $300 USD (válido por 90 días). Esto nos permitirá absorber los costos de la fase de pruebas y configuración arquitectónica inicial sin impacto presupuestal.</li>
@@ -656,10 +749,9 @@
                             <li>Additionally, Google Cloud offers a <strong>Free Tier</strong> that includes free monthly use of over 20 products and an initial credit of $300 USD (valid for 90 days). This will allow us to absorb the costs of the testing phase and initial architectural configuration without budgetary impact.</li>
                             <li>Therefore, the only fixed investment required to enable this secure architecture are the <em>Enterprise</em> licenses for the 5 members of the development team, as previously requested.</li>
                         </ul>
-                        <br>
+                        
                         <h5 class="fw-bold text-brand-primary mt-4 lang-es">¿Cómo nos ayuda esto a garantizar la migración?</h5>
                         <h5 class="fw-bold text-brand-primary mt-4 lang-en" style="display:none;">How does this help us guarantee the migration?</h5>
-                        <br>
                         <ol class="text-muted mb-0 lang-es">
                             <li><strong>Desbloqueo de Conectividad (El Stopper):</strong> Nos permite crear una Red Privada Virtual (VPC) corporativa en la nube para establecer túneles seguros y directos hacia nuestros servidores SQL On-Premise.</li>
                             <li><strong>Seguridad y Gobernanza (IAM & DLP):</strong> Podremos aplicar políticas de prevención de pérdida de datos y gestionar los accesos a los más de 300 flujos y bots desde un único panel de control directivo.</li>
@@ -673,11 +765,11 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div>-->
 
     </div>
 
-    <!-- Modal para el detalle del Riesgo -->
+    <!-- Modal para el detalle del Riesgo (Individual) -->
     <div class="modal fade" id="riskDetailModal" tabindex="-1" aria-labelledby="riskDetailModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content border-0" style="border-top: 5px solid var(--brand-accent) !important;">
@@ -699,6 +791,54 @@
                     <h6 class="fw-bold text-brand-secondary mt-4 lang-en" style="display:none;">Impact Description (Risk Detail):</h6>
                     <div class="p-3 bg-light rounded text-muted" id="modalAppRiskDetail" style="font-size: 0.95rem; border-left: 3px solid var(--brand-accent);">
                         <!-- El detalle se inyecta aquí -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <span class="lang-es">Cerrar</span><span class="lang-en" style="display:none;">Close</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal GENERAL de Todos los Productos -->
+    <div class="modal fade" id="allProductsModal" tabindex="-1" aria-labelledby="allProductsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
+            <div class="modal-content border-0" style="border-top: 5px solid var(--brand-primary) !important;">
+                <div class="modal-header bg-light">
+                    <h5 class="modal-title fw-bold text-brand-primary" id="allProductsModalLabel">
+                        <i class="fas fa-th-list me-2 text-brand-accent"></i> 
+                        <span class="lang-es">Vista General del Portafolio (Detalles)</span><span class="lang-en" style="display:none;">Portfolio Overview (Details)</span> 
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0" style="font-size: 0.85rem;">
+                            <thead style="position: sticky; top: 0; z-index: 10;">
+                                <tr>
+                                    <!-- Encabezados ES -->
+                                    <th class="ps-3 lang-es" style="width: 15%;">Nombre del Producto</th>
+                                    <th class="lang-es text-center" style="width: 10%;">Inicio</th>
+                                    <th class="lang-es text-center" style="width: 10%;">Fin</th>
+                                    <th class="lang-es text-center" style="width: 10%;">Prioridad</th>
+                                    <th class="lang-es" style="width: 15%;">Herramienta (GWS)</th>
+                                    <th class="lang-es" style="width: 40%;">Detalle del Riesgo</th>
+                                    
+                                    <!-- Encabezados EN -->
+                                    <th class="ps-3 lang-en" style="width: 15%; display:none;">Product Name</th>
+                                    <th class="lang-en text-center" style="width: 10%; display:none;">Start</th>
+                                    <th class="lang-en text-center" style="width: 10%; display:none;">End</th>
+                                    <th class="lang-en text-center" style="width: 10%; display:none;">Priority</th>
+                                    <th class="lang-en" style="width: 15%; display:none;">Tool (GWS)</th>
+                                    <th class="lang-en" style="width: 40%; display:none;">Risk Detail</th>
+                                </tr>
+                            </thead>
+                            <tbody id="all-products-body">
+                                <!-- Los datos se inyectan via JavaScript -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -741,10 +881,6 @@
                 });
                 enElements.forEach(el => el.style.display = 'none');
                 
-                // Actualizar botones de filtro
-                document.querySelectorAll('.filter-btn.lang-en').forEach(el => el.style.display = 'none');
-                document.querySelectorAll('.filter-btn.lang-es').forEach(el => el.style.display = 'inline-block');
-                
             } else {
                 esElements.forEach(el => el.style.display = 'none');
                 
@@ -753,20 +889,17 @@
                     else if (el.tagName === 'SPAN' || el.tagName === 'I') { el.style.display = 'inline'; }
                     else { el.style.display = 'block'; }
                 });
-                
-                // Actualizar botones de filtro
-                document.querySelectorAll('.filter-btn.lang-es').forEach(el => el.style.display = 'none');
-                document.querySelectorAll('.filter-btn.lang-en').forEach(el => el.style.display = 'inline-block');
             }
 
-            // Re-renderizar tabla para aplicar las etiquetas correctas de riesgo/prioridad
+            // Mantenemos el estado de los filtros al cambiar de idioma
             let activeFilter = 'Todos';
-            document.querySelectorAll('.filter-btn.lang-es').forEach(btn => {
-                if(btn.classList.contains('active')) {
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                if(btn.classList.contains('active') && btn.style.display !== 'none') {
                     activeFilter = btn.innerText;
                 }
             });
-            renderTable(activeFilter);
+            // Re-aplicar el filtro con el nuevo idioma
+            applyFilter(activeFilter, null, true);
         }
 
         // Configuración de Chart.js
@@ -778,86 +911,153 @@
             textShadowColor: 'rgba(0,0,0,0.6)'
         };
 
-        // --- EXTRACCIÓN REAL DE LAS IMÁGENES PROPORCIONADAS (38 Productos de Alta Prioridad con Detalle de Riesgo) ---
-        const portafolioApps = [
-            { nombre: "Horarios Training App", tipo: "Power Apps", prioridad: "01 Alta", riesgo: "Riesgo Estratégico - Riesgo Financiero", detalle: "Riesgo tipificado en la asignación automática de salas para clases contratadas o próximas a contratación según TPHire, afectando directamente el inicio de las capacitaciones y su codificacion de horarios para la liquidacion de su nomina. (Customer Expert)" },
-            { nombre: "Nomina - Apoyos", tipo: "Power Apps", prioridad: "01 Alta", riesgo: "Riesgo Estratégico - Riesgo Financiero", detalle: "Se tipifica el riesgo para este proceso, en que no lograrian hacer los filtro de seguridad para que las personas que se postulan para realizar apoyos cumplan con los requisitos para hacer el apoyo para el cliente Frisby." },
-            { nombre: "AI Insights HUB", tipo: "Power Apps", prioridad: "01 Alta", riesgo: "Riesgo Estratégico", detalle: "Pérdida de control documental e interrupción de las alertas automatizadas. Alto riesgo de desactualización en la carga de informes mensuales correspondientes al proyecto de IA Transformation." },
-            { nombre: "Billing Tool App", tipo: "Power Apps", prioridad: "01 Alta", riesgo: "Riesgo Estratégico - Riesgo Financiero", detalle: "Se tipifica el riesgo en la perdida de centralizacion de la informacion de nuevos CECOS reportados por el area de operaciones a el equipo de Finananzas, posible impacto financiero." },
-            { nombre: "Extemporaneos App", tipo: "Power Apps", prioridad: "01 Alta", riesgo: "Riesgo Estratégico - Riesgo Financiero", detalle: "Se tipifica el riesgo en la perdida de centralizacion de la informacion del personal contratado por fuera de la planeacion inicial de las waves reportadas." },
-            { nombre: "NHA II Toque - Soporte", tipo: "Power Apps", prioridad: "01 Alta", riesgo: "Riesgo Estratégico - Riesgo Financiero", detalle: "Se tipifica un riesgo de impacto económico y estrategico por eventos facturables (estimados) y de seguimiento de reclasificación sobre contrataciones en OPS por clientes." },
-            { nombre: "CentroCostos App Fase III", tipo: "Power Apps", prioridad: "01 Alta", riesgo: "Riesgo Estratégico - Riesgo Financiero", detalle: "Se tipifican varios reisgo debido a que la herramienta es el núcleo que alimenta procesos críticos (TPFriend, Nómina, TP Bonus), cualquier cambio en las reglas de negocio de los bonos o en los centros de costos de TPMAR provocará un desalineamiento severo, ya que no habrá un desarrollador que sepa cómo actualizar las validaciones internas de la aplicación." },
-            { nombre: "Secure App", tipo: "Power Apps", prioridad: "01 Alta", riesgo: "Riesgo Estratégico", detalle: "Se tipifica un riesgo en la centralizacion de las novedades del equipo de seguridad tales como excepciones de Badged, y solicitudes de accesos, los tiempo de respuesta se vuelven mas extensos afectando la productividad y la seguridad física de la corporacion." },
-            { nombre: "Actas y Compromisos App", tipo: "Power Apps", prioridad: "01 Alta", riesgo: "Riesgo Estratégico", detalle: "Decentralizacion de los documentos (Actas) y pérdida de trazabilidad de compromisos corporativos que asumen las diferentes areas y procesos de la compañia durante las sesiones de calibracion." },
-            { nombre: "AI Risk Management", tipo: "Power Apps", prioridad: "01 Alta", riesgo: "Riesgo Estratégico", detalle: "Perdida de seguimiento y visibilidad de los lideres de Stream de los riesgos que encuentran mapeados para cada iniciativa del proyecto IA Transformation." },
-            { nombre: "DCS - App", tipo: "Power Apps", prioridad: "01 Alta", riesgo: "Riesgo Estratégico - Riesgo Legal", detalle: "Pérdida de trazabilidad y centralizacion de la gestion documental sobre más de 1.800 documentos codificados y 70 en estado pendiente. Fallos en las alertas del sistema y paralización de los procesos de capacitacion vinculados a las actualizaciones documentales, tales como reportes, notificaciones accesos de documentos, validaciones de controles de calidad, trazabilidad informativa en procesos de administracion y aprobacion de los flujos." },
-            { nombre: "TP Payroll Ayuda - Pink", tipo: "Power Apps", prioridad: "01 Alta", riesgo: "Riesgo Estratégico - Riesgo Financiero", detalle: "Se tipifica un riesgo al perder el canal de centralizacion de reclamos y novedades de nomina de los Customers Expert, se pierde la centralizacion y se perderia el proceso de gestion automatica de los analistas de Help Desk." },
-            { nombre: "TP Payroll Ayuda App", tipo: "Power Apps", prioridad: "01 Alta", riesgo: "Riesgo Estratégico - Riesgo Financiero", detalle: "Riesgo crítico de incumplimiento en la atención de escalamientos de nómina. Potenciales contingencias legales y financieras, insatisfacción generalizada de los colaboradores e incumplimiento grave de los SLAs del Helpdesk, derivando en tiempos de respuesta inaceptables." },
-            { nombre: "YubiKey App", tipo: "Power Apps", prioridad: "01 Alta", riesgo: "Riesgo Estratégico - Riesgo Financiero", detalle: "El riesgo se tipifica Inicialmente debido a que no se contaria con un sistema que permita identificar los préstamos y devoluciones de activos y periféricos en los diferentes sites de TP , lo que conllevaría pérdidas para el área y la compañía. De la misma forma, tampoco se podrá realizar la trazabilidad de los activos que no se encuentren registrados en el inventario de Goods Strategy." },
-            { nombre: "AI Status CEO", tipo: "Power Apps", prioridad: "01 Alta", riesgo: "Riesgo Estratégico - Riesgo Financiero", detalle: "Se tipifica el riesgo de este desarrollo en el impacto que tendrian en la visibilidad a nivel corporativo sobre el estado actual del proyecto de IA transformation, los riesgos clave y los pasos a seguir para cada uno de los actores en TP AMERICAS respecto a la actualizacion por SubStream. La falta de un sistema centralizado impondrá un alto volumen de procesos manuales, lo que podría derivar en afectaciones operativas e impacto económico para la organización." },
-            { nombre: "Sprint App", tipo: "Power Apps", prioridad: "01 Alta", riesgo: "Riesgo Estratégico", detalle: "Afectación en la priorización del desarrollo de tareas, productos y reportería en los que se encuentran trabajando miembros de el equipo, así como la desorganización de tareas puesto que cada miembro de el area utiliza el aplicativo para poder organizar su sprint de acuerdo a sus prioridades. La ausencia del desarrollador que domina el código genera un punto único de falla donde cualquier error técnico congelaría las plataformas, forzando un retroceso hacia procesos manuales y hojas de Excel. Este escenario no solo provocaría una inmediata 'ceguera gerencial' al eliminar la visibilidad en tiempo real sobre la productividad, los cuellos de botella y el avance de los Sprints, sino que también obligaría al equipo de Process Automation a estancarse en roadmap estratégico y sus proyectos de innovación para desgastarse atendiendo tareas de soporte básico." },
-            { nombre: "Alertas BUE - Payroll Transformation", tipo: "Power Automate", prioridad: "01 Alta", riesgo: "Riesgo Estratégico - Riesgo Financiero", detalle: "No se llevará una trazabilidad de los colaboradores que no tienen dias laborables registrados en la BUE en la semana actual y semana anterior o que no concuerdan con la intensidad horaria contratada. Afecta la nomina de colaborador en el calculo de los descuento." },
-            { nombre: "Alertas Recepción de Activos - Flujo Automatizado", tipo: "Power Automate", prioridad: "01 Alta", riesgo: "Riesgo Estratégico - Riesgo Financiero", detalle: "Se afectaria el proceso de notificación a los diferentes entes y personas del proceso de ingreso de activos y perifericos al area de Goods Strategy tanto en Colombia." },
-            { nombre: "Ordenes de Compra Goods Strategy Perú", tipo: "Power Automate", prioridad: "01 Alta", riesgo: "Riesgo Estratégico - Riesgo Financiero", detalle: "Se afectaria el proceso de notificación a los diferentes entes y personas del proceso de ingreso de activos y perifericos al area de Goods Strategy tanto en Perú." },
-            { nombre: "Schedule Flexibility", tipo: "Power Automate", prioridad: "01 Alta", riesgo: "Riesgo Estratégico - Riesgo Financiero", detalle: "Riegos tipificado en la no diponibilidad del envio de los horarios de WF al equipo de reclutamiento, afectando el dimensionamiento de staffing del equipo de WF." },
-            { nombre: "OnTime - Alerta Novedades Pendientes", tipo: "Power Automate", prioridad: "01 Alta", riesgo: "Riesgo Estratégico - Riesgo Financiero", detalle: "Afectaria el proceso de notificación de las diferentes cuentas de Colombia y Perú que presentan Novedades en On Time y que deben ser ajustadas dentro de la misma. El proceso deberia de realizar de forma manual y podria generar altos tiempo para identificar las inconsistencias y notificarlas." },
-            { nombre: "TP Payroll Ayuda Activos Blue", tipo: "Power Automate", prioridad: "01 Alta", riesgo: "Riesgo Estratégico - Riesgo Financiero", detalle: "Riesgo crítico de incumplimiento en la atención de escalamientos de nómina. Potenciales contingencias legales y financieras, insatisfacción generalizada de los colaboradores e incumplimiento grave de los SLAs del Helpdesk, derivando en tiempos de respuesta inaceptables." },
-            { nombre: "TP Payroll Ayuda Retirados Peru", tipo: "Power Automate", prioridad: "01 Alta", riesgo: "Riesgo Estratégico - Riesgo Financiero", detalle: "Riesgo crítico de incumplimiento en la atención de escalamientos de nómina. Potenciales contingencias legales y financieras, insatisfacción generalizada de los colaboradores e incumplimiento grave de los SLAs del Helpdesk, derivando en tiempos de respuesta inaceptables." },
-            { nombre: "TP Payroll Colombia - Helpdesk Flujo Nómina", tipo: "Power Automate", prioridad: "01 Alta", riesgo: "Riesgo Estratégico - Riesgo Financiero", detalle: "Riesgo crítico de incumplimiento en la atención de escalamientos de nómina. Potenciales contingencias legales y financieras, insatisfacción generalizada de los colaboradores e incumplimiento grave de los SLAs del Helpdesk, derivando en tiempos de respuesta inaceptables." },
-            { nombre: "TP Payroll Retirados (Colombia)", tipo: "Power Automate", prioridad: "01 Alta", riesgo: "Riesgo Estratégico - Riesgo Financiero", detalle: "Riesgo crítico de incumplimiento en la atención de escalamientos de nómina. Potenciales contingencias legales y financieras, insatisfacción generalizada de los colaboradores e incumplimiento grave de los SLAs del Helpdesk, derivando en tiempos de respuesta inaceptables." },
-            { nombre: "Paz y Salvos Goods Strategy - Flujo Automatizado", tipo: "Power Automate", prioridad: "01 Alta", riesgo: "Riesgo Estratégico - Riesgo Financiero", detalle: "El no tener este proceso centralizado el equipo de Liquidaciones de nomina no tendria la informacion para liberar los paz y salvos al personal retirado, afectando el tiempo de la liquidaciones." },
-            { nombre: "Actas GS - Adobe Sign (Colombia)", tipo: "Power Automate", prioridad: "01 Alta", riesgo: "Sin Riesgo", detalle: "Pendiente la conexión a un servidor para ejecuciones con conexión abierta para programarlo, actualmente se ejecuta mediante un Scheduler de una persona interna del equipo." },
-            { nombre: "NHA Creacion Usuarios - Flujo Automatizado", tipo: "Power Automate", prioridad: "01 Alta", riesgo: "Riesgo Estratégico", detalle: "No es posible informar a Entrenamiento sobre usuarios creados para la solicitud de equipos y validación de accesos para el inicio de su proceso informativo." },
-            { nombre: "OnTime - Alerta de Justificaciones", tipo: "Power Automate", prioridad: "01 Alta", riesgo: "Riesgo Estratégico - Riesgo Financiero", detalle: "Se tipifica el riesgo debido a que las operaciones no serian notificadas de las infracciones que tienen pendientes por justificar en On-Time, al no proceder, se puede liquidar la nomina de los colaboradores de forma errada." },
-            { nombre: "PBI Overlays - Analisis Datos", tipo: "Power BI", prioridad: "01 Alta", riesgo: "Riesgo Estratégico - Riesgo Financiero", detalle: "El riesgo es alto, ya que el equipo de WF lo que hace es verificar que los agentes cumplan con los tiempos y ver si los permisos fueron otorgados en los tiempos establecidos." },
-            { nombre: "OnTime - Reporte Infracciones", tipo: "Power BI", prioridad: "01 Alta", riesgo: "Riesgo Estratégico - Riesgo Financiero", detalle: "Se tipifica el riesgo al no tener la visibilidad consolidada de las infracciones Gestionadas dentro de la herramienta On-Time, se pierde el seguimiento de la volumetria de las horas gestionadas." },
-            { nombre: "AI Bonos Manager", tipo: "Power BI", prioridad: "01 Alta", riesgo: "Riesgo Estratégico", detalle: "El no tener este producto genera un riesgo para los lideres ya que no tendrian forma de validar el cumplimiento de los analistas frente a sus metas mensuales para el cubrimiento de bonos." },
-            { nombre: "OnTime - Reporte Post Payroll", tipo: "Power BI", prioridad: "01 Alta", riesgo: "Riesgo Estratégico", detalle: "El riesgo estrategico pasa por no tener la visibilidad de los ajustes pendientes de cortes anteriores." },
-            { nombre: "BOT OnTime V2.0", tipo: "BOT´s", prioridad: "01 Alta", riesgo: "Riesgo Estratégico - Riesgo Financiero", detalle: "Imposible realizar consultas, solicitudes de reemplazos entre supervisores, incidencias de herramientas OnTime, comunicación con analistas y solicitar entrenamientos, se pierde centralización de datos de procesos de la herramienta de justificaciones de Nomina." },
-            { nombre: "Activos Ayuda (Colombia)", tipo: "BOT´s", prioridad: "01 Alta", riesgo: "Riesgo Estratégico - Riesgo Financiero", detalle: "Se afectarían diferentes procesos relacionados con las entregas de activos y periféricos a los colaboradores WAHA en Colombia. Desde el empaque de los activos hasta la entrega y reporte de novedades. No existiria un sistema que centralice las novedades con las entregas en Goods Strategy." },
-            { nombre: "BOT Activos Ayuda", tipo: "BOT´s", prioridad: "01 Alta", riesgo: "Riesgo Estratégico - Riesgo Financiero", detalle: "Se afectarían diferentes procesos relacionados con las entregas de activos y periféricos a los colaboradores WAHA en Colombia. Desde el empaque de los activos hasta la entrega y reporte de novedades. No existiria un sistema que centralice las novedades con las entregas en Goods Strategy." },
-            { nombre: "TP Payroll Ayuda Activos Peru - BOT", tipo: "BOT´s", prioridad: "01 Alta", riesgo: "Riesgo Estratégico - Riesgo Financiero", detalle: "Se tipifica un riesgo al perder el canal de centralizacion de reclamos y novedades de nomina de los Customers Expert, se pierde la centralizacion y se perderia el proceso de gestion automatica de los analistas de Help Desk." },
-            { nombre: "AI Clients", tipo: "Otros", prioridad: "01 Alta", riesgo: "Riesgo Estratégico", detalle: "No se podrá poner producto desarrollado en producción, los ajustes de clientes quedarían descentralizados afectando los productos desarrollados para AI Transformation" }
+        // --- DATOS DEL PORTAFOLIO GENERAL ---
+        // Extraído de las matrices proporcionadas. Contiene fechas, herramientas GWS, etc.
+        // Se ordenará por Fecha de Inicio y luego por duración (Fecha Fin - Fecha Inicio)
+        let portafolioApps = [
+            { nombre: "Horarios Training App", tipo: "01. Power App", prioridad: "01 Alta", riesgo: "Riesgo Estratégico - Riesgo Financiero", herramienta: "Google AppScript", inicio: "2026-10-01", fin: "2027-06-28", detalle: "Riesgo tipificado en la asignación automática de salas para clases contratadas o próximas a contratación según TPHire, afectando directamente el inicio de las capacitaciones y su codificacion de horarios para la liquidacion de su nomina. (Customer Expert)" },
+            { nombre: "Nomina - Apoyos", tipo: "01. Power App", prioridad: "01 Alta", riesgo: "Riesgo Estratégico - Riesgo Financiero", herramienta: "Google AppScript", inicio: "2026-10-01", fin: "2027-09-26", detalle: "Se tipifica el riesgo para este proceso, en que no lograrian hacer los filtro de seguridad para que las personas que se postulan para realizar apoyos cumplan con los requisitos para hacer el apoyo para el cliente Frisby." },
+            { nombre: "Billing Tool App", tipo: "01. Power App", prioridad: "01 Alta", riesgo: "Riesgo Estratégico - Riesgo Financiero", herramienta: "Google AppScript", inicio: "2026-12-30", fin: "2027-05-29", detalle: "Se tipifica el riesgo en la perdida de centralizacion de la informacion de nuevos CECOS reportados por el area de operaciones a el equipo de Finananzas, posible impacto financiero." },
+            { nombre: "Extemporaneos App", tipo: "01. Power App", prioridad: "01 Alta", riesgo: "Riesgo Estratégico - Riesgo Financiero", herramienta: "Google AppScript", inicio: "2027-01-01", fin: "2027-12-27", detalle: "Se tipifica el riesgo en la perdida de centralizacion de la informacion del personal contratado por fuera de la planeacion inicial de las waves reportadas." },
+            { nombre: "NHA II Toque - Soporte", tipo: "01. Power App", prioridad: "01 Alta", riesgo: "Riesgo Estratégico - Riesgo Financiero", herramienta: "Google AppScript", inicio: "2026-10-01", fin: "2026-12-30", detalle: "Se tipifica un riesgo de impacto económico y estrategico por eventos facturables (estimados) y de seguimiento de reclasificación sobre contrataciones en OPS por clientes." },
+            { nombre: "CentroCostos App Fase III", tipo: "01. Power App", prioridad: "01 Alta", riesgo: "Riesgo Estratégico - Riesgo Financiero", herramienta: "Google AppScript", inicio: "2026-12-30", fin: "2027-08-27", detalle: "Se tipifican varios reisgo debido a que la herramienta es el núcleo que alimenta procesos críticos (TPFriend, Nómina, TP Bonus), cualquier cambio en las reglas de negocio de los bonos o en los centros de costos de TPMAR provocará un desalineamiento severo, ya que no habrá un desarrollador que sepa cómo actualizar las validaciones internas de la aplicación." },
+            { nombre: "HelpDesk", tipo: "01. Power App", prioridad: "01 Alta", riesgo: "Riesgo Estratégico", herramienta: "Google AppScript", inicio: "2026-10-01", fin: "2026-12-30", detalle: "Riesgo en la atención de solicitudes." },
+            { nombre: "YubiKey App", tipo: "01. Power App", prioridad: "01 Alta", riesgo: "Riesgo Estratégico - Riesgo Financiero", herramienta: "Google AppScript", inicio: "2026-10-01", fin: "2026-12-30", detalle: "El riesgo se tipifica Inicialmente debido a que no se contaria con un sistema que permita identificar los préstamos y devoluciones de activos y periféricos en los diferentes sites de TP , lo que conllevaría pérdidas para el área y la compañía. De la misma forma, tampoco se podrá realizar la trazabilidad de los activos que no se encuentren registrados en el inventario de Goods Strategy." },
+            { nombre: "AI Status CEO", tipo: "01. Power App", prioridad: "01 Alta", riesgo: "Riesgo Estratégico - Riesgo Financiero", herramienta: "Google AppScript", inicio: "2026-10-01", fin: "2026-12-30", detalle: "Se tipifica el riesgo de este desarrollo en el impacto que tendrian en la visibilidad a nivel corporativo sobre el estado actual del proyecto de IA transformation, los riesgos clave y los pasos a seguir para cada uno de los actores en TP AMERICAS respecto a la actualizacion por SubStream. La falta de un sistema centralizado impondrá un alto volumen de procesos manuales, lo que podría derivar en afectaciones operativas e impacto económico para la organización." },
+            { nombre: "DCS - App", tipo: "01. Power App", prioridad: "01 Alta", riesgo: "Riesgo Estratégico - Riesgo Legal", herramienta: "Google AppScript", inicio: "2026-10-01", fin: "2027-07-28", detalle: "Pérdida de trazabilidad y centralizacion de la gestion documental sobre más de 1.800 documentos codificados y 70 en estado pendiente. Fallos en las alertas del sistema y paralización de los procesos de capacitacion vinculados a las actualizaciones documentales, tales como reportes, notificaciones accesos de documentos, validaciones de controles de calidad, trazabilidad informativa en procesos de administracion y aprobacion de los flujos." },
+            { nombre: "AI Insights HUB", tipo: "01. Power App", prioridad: "01 Alta", riesgo: "Riesgo Estratégico", herramienta: "Google AppScript", inicio: "2026-10-01", fin: "2027-07-28", detalle: "Pérdida de control documental e interrupción de las alertas automatizadas. Alto riesgo de desactualización en la carga de informes mensuales correspondientes al proyecto de IA Transformation." },
+            { nombre: "Secure App", tipo: "01. Power App", prioridad: "01 Alta", riesgo: "Riesgo Estratégico", herramienta: "Google AppScript", inicio: "2026-10-01", fin: "2027-05-29", detalle: "Se tipifica un riesgo en la centralizacion de las novedades del equipo de seguridad tales como excepciones de Badged, y solicitudes de accesos, los tiempo de respuesta se vuelven mas extensos afectando la productividad y la seguridad física de la corporacion." },
+            { nombre: "Actas y Compromisos App", tipo: "01. Power App", prioridad: "01 Alta", riesgo: "Riesgo Estratégico", herramienta: "Google AppScript", inicio: "2026-11-01", fin: "2027-03-31", detalle: "Decentralizacion de los documentos (Actas) y pérdida de trazabilidad de compromisos corporativos que asumen las diferentes areas y procesos de la compañia durante las sesiones de calibracion." },
+            { nombre: "AI Risk Management", tipo: "01. Power App", prioridad: "01 Alta", riesgo: "Riesgo Estratégico", herramienta: "Google AppScript", inicio: "2026-10-01", fin: "2026-12-30", detalle: "Perdida de seguimiento y visibilidad de los lideres de Stream de los riesgos que encuentran mapeados para cada iniciativa del proyecto IA Transformation." },
+            { nombre: "Sprint App", tipo: "01. Power App", prioridad: "01 Alta", riesgo: "Riesgo Estratégico", herramienta: "Django/React", inicio: "2026-10-01", fin: "2027-03-30", detalle: "Afectación en la priorización del desarrollo de tareas, productos y reportería en los que se encuentran trabajando miembros de el equipo, así como la desorganización de tareas puesto que cada miembro de el area utiliza el aplicativo para poder organizar su sprint de acuerdo a sus prioridades. La ausencia del desarrollador que domina el código genera un punto único de falla donde cualquier error técnico congelaría las plataformas, forzando un retroceso hacia procesos manuales y hojas de Excel. Este escenario no solo provocaría una inmediata 'ceguera gerencial' al eliminar la visibilidad en tiempo real sobre la productividad, los cuellos de botella y el avance de los Sprints, sino que también obligaría al equipo de Process Automation a estancarse en roadmap estratégico y sus proyectos de innovación para desgastarse atendiendo tareas de soporte básico." },
+            { nombre: "OnTime - Alerta Novedades Pendientes", tipo: "02. Power Automate", prioridad: "01 Alta", riesgo: "Riesgo Estratégico - Riesgo Financiero", herramienta: "Google AppScript/Python", inicio: "2026-10-01", fin: "2027-09-26", detalle: "Afectaria el proceso de notificación de las diferentes cuentas de Colombia y Perú que presentan Novedades en On Time y que deben ser ajustadas dentro de la misma. El proceso deberia de realizar de forma manual y podria generar altos tiempo para identificar las inconsistencias y notificarlas." },
+            { nombre: "Paz y Salvos Goods Strategy - Flujo Automatizado", tipo: "02. Power Automate", prioridad: "01 Alta", riesgo: "Riesgo Estratégico - Riesgo Financiero", herramienta: "Google AppScript/Python", inicio: "2027-04-01", fin: "2027-08-29", detalle: "El no tener este proceso centralizado el equipo de Liquidaciones de nomina no tendria la informacion para liberar los paz y salvos al personal retirado, afectando el tiempo de la liquidaciones." },
+            { nombre: "NHA Creacion Usuarios - Flujo Automatizado", tipo: "02. Power Automate", prioridad: "01 Alta", riesgo: "Riesgo Estratégico", herramienta: "Google AppScript/Python", inicio: "2026-12-30", fin: "2027-05-29", detalle: "No es posible informar a Entrenamiento sobre usuarios creados para la solicitud de equipos y validación de accesos para el inicio de su proceso informativo." },
+            { nombre: "Actas GS - Adobe Sign (Colombia)", tipo: "02. Power Automate", prioridad: "01 Alta", riesgo: "Sin Riesgo", herramienta: "Python", inicio: "2026-09-01", fin: "2026-11-30", detalle: "Pendiente la conexión a un servidor para ejecuciones con conexión abierta para programarlo, actualmente se ejecuta mediante un Scheduler de una persona interna del equipo." },
+            { nombre: "PBI Overlays - Analisis Datos", tipo: "03. Power BI", prioridad: "01 Alta", riesgo: "Riesgo Estratégico - Riesgo Financiero", herramienta: "Google AppScript/Python", inicio: "2026-10-01", fin: "2026-12-30", detalle: "El riesgo es alto, ya que el equipo de WF lo que hace es verificar que los agentes cumplan con los tiempos y ver si los permisos fueron otorgados en los tiempos establecidos." },
+            { nombre: "OnTime - Reporte Infracciones", tipo: "03. Power BI", prioridad: "01 Alta", riesgo: "Riesgo Estratégico - Riesgo Financiero", herramienta: "Google AppScript/Python", inicio: "2026-10-01", fin: "2027-11-05", detalle: "Se tipifica el riesgo al no tener la visibilidad consolidada de las infracciones Gestionadas dentro de la herramienta On-Time, se pierde el seguimiento de la volumetria de las horas gestionadas." },
+            { nombre: "AI Bonos Manager", tipo: "03. Power BI", prioridad: "01 Alta", riesgo: "Riesgo Estratégico", herramienta: "Google AppScript/Python", inicio: "2026-12-30", fin: "2027-08-27", detalle: "El no tener este producto genera un riesgo para los lideres ya que no tendrian forma de validar el cumplimiento de los analistas frente a sus metas mensuales para el cubrimiento de bonos." },
+            { nombre: "OnTime - Reporte Post Payroll", tipo: "03. Power BI", prioridad: "01 Alta", riesgo: "Riesgo Estratégico", herramienta: "Google AppScript/Python", inicio: "2026-10-01", fin: "2027-05-29", detalle: "El riesgo estrategico pasa por no tener la visibilidad de los ajustes pendientes de cortes anteriores." },
+            { nombre: "BOT OnTime V2.0", tipo: "04. Bot", prioridad: "01 Alta", riesgo: "Riesgo Estratégico - Riesgo Financiero", herramienta: "Google AppScript", inicio: "2026-10-01", fin: "2026-12-30", detalle: "Imposible realizar consultas, solicitudes de reemplazos entre supervisores, incidencias de herramientas OnTime, comunicación con analistas y solicitar entrenamientos, se pierde centralización de datos de procesos de la herramienta de justificaciones de Nomina." },
+            { nombre: "AI Clients", tipo: "05. Programación", prioridad: "01 Alta", riesgo: "Riesgo Estratégico", herramienta: "Google AppScript", inicio: "2026-09-01", fin: "2026-10-31", detalle: "No se podrá poner producto desarrollado en producción, los ajustes de clientes quedarían descentralizados afectando los productos desarrollados para AI Transformation" },
+            { nombre: "Change Management App", tipo: "01. Power App", prioridad: "01 Alta", riesgo: "Riesgo Estratégico", herramienta: "Google AppScript", inicio: "2026-12-01", fin: "2027-09-27", detalle: "Riesgo en gestión de cambios." },
+            { nombre: "Process Office - Bonos App", tipo: "01. Power App", prioridad: "01 Alta", riesgo: "Riesgo Estratégico", herramienta: "Google AppScript", inicio: "2026-10-01", fin: "2026-12-30", detalle: "Riesgo en gestión de bonos." },
+            { nombre: "Recolección Activos WAH Perú - Form", tipo: "02. Power Automate", prioridad: "02 Media", riesgo: "Riesgo Estratégico", herramienta: "Google AppScript/Google Forms", inicio: "2026-11-01", fin: "2027-03-01", detalle: "Riesgo en proceso de recolección." },
+            { nombre: "Solicitud de Activos Perú - Form", tipo: "02. Power Automate", prioridad: "02 Media", riesgo: "Riesgo Estratégico", herramienta: "Google AppScript/Google Forms", inicio: "2026-11-01", fin: "2027-03-01", detalle: "Riesgo en solicitudes." },
+            { nombre: "WFM - TimeKeeper", tipo: "02. Power Automate", prioridad: "02 Media", riesgo: "Riesgo Estratégico", herramienta: "Google AppScript/Python", inicio: "2027-03-01", fin: "2027-07-29", detalle: "Riesgo en TimeKeeper." },
+            { nombre: "WFM - RTM BOT Automate", tipo: "02. Power Automate", prioridad: "02 Media", riesgo: "Riesgo Estratégico", herramienta: "Google AppScript/Python", inicio: "2027-04-01", fin: "2027-09-28", detalle: "Riesgo en bot." },
+            { nombre: "OnTime - Comparativo Ajustes Vwnómina Vs OnTime", tipo: "03. Power BI", prioridad: "01 Alta", riesgo: "Riesgo Estratégico - Riesgo Financiero", herramienta: "Google AppScript/Python", inicio: "2026-12-01", fin: "2027-07-29", detalle: "Comparativo de nómina." },
+            { nombre: "OnTime Reporte PBI Excesos Horas Extras", tipo: "03. Power BI", prioridad: "01 Alta", riesgo: "Riesgo Estratégico - Riesgo Financiero", herramienta: "Google AppScript/Python", inicio: "2026-12-01", fin: "2027-07-29", detalle: "Reporte de horas extras." },
+            { nombre: "OnTime - Reporte Horas sin Justificar PBI", tipo: "03. Power BI", prioridad: "01 Alta", riesgo: "Riesgo Estratégico - Riesgo Financiero", herramienta: "Google AppScript/Python", inicio: "2026-12-01", fin: "2027-03-31", detalle: "Reporte de justificaciones." },
+            { nombre: "Strategic Radar", tipo: "03. Power BI", prioridad: "01 Alta", riesgo: "Riesgo Estratégico", herramienta: "Google AppScript/Python/Drive", inicio: "2026-12-01", fin: "2027-05-30", detalle: "Radar estratégico." },
+            { nombre: "Process Controller - Alerta nomina excesos de horas", tipo: "05. Programación", prioridad: "01 Alta", riesgo: "Riesgo Estratégico - Riesgo Financiero", herramienta: "Google AppScript", inicio: "2027-01-01", fin: "2027-04-01", detalle: "Alerta de excesos." },
+            { nombre: "PA Portal de Productos", tipo: "05. Programación", prioridad: "02 Media", riesgo: "Riesgo Estratégico", herramienta: "Google AppScript", inicio: "2026-10-01", fin: "2027-01-29", detalle: "Portal PA." },
+            { nombre: "Comunicaciones Perú", tipo: "08. Sql", prioridad: "02 Media", riesgo: "Riesgo Estratégico", herramienta: "Google AppScript", inicio: "2027-02-01", fin: "2027-07-31", detalle: "Base de datos comunicaciones." },
+            { nombre: "OnTime - Cronograma App", tipo: "01. Power App", prioridad: "01 Alta", riesgo: "Riesgo Estratégico", herramienta: "Google AppScript", inicio: "2026-10-01", fin: "2027-05-29", detalle: "App de cronograma." },
+            { nombre: "Vacation Plan App", tipo: "01. Power App", prioridad: "01 Alta", riesgo: "Riesgo Estratégico", herramienta: "Google AppScript", inicio: "2026-12-01", fin: "2027-03-31", detalle: "Plan de vacaciones." },
+            { nombre: "Excepcionales App", tipo: "02. Power Automate", prioridad: "02 Media", riesgo: "Riesgo Estratégico", herramienta: "Google AppScript/Python", inicio: "2027-01-01", fin: "2027-10-28", detalle: "Excepciones." },
+            { nombre: "Process Controller - Alerta horas altas y descuentos alt", tipo: "02. Power Automate", prioridad: "01 Alta", riesgo: "Riesgo Estratégico - Riesgo Financiero", herramienta: "Google AppScript", inicio: "2026-12-01", fin: "2027-08-28", detalle: "Alertas varias." }
         ];
 
-        // Función para renderizar la tabla basada en el filtro
+        // Función para calcular duración en días y ordenar el array original
+        function sortPortafolio() {
+            portafolioApps.forEach(app => {
+                const start = new Date(app.inicio);
+                const end = new Date(app.fin);
+                app.duracion = (end - start) / (1000 * 60 * 60 * 24); // días
+            });
+
+            // Ordenar: Primero por fecha inicio (ascendente), luego por duración (descendente)
+            portafolioApps.sort((a, b) => {
+                const dateA = new Date(a.inicio);
+                const dateB = new Date(b.inicio);
+                if (dateA < dateB) return -1;
+                if (dateA > dateB) return 1;
+                return b.duracion - a.duracion;
+            });
+        }
+        sortPortafolio();
+
+        // --- SISTEMA DE PAGINACIÓN DE LA TABLA ---
+        const itemsPerPage = 10;
+        let currentPage = 1;
+        let currentFilteredData = [];
+
         function renderTable(filterWord) {
+            // Lógica de filtrado
+            if (filterWord === 'Todos' || filterWord === 'All') {
+                currentFilteredData = portafolioApps;
+            } else {
+                currentFilteredData = portafolioApps.filter(app => {
+                    let typeMatch = false;
+                    if(filterWord === 'Power Apps' && app.tipo.includes('01. Power App')) typeMatch = true;
+                    if(filterWord === 'Power Automate' && app.tipo.includes('02. Power Automate')) typeMatch = true;
+                    if(app.tipo === filterWord) typeMatch = true; 
+                    
+                    let riskMatch = false;
+                    if(filterWord === 'Riesgo Financiero' || filterWord === 'Financial Risk') riskMatch = app.riesgo.includes('Riesgo Financiero');
+                    if(filterWord === 'Riesgo Estratégico' || filterWord === 'Strategic Risk') riskMatch = app.riesgo.includes('Riesgo Estratégico');
+                    if(filterWord === 'Riesgo Legal' || filterWord === 'Legal Risk') riskMatch = app.riesgo.includes('Riesgo Legal');
+                    
+                    return typeMatch || riskMatch;
+                });
+            }
+
+            document.getElementById('count-display').innerText = currentFilteredData.length;
+            currentPage = 1;
+            displayPage(currentPage);
+        }
+
+        function displayPage(page) {
             const tbody = document.getElementById('app-details-body');
             tbody.innerHTML = '';
             
-            let filteredData = portafolioApps;
-            if (filterWord !== 'Todos' && filterWord !== 'All') {
-                filteredData = portafolioApps.filter(app => 
-                    app.tipo === filterWord || app.riesgo.includes(filterWord) || 
-                    (filterWord === 'Financial Risk' && app.riesgo.includes('Riesgo Financiero')) ||
-                    (filterWord === 'Strategic Risk' && app.riesgo.includes('Riesgo Estratégico')) ||
-                    (filterWord === 'Legal Risk' && app.riesgo.includes('Riesgo Legal'))
-                );
-            }
+            const totalPages = Math.ceil(currentFilteredData.length / itemsPerPage) || 1;
+            
+            // Validar límites
+            if(page < 1) page = 1;
+            if(page > totalPages) page = totalPages;
+            currentPage = page;
 
-            if(filteredData.length === 0) {
-                const emptyMsgEs = 'No se encontraron aplicativos para el filtro seleccionado en el bloque de prioridad alta.';
-                const emptyMsgEn = 'No applications found for the selected filter in the high priority block.';
+            // Actualizar UI de paginación
+            document.getElementById('page-indicator').innerText = currentLang === 'es' ? `Página ${currentPage} de ${totalPages}` : `Page ${currentPage} of ${totalPages}`;
+            document.getElementById('btn-prev').disabled = currentPage === 1;
+            document.getElementById('btn-next').disabled = currentPage === totalPages || totalPages === 0;
+
+            if(currentFilteredData.length === 0) {
+                const emptyMsgEs = 'No se encontraron aplicativos para el filtro seleccionado.';
+                const emptyMsgEn = 'No applications found for the selected filter.';
                 tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-muted"><span class="lang-es">${emptyMsgEs}</span><span class="lang-en" style="display:none;">${emptyMsgEn}</span></td></tr>`;
             } else {
-                filteredData.forEach((app, index) => {
-                    // Traducciones al vuelo para los badges
+                // Calcular slice
+                const start = (currentPage - 1) * itemsPerPage;
+                const end = start + itemsPerPage;
+                const pageData = currentFilteredData.slice(start, end);
+
+                pageData.forEach((app) => {
+                    const realIndex = portafolioApps.findIndex(item => item.nombre === app.nombre);
+                    
                     let riskEn = app.riesgo.replace('Riesgo Estratégico', 'Strategic Risk').replace('Riesgo Financiero', 'Financial Risk').replace('Riesgo Legal', 'Legal Risk').replace('Sin Riesgo', 'No Risk');
-                    let priorityEn = app.prioridad.replace('Alta', 'High');
+                    let priorityEn = app.prioridad.replace('Alta', 'High').replace('Media', 'Medium').replace('Baja', 'Low');
+                    let displayType = app.tipo.replace(/[0-9.]/g, '').trim(); 
+
+                    let prioBadge = 'bg-danger';
+                    if(app.prioridad.includes('Media')) prioBadge = 'bg-warning text-dark';
+                    if(app.prioridad.includes('Bajo')) prioBadge = 'bg-success';
 
                     const row = `<tr>
                         <td class="ps-4 fw-bold" style="color: var(--brand-primary);">${app.nombre}</td>
-                        <td class="text-center"><span class="badge bg-light text-dark border">${app.tipo}</span></td>
+                        <td class="text-center"><span class="badge bg-light text-dark border">${displayType}</span></td>
                         <td class="text-center">
-                            <span class="badge bg-danger lang-es">${app.prioridad}</span>
-                            <span class="badge bg-danger lang-en" style="display:none;">${priorityEn}</span>
+                            <span class="badge ${prioBadge} lang-es">${app.prioridad}</span>
+                            <span class="badge ${prioBadge} lang-en" style="display:none;">${priorityEn}</span>
                         </td>
                         <td class="text-muted small">
                             <span class="lang-es">${app.riesgo}</span>
                             <span class="lang-en" style="display:none;">${riskEn}</span>
                         </td>
                         <td class="text-center">
-                            <button class="btn-view-risk" onclick="openRiskModal(${index})">
+                            <button class="btn-view-risk" onclick="openRiskModal(${realIndex})">
                                 <i class="fas fa-eye me-1"></i> <span class="lang-es">Ver Detalle</span><span class="lang-en" style="display:none;">Detail</span>
                             </button>
                         </td>
@@ -865,81 +1065,67 @@
                     tbody.innerHTML += row;
                 });
                 
-                // Asegurarse de que las clases lang-en se oculten si estamos en español
                 if(currentLang === 'es') {
-                    document.querySelectorAll('#app-details-body .lang-en').forEach(el => {
-                        el.style.display = 'none';
-                    });
+                    document.querySelectorAll('#app-details-body .lang-en').forEach(el => el.style.display = 'none');
                     document.querySelectorAll('#app-details-body .lang-es').forEach(el => {
-                        if (el.tagName === 'TH' || el.tagName === 'TD') { el.style.display = 'table-cell'; }
-                        else if (el.tagName === 'SPAN' || el.tagName === 'I') { el.style.display = 'inline'; }
-                        else { el.style.display = 'block'; }
+                        if (el.tagName === 'SPAN' || el.tagName === 'I') el.style.display = 'inline';
                     });
                 } else {
-                    document.querySelectorAll('#app-details-body .lang-es').forEach(el => {
-                        el.style.display = 'none';
-                    });
+                    document.querySelectorAll('#app-details-body .lang-es').forEach(el => el.style.display = 'none');
                     document.querySelectorAll('#app-details-body .lang-en').forEach(el => {
-                        if (el.tagName === 'TH' || el.tagName === 'TD') { el.style.display = 'table-cell'; }
-                        else if (el.tagName === 'SPAN' || el.tagName === 'I') { el.style.display = 'inline'; }
-                        else { el.style.display = 'block'; }
+                        if (el.tagName === 'SPAN' || el.tagName === 'I') el.style.display = 'inline';
                     });
                 }
             }
-            document.getElementById('count-display').innerText = filteredData.length;
         }
 
-        // Función para abrir el Modal y cargar datos del Riesgo
+        function prevPage() {
+            if (currentPage > 1) { displayPage(currentPage - 1); }
+        }
+        function nextPage() {
+            const totalPages = Math.ceil(currentFilteredData.length / itemsPerPage);
+            if (currentPage < totalPages) { displayPage(currentPage + 1); }
+        }
+
+        // --- MANEJADORES DE MODALES Y FILTROS ---
         function openRiskModal(appIndex) {
             const app = portafolioApps[appIndex];
-            
             document.getElementById('modalAppName').innerText = app.nombre;
-            document.getElementById('modalAppType').innerText = app.tipo;
+            document.getElementById('modalAppType').innerText = app.tipo.replace(/[0-9.]/g, '').trim();
             
-            // Textos según idioma para badges en Modal
             if(currentLang === 'es') {
                 document.getElementById('modalAppPriority').innerText = app.prioridad;
                 document.getElementById('modalAppRiskType').innerText = app.riesgo;
             } else {
-                document.getElementById('modalAppPriority').innerText = app.prioridad.replace('Alta', 'High');
+                document.getElementById('modalAppPriority').innerText = app.prioridad.replace('Alta', 'High').replace('Media', 'Medium');
                 document.getElementById('modalAppRiskType').innerText = app.riesgo.replace('Riesgo Estratégico', 'Strategic Risk').replace('Riesgo Financiero', 'Financial Risk').replace('Riesgo Legal', 'Legal Risk').replace('Sin Riesgo', 'No Risk');
             }
-            
             document.getElementById('modalAppRiskDetail').innerText = app.detalle;
-
             const modal = new bootstrap.Modal(document.getElementById('riskDetailModal'));
             modal.show();
         }
 
-        // Abrir el panel (Collapse) si está cerrado
         function openCollapsePanel() {
             const collapseElement = document.getElementById('collapseTableDetails');
             const bsCollapse = bootstrap.Collapse.getInstance(collapseElement) || new bootstrap.Collapse(collapseElement, {toggle: false});
             bsCollapse.show();
         }
 
-        // Manejador principal de los filtros (FIX para el bug de botones activos simultáneamente)
-        function applyFilter(filterWord, buttonElement) {
-            // 1. Limpiar SIEMPRE todos los botones en ambos idiomas
+        function applyFilter(filterWord, buttonElement, fromLanguageChange = false) {
             document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
             
-            // 2. Determinar la palabra equivalente en el otro idioma
             let equivalentWordEs = filterWord;
             let equivalentWordEn = filterWord;
 
             if (filterWord === 'All') equivalentWordEs = 'Todos';
             if (filterWord === 'Todos') equivalentWordEn = 'All';
-            
             if (filterWord === 'Financial Risk') equivalentWordEs = 'Riesgo Financiero';
             if (filterWord === 'Riesgo Financiero') equivalentWordEn = 'Financial Risk';
-
             if (filterWord === 'Strategic Risk') equivalentWordEs = 'Riesgo Estratégico';
             if (filterWord === 'Riesgo Estratégico') equivalentWordEn = 'Strategic Risk';
-
             if (filterWord === 'Legal Risk') equivalentWordEs = 'Riesgo Legal';
             if (filterWord === 'Riesgo Legal') equivalentWordEn = 'Legal Risk';
 
-            // 3. Activar los botones correspondientes
             document.querySelectorAll('.filter-btn.lang-es').forEach(btn => {
                  if(btn.innerText.trim() === equivalentWordEs) btn.classList.add('active');
             });
@@ -947,14 +1133,10 @@
                  if(btn.innerText.trim() === equivalentWordEn) btn.classList.add('active');
             });
             
-            // 4. Mapear para filtrar los datos internos
-            const internalFilterWord = (filterWord === 'All' || filterWord === 'Todos') ? 'Todos' : 
-                                     (filterWord === 'Financial Risk' ? 'Riesgo Financiero' : 
-                                     (filterWord === 'Strategic Risk' ? 'Riesgo Estratégico' : 
-                                     (filterWord === 'Legal Risk' ? 'Riesgo Legal' : filterWord)));
-            
+            const internalFilterWord = equivalentWordEs; 
             renderTable(internalFilterWord);
-            openCollapsePanel();
+            
+            if(!fromLanguageChange) { openCollapsePanel(); }
         }
 
         // Inicializar tabla
@@ -963,8 +1145,61 @@
         function scrollToDetails() {
             document.getElementById('seccion-detalles').scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
+        
+        // Función para renderizar y abrir el Modal General de Productos
+        function openAllProductsModal() {
+            const tbody = document.getElementById('all-products-body');
+            tbody.innerHTML = '';
+            
+            // Mostrar los 86 productos (portafolioApps ya está ordenado)
+            portafolioApps.forEach(app => {
+                let riskEn = app.riesgo.replace('Riesgo Estratégico', 'Strategic Risk').replace('Riesgo Financiero', 'Financial Risk').replace('Riesgo Legal', 'Legal Risk').replace('Sin Riesgo', 'No Risk');
+                let priorityEn = app.prioridad.replace('Alta', 'High').replace('Media', 'Medium').replace('Baja', 'Low');
+                
+                let prioBadge = 'bg-danger';
+                if(app.prioridad.includes('Media')) prioBadge = 'bg-warning text-dark';
+                if(app.prioridad.includes('Bajo')) prioBadge = 'bg-success';
 
-        // --- CONFIGURACIÓN DE GRÁFICAS (EVENTOS CLICK) ---
+                const row = `<tr>
+                    <td class="ps-3 fw-bold" style="color: var(--brand-primary);">${app.nombre}</td>
+                    <td class="text-center text-muted">${new Date(app.inicio).toLocaleDateString()}</td>
+                    <td class="text-center text-muted">${new Date(app.fin).toLocaleDateString()}</td>
+                    <td class="text-center">
+                        <span class="badge ${prioBadge} lang-es">${app.prioridad}</span>
+                        <span class="badge ${prioBadge} lang-en" style="display:none;">${priorityEn}</span>
+                    </td>
+                    <td><span class="badge bg-light text-dark border">${app.herramienta}</span></td>
+                    <td class="text-muted small" style="max-width: 300px; white-space: normal;">
+                        <strong class="lang-es">${app.riesgo}:</strong>
+                        <strong class="lang-en" style="display:none;">${riskEn}:</strong>
+                        <br>${app.detalle}
+                    </td>
+                </tr>`;
+                tbody.innerHTML += row;
+            });
+            
+            // Aplicar idioma actual al contenido del modal
+            if(currentLang === 'es') {
+                document.querySelectorAll('#allProductsModal .lang-en').forEach(el => el.style.display = 'none');
+                document.querySelectorAll('#allProductsModal .lang-es').forEach(el => {
+                    if (el.tagName === 'TH' || el.tagName === 'TD') { el.style.display = 'table-cell'; }
+                    else if (el.tagName === 'SPAN' || el.tagName === 'I') { el.style.display = 'inline'; }
+                    else { el.style.display = 'block'; }
+                });
+            } else {
+                document.querySelectorAll('#allProductsModal .lang-es').forEach(el => el.style.display = 'none');
+                document.querySelectorAll('#allProductsModal .lang-en').forEach(el => {
+                    if (el.tagName === 'TH' || el.tagName === 'TD') { el.style.display = 'table-cell'; }
+                    else if (el.tagName === 'SPAN' || el.tagName === 'I') { el.style.display = 'inline'; }
+                    else { el.style.display = 'block'; }
+                });
+            }
+
+            const modal = new bootstrap.Modal(document.getElementById('allProductsModal'));
+            modal.show();
+        }
+
+        // --- CONFIGURACIÓN DE GRÁFICAS ---
 
         const ctxInventory = document.getElementById('inventoryChart').getContext('2d');
         const inventoryChart = new Chart(ctxInventory, {
@@ -991,9 +1226,7 @@
                 },
                 plugins: {
                     legend: { display: false },
-                    datalabels: {
-                        color: 'white', font: labelOptions.font, anchor: 'center', align: 'center'
-                    }
+                    datalabels: { color: 'white', font: labelOptions.font, anchor: 'center', align: 'center' }
                 },
                 scales: { x: { beginAtZero: true } }
             }
@@ -1023,11 +1256,71 @@
                 },
                 plugins: {
                     legend: { display: false },
-                    datalabels: {
-                        color: 'white', font: labelOptions.font, anchor: 'end', align: 'bottom'
-                    }
+                    datalabels: { color: 'white', font: labelOptions.font, anchor: 'end', align: 'bottom' }
                 },
                 scales: { y: { beginAtZero: true, max: 50 } }
+            }
+        });
+
+        // --- CONFIGURACIÓN DIAGRAMA DE GANTT (20 Registros) ---
+        // Tomamos los primeros 20 elementos de portafolioApps (que ya está ordenado por inicio y duración)
+        const ganttData = portafolioApps.slice(0, 20);
+
+        // Paleta de colores para las barras del Gantt
+        const ganttColors = ['#582E51', '#655B8B', '#434B68', '#8394B1', '#311C54', '#8C8B82', '#A391B1', '#2C3A5A', '#6B4A6A', '#9B8EAD'];
+
+        const ctxGantt = document.getElementById('ganttChart').getContext('2d');
+        
+        const dataGanttArray = ganttData.map(d => [new Date(d.inicio).getTime(), new Date(d.fin).getTime()]);
+        const labelsGantt = ganttData.map(d => d.nombre);
+        const colorsGantt = ganttData.map((d, index) => ganttColors[index % ganttColors.length]);
+
+        const ganttChartObj = new Chart(ctxGantt, {
+            type: 'bar',
+            data: {
+                labels: labelsGantt,
+                datasets: [{
+                    label: 'Periodo de Migración',
+                    data: dataGanttArray,
+                    backgroundColor: colorsGantt,
+                    borderWidth: 0,
+                    borderRadius: 4,
+                    barPercentage: 0.6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y', 
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const d1 = new Date(context.raw[0]);
+                                const d2 = new Date(context.raw[1]);
+                                return `Inicio: ${d1.toLocaleDateString()} - Fin: ${d2.toLocaleDateString()}`;
+                            }
+                        }
+                    },
+                    datalabels: { display: false } 
+                },
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'month',
+                            displayFormats: { month: 'MMM yyyy' }
+                        },
+                        min: new Date('2026-09-01').getTime(),
+                        max: new Date('2028-01-01').getTime(),
+                        grid: { color: '#e9ecef' }
+                    },
+                    y: {
+                        grid: { display: false },
+                        ticks: { font: { size: 10 } }
+                    }
+                }
             }
         });
     </script>

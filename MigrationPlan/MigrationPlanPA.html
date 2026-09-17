@@ -117,7 +117,6 @@
             vertical-align: middle; 
             padding: 12px 15px !important;
         }
-
         /* --- CARROUSEL DE FILTROS --- */
         .filter-carousel {
             display: flex;
@@ -298,16 +297,12 @@
             border-top: 4px solid var(--brand-secondary);
         }
         
-        /* Colores específicos de las fases */
         .step-1 .roadmap-marker { background-color: #EA4335; box-shadow: 0 0 0 3px rgba(234, 67, 53, 0.2); }
         .step-1 .roadmap-content { border-top-color: #EA4335; }
-        
         .step-2 .roadmap-marker { background-color: #FBBC05; box-shadow: 0 0 0 3px rgba(251, 188, 5, 0.2); }
         .step-2 .roadmap-content { border-top-color: #FBBC05; }
-        
         .step-3 .roadmap-marker { background-color: #4285F4; box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.2); }
         .step-3 .roadmap-content { border-top-color: #4285F4; }
-        
         .step-4 .roadmap-marker { background-color: #34A853; box-shadow: 0 0 0 3px rgba(52, 168, 83, 0.2); }
         .step-4 .roadmap-content { border-top-color: #34A853; }
         
@@ -323,11 +318,9 @@
         .text-brand-primary { color: var(--brand-primary) !important; }
         .text-brand-accent { color: var(--brand-accent) !important; }
 
-        /* Clases para el control de idioma */
         .lang-en { display: none; }
         .lang-es { display: inline; }
 
-        /* Paginación Carrusel */
         .pagination-controls {
             display: flex;
             justify-content: center;
@@ -526,7 +519,7 @@
             <div class="col-12">
                 <div class="card border-0 shadow-sm" style="border-top: 4px solid var(--brand-highlight) !important;">
                     
-                    <!-- Cabecera y Controles SIMPLES (Como en versiones anteriores) -->
+                    <!-- Cabecera y Controles SIMPLES -->
                     <div class="card-header bg-white d-flex flex-column flex-md-row justify-content-between align-items-md-center p-4">
                         <div class="d-flex align-items-center mb-3 mb-md-0">
                             <h4 class="fw-bold text-brand-primary mb-0 me-3 lang-es"><i class="fas fa-list-ul me-2"></i> Desglose de Portafolio</h4>
@@ -740,72 +733,231 @@
                     <div class="card-body p-4">
                         <p class="text-muted small mb-4 lang-es">Visualización de las fechas tentativas de inicio y fin para los desarrollos en proceso de migración hacia Google Workspace.</p>
                         <p class="text-muted small mb-4 lang-en" style="display:none;">Visualization of tentative start and end dates for developments migrating to Google Workspace.</p>
-                        
-                        <div class="text-center mb-4">
-                            <button class="btn-view-general shadow-sm m-0" onclick="openAllProductsModal()">
-                                <i class="fas fa-th-list me-2"></i> <span class="lang-es">Ver Todos los Detalles de Productos</span><span class="lang-en" style="display:none;">View All Product Details</span>
-                            </button>
-                        </div>
-                        
+
                         <div class="gantt-container">
                             <canvas id="ganttChart"></canvas>
                         </div>
                     </div>
+                    <div class="text-center mb-4">
+                            <button class="btn-view-general shadow-sm m-0" onclick="openAllProductsModal()">
+                                <i class="fas fa-th-list me-2"></i> <span class="lang-es">Ver Todos los Detalles de Productos</span><span class="lang-en" style="display:none;">View All Product Details</span>
+                            </button>
+                        </div>
                 </div>
             </div>
         </div>
 
-        <!-- Tabla de Requerimientos vs Carencias -->
+        <!-- Matriz de Carencias -->
+        <div class="card-header bg-white d-flex flex-column flex-md-row justify-content-between align-items-md-center p-4">
         <div class="row mb-5">
             <div class="col-12">
-                <h3 class="fw-bold border-bottom pb-2 mb-4 text-brand-primary lang-es">Matriz de Carencias Nivel Business vs Requerimiento Enterprise</h3>
+                <h3 class="fw-bold border-bottom pb-2 mb-4 text-brand-primary lang-es">Matriz de estado actual migracion a herramientas Google Workspace</h3>
                 <h3 class="fw-bold border-bottom pb-2 mb-4 text-brand-primary lang-en">Gap Matrix: Business Level vs Enterprise Requirement</h3>
-                <div class="table-responsive p-0 shadow-sm rounded">
-                    <table class="table table-hover align-middle mb-0">
+                <div class="table-responsive p-0 shadow-sm rounded border">
+                    <table class="table table-hover align-middle mb-0" style="table-layout: fixed; word-wrap: break-word;">
                         <thead>
                             <tr>
-                                <th class="lang-es ps-4" style="width: 30%;">Funcionalidad / Herramienta</th>
-                                <th class="lang-en ps-4" style="width: 30%; display:none;">Functionality / Tool</th>
-                                
-                                <th class="lang-es" style="width: 35%;">Limitación Actual (Google Business)</th>
-                                <th class="lang-en" style="width: 35%; display:none;">Current Limitation (Google Business)</th>
-                                
-                                <th class="lang-es pe-4" style="width: 35%;">Solución (Google Enterprise Pro + GCP Org)</th>
-                                <th class="lang-en pe-4" style="width: 35%; display:none;">Solution (Google Enterprise Pro + GCP Org)</th>
+                                <th class="lang-es ps-4" style="width: 16%; white-space: normal !important;">Herramienta Actual (Microsoft)</th>
+                                <th class="lang-es text-center" style="width: 16%; white-space: normal !important;">Herramienta Esperada (Google Workspace)</th>
+                                <th class="lang-es text-center" style="width: 8%; white-space: normal !important;">Cant</th>
+                                <th class="lang-es text-center" style="width: 10%; white-space: normal !important;">Homologada Yes/No</th>
+                                <th class="lang-es pe-4" style="width: 50%; white-space: normal !important;">Observación</th>
+                                <th class="lang-en ps-4" style="width: 16%; white-space: normal !important; display:none;">Current Tool (Microsoft Environment)</th>
+                                <th class="lang-en text-center" style="width: 16%; white-space: normal !important; display:none;">Expected Tool (Google Workspace)</th>
+                                <th class="lang-en text-center" style="width: 8%; white-space: normal !important; display:none;">Product Quantity</th>
+                                <th class="lang-en text-center" style="width: 10%; white-space: normal !important; display:none;">Homologated Yes/No</th>
+                                <th class="lang-en pe-4" style="width: 50%; white-space: normal !important; display:none;">Observation</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td class="ps-4"><strong>Conexión Azure / SQL On-Premise</strong></td>
-                                <td>
-                                    <span class="lang-es">Obliga a crear "proyectos personales" fuera del control corporativo y limita IPs.</span>
-                                    <span class="lang-en" style="display:none;">Forces the creation of "personal projects" outside corporate control and limits IPs.</span>
-                                </td>
-                                <td class="pe-4">
-                                    <span class="fw-bold text-success lang-es">Acceso completo a GCP Admin</span><span class="fw-bold text-success lang-en" style="display:none;">Full access to GCP Admin</span> 
-                                    <span class="lang-es">para crear VPCs, túneles seguros y bases Cloud Run.</span><span class="lang-en" style="display:none;">to create VPCs, secure tunnels, and Cloud Run bases.</span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="ps-4"><strong>AppSheet & Automatizaciones</strong></td>
-                                <td>
-                                    <span class="lang-es">Incluido en nivel básico. Cuotas de Apps Script restrictivas.</span>
-                                    <span class="lang-en" style="display:none;">Included at basic level. Restrictive Apps Script quotas.</span>
-                                </td>
-                                <td class="pe-4">
-                                    <span class="fw-bold text-success">AppSheet Core</span> 
-                                    <span class="lang-es">y máximas cuotas de ejecución por administrador.</span><span class="lang-en" style="display:none;">and maximum execution quotas per administrator.</span>
+                                <td class="ps-4">Power Apps</td>
+                                <td class="text-center">Google Apps Script</td>
+                                <td class="text-center">1</td>
+                                <td class="text-center"><span class="badge bg-success"><i class="fas fa-check"></i> Yes</span></td>
+                                <td class="small pe-4" style="text-align: justify; line-height: 1.6; color: #555;">
+                                    <span class="lang-es">Ya nos encontramos en proceso de migracion de las aplicaciones que no requieren conexión a SQL.</span>
+                                    <span class="lang-en" style="display:none;">We are already in the process of migrating applications that do not require an SQL connection.</span>
                                 </td>
                             </tr>
                             <tr>
-                                <td class="ps-4"><strong>Seguridad de Datos (DLP) y Auditoría</strong></td>
-                                <td>
-                                    <span class="lang-es">Políticas de compartición estándar. Sin cifrado avanzado.</span>
-                                    <span class="lang-en" style="display:none;">Standard sharing policies. No advanced encryption.</span>
+                                <td class="ps-4">Power Apps</td>
+                                <td class="text-center">Google AI Studio</td>
+                                <td class="text-center">0</td>
+                                <td class="text-center"><span class="badge bg-danger"><i class="fas fa-times"></i> No</span></td>
+                                <td class="small pe-4" style="text-align: justify; line-height: 1.6; color: #555;">
+                                    <span class="lang-es">No se cuenta con acceso a esta herramienta, es demasiado útil. En consulta con el equipo de implementacion global no se otorgaron los permisos a esta herramienta debido a que se encuentra en validacion y alcance del proyecto de migracion a Google.</span>
+                                    <span class="lang-en" style="display:none;">No access to this tool, it is very useful. In consultation with the global implementation team, permissions were not granted due to validation and scope of the Google migration project.</span>
                                 </td>
-                                <td class="pe-4">
-                                    <span class="fw-bold text-success lang-es">Prevención de Pérdida de Datos (DLP)</span><span class="fw-bold text-success lang-en" style="display:none;">Data Loss Prevention (DLP)</span> 
-                                    <span class="lang-es">activa, gestión IAM y Vault eDiscovery.</span><span class="lang-en" style="display:none;">active, IAM management, and Vault eDiscovery.</span>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">Power Apps</td>
+                                <td class="text-center">Google Sites</td>
+                                <td class="text-center">0</td>
+                                <td class="text-center"><span class="badge bg-danger"><i class="fas fa-times"></i> No</span></td>
+                                <td class="small pe-4" style="text-align: justify; line-height: 1.6; color: #555;">
+                                    <span class="lang-es">No se cuenta con acceso a herramienta, permite hacer despliegues en la nube. En consulta con el equipo de implementacion global no se otorgaron los permisos a esta herramienta debido a que se encuentra en validacion y alcance del proyecto de migracion a Google.</span>
+                                    <span class="lang-en" style="display:none;">No access to this tool, allows cloud deployments. In consultation with the global implementation team, permissions were not granted due to validation and scope of the Google migration project.</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">Power Apps</td>
+                                <td class="text-center">Engine App</td>
+                                <td class="text-center">0</td>
+                                <td class="text-center"><span class="badge bg-danger"><i class="fas fa-times"></i> No</span></td>
+                                <td class="small pe-4" style="text-align: justify; line-height: 1.6; color: #555;">
+                                    <span class="lang-es">No se tiene acceso a esta herramienta. En consulta con el equipo de implementacion global no se otorgaron los permisos a esta herramienta debido a que se encuentra en validacion y alcance del proyecto de migracion a Google.</span>
+                                    <span class="lang-en" style="display:none;">No access to this tool. In consultation with the global implementation team, permissions were not granted due to validation and scope of the Google migration project.</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">Copilot Studio</td>
+                                <td class="text-center">Google Chat Bots</td>
+                                <td class="text-center">0</td>
+                                <td class="text-center"><span class="badge bg-success"><i class="fas fa-check"></i> Yes</span></td>
+                                <td class="small pe-4" style="text-align: justify; line-height: 1.6; color: #555;">
+                                    <span class="lang-es">Mejora la integración de bots dentro de aplicativos.</span>
+                                    <span class="lang-en" style="display:none;">Improves the integration of bots within applications.</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">Copilot Studio</td>
+                                <td class="text-center">Google AppsScript</td>
+                                <td class="text-center">4</td>
+                                <td class="text-center"><span class="badge bg-success"><i class="fas fa-check"></i> Yes</span></td>
+                                <td class="small pe-4" style="text-align: justify; line-height: 1.6; color: #555;">
+                                    <span class="lang-es">Permite desarrollar libremente, con limitaciones de no poder incorporar Frameworks modernos y librerias usadas hoy día, está limitado a lo que permite hacer con JavaScript.</span>
+                                    <span class="lang-en" style="display:none;">Allows free development, with limitations of not being able to incorporate modern Frameworks and libraries used today, it is limited to what can be done with JavaScript.</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">Sharepoint</td>
+                                <td class="text-center">Google Drive</td>
+                                <td class="text-center"></td>
+                                <td class="text-center"><span class="badge bg-danger"><i class="fas fa-times"></i> No</span></td>
+                                <td class="small pe-4" style="text-align: justify; line-height: 1.6; color: #555;">
+                                    <span class="lang-es">Son diferentes, porque el sharepoint permitia personalizar sitios, con google Drive es únicamente un repositorio de almacenamiento de datos, no permite trabajar visuales como con SP.</span>
+                                    <span class="lang-en" style="display:none;">They are different, because sharepoint allowed personalizing sites, with Google Drive it is solely a data storage repository, it does not allow working with visuals like SP.</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">Power BI</td>
+                                <td class="text-center">Looker Studio/Data Studio</td>
+                                <td class="text-center"></td>
+                                <td class="text-center"><span class="badge bg-success"><i class="fas fa-check"></i> Yes</span></td>
+                                <td class="small pe-4" style="text-align: justify; line-height: 1.6; color: #555;">
+                                    <span class="lang-es">Limitado, se debe de tener una licencia superior para acceder a mayores funcionalidades.</span>
+                                    <span class="lang-en" style="display:none;">Limited, a higher license is required to access more functionalities.</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">Azure (Conector SQL)</td>
+                                <td class="text-center">Google Cloud (GCP)</td>
+                                <td class="text-center"></td>
+                                <td class="text-center"><span class="badge bg-danger"><i class="fas fa-times"></i> No</span></td>
+                                <td class="small pe-4" style="text-align: justify; line-height: 1.6; color: #555;">
+                                    <span class="lang-es">No tenemos acceso en Azure ni en GCP. En consulta con el equipo de implementacion global no se otorgaron los permisos a esta herramienta debido a que se encuentra en validacion y alcance del proyecto de migracion a Google.</span>
+                                    <span class="lang-en" style="display:none;">We do not have access to Azure or GCP. In consultation with the global implementation team, permissions were not granted due to validation and scope of the Google migration project.</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">Azure (Conector SQL)</td>
+                                <td class="text-center">Cloud Console</td>
+                                <td class="text-center"></td>
+                                <td class="text-center"><span class="badge bg-danger"><i class="fas fa-times"></i> No</span></td>
+                                <td class="small pe-4" style="text-align: justify; line-height: 1.6; color: #555;">
+                                    <span class="lang-es">No contamos con acceso a esta herramienta de la plataorma GWS. En consulta con el equipo de implementacion global no se otorgaron los permisos a esta herramienta debido a que se encuentra en validacion y alcance del proyecto de migracion a Google.</span>
+                                    <span class="lang-en" style="display:none;">We do not have access to this GWS platform tool. In consultation with the global implementation team, permissions were not granted due to validation and scope of the Google migration project.</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">Excel (Fórmulas)</td>
+                                <td class="text-center">Google Sheets</td>
+                                <td class="text-center"></td>
+                                <td class="text-center"><span class="badge bg-danger"><i class="fas fa-times"></i> Si</span></td>
+                                <td class="small pe-4" style="text-align: justify; line-height: 1.6; color: #555;">
+                                    <span class="lang-es">Cambian un poco las formulas pero tiene una ventaja es que sheets de Google ya viene integrado con Gemini.</span>
+                                    <span class="lang-en" style="display:none;">The formulas change slightly but it has the advantage that Google Sheets comes integrated with Gemini.</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">On Premise (Conector SQL)</td>
+                                <td class="text-center">Cloud Run / Cloud Run Functions</td>
+                                <td class="text-center"></td>
+                                <td class="text-center"><span class="badge bg-danger"><i class="fas fa-times"></i> No</span></td>
+                                <td class="small pe-4" style="text-align: justify; line-height: 1.6; color: #555;">
+                                    <span class="lang-es">Tiene costo y no se tiene conocimiento por parte de global tarifas, es super recomendable contar con este conector para agilidad de conectividad con procesos automatizados y ejecutados en SQL.</span>
+                                    <span class="lang-en" style="display:none;">It has a cost and global rates are not known, it is highly recommended to have this connector for agile connectivity with automated processes executed in SQL.</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">Capacidad Grupos Dataverse (Teams)</td>
+                                <td class="text-center">Google Groups</td>
+                                <td class="text-center"></td>
+                                <td class="text-center"><span class="badge bg-danger"><i class="fas fa-times"></i> No</span></td>
+                                <td class="small pe-4" style="text-align: justify; line-height: 1.6; color: #555;">
+                                    <span class="lang-es">No son lo mismo, no se manejan soluciones dentro de Google Groups y tampoco con Google chat.</span>
+                                    <span class="lang-en" style="display:none;">They are not the same, solutions are not managed within Google Groups or Google Chat.</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">Admin User Microsoft Platform</td>
+                                <td class="text-center">GCP Admin (IAM, Proyectos, Políticas)</td>
+                                <td class="text-center"></td>
+                                <td class="text-center"><span class="badge bg-danger"><i class="fas fa-times"></i> No</span></td>
+                                <td class="small pe-4" style="text-align: justify; line-height: 1.6; color: #555;">
+                                    <span class="lang-es">Sin acceso a GCP, proyecto de global no ha terminado y no sabemos si en algún momento tendremos si o no acceso. En consulta con el equipo de implementacion global no se otorgaron los permisos a esta herramienta debido a que se encuentra en validacion y alcance del proyecto de migracion a Google.</span>
+                                    <span class="lang-en" style="display:none;">No access to GCP, global project is not finished and we don't know if we will have access or not. In consultation with the global implementation team, permissions were not granted due to validation and scope of the Google migration project.</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">Power Automated - Power Apps</td>
+                                <td class="text-center">AppSheet</td>
+                                <td class="text-center">0</td>
+                                <td class="text-center"><span class="badge bg-success"><i class="fas fa-check"></i> Yes</span></td>
+                                <td class="small pe-4" style="text-align: justify; line-height: 1.6; color: #555;">
+                                    <span class="lang-es">No es muy útil ésta herramienta a no ser que un usuario simplemente desee llevar datos básicos a un Google Sheet con un entorno visual básico parametrizado por AppSheet.</span>
+                                    <span class="lang-en" style="display:none;">This tool is not very useful unless a user simply wants to bring basic data to a Google Sheet with a basic visual environment parameterized by AppSheet.</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">Power Automated - Power Apps</td>
+                                <td class="text-center">AppScript</td>
+                                <td class="text-center"></td>
+                                <td class="text-center"><span class="badge bg-success"><i class="fas fa-check"></i> Yes</span></td>
+                                <td class="small pe-4" style="text-align: justify; line-height: 1.6; color: #555;">
+                                    <span class="lang-es">Funciona sin conexiones a SQL, es una herramienta que tiene mayores ventajas a microsoft.</span>
+                                    <span class="lang-en" style="display:none;">It works without SQL connections, it is a tool that has major advantages over Microsoft.</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">Power Automated - Power Apps</td>
+                                <td class="text-center">Python</td>
+                                <td class="text-center"></td>
+                                <td class="text-center"><span class="badge bg-danger"><i class="fas fa-times"></i> No</span></td>
+                                <td class="small pe-4" style="text-align: justify; line-height: 1.6; color: #555;">
+                                    <span class="lang-es">Python es una alternativa, pero no se cuenta con un servidor propio en la Oficina de Procesos, únicamente de base de datos, este se requiere para las programaciones automaticas de RPA's.</span>
+                                    <span class="lang-en" style="display:none;">Python is an alternative, but the Process Office does not have its own server, only a database, this is required for automated RPA programming.</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">Microsoft Forms</td>
+                                <td class="text-center">Google Forms</td>
+                                <td class="text-center">2</td>
+                                <td class="text-center"><span class="badge bg-success"><i class="fas fa-check"></i> Yes</span></td>
+                                <td class="small pe-4" style="text-align: justify; line-height: 1.6; color: #555;">
+                                    <span class="lang-es">Es posible generar formularios al igual que en la plataforma de Microsoft.</span>
+                                    <span class="lang-en" style="display:none;">It is possible to generate forms just like on the Microsoft platform.</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">Visio</td>
+                                <td class="text-center">Google Drawings</td>
+                                <td class="text-center">0</td>
+                                <td class="text-center"><span class="badge bg-danger"><i class="fas fa-times"></i> No</span></td>
+                                <td class="small pe-4" style="text-align: justify; line-height: 1.6; color: #555;">
+                                    <span class="lang-es">No es igual de robusta a Visio, no tiene las mismas opciones, es como un paint.</span>
+                                    <span class="lang-en" style="display:none;">It is not as robust as Visio, it doesn't have the same options, it's like paint.</span>
                                 </td>
                             </tr>
                         </tbody>
@@ -813,8 +965,9 @@
                 </div>
             </div>
         </div>
+        </div>
         
-        <!-- Solución Estratégica: GCP -->
+        <!-- Solución Estratégica: GCP 
         <div class="row mb-5">
             <div class="col-12">
                 <div class="card shadow-sm border-0" style="border-left: 5px solid var(--brand-secondary) !important;">
@@ -853,7 +1006,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div>-->
 
     </div>
 
@@ -899,7 +1052,46 @@
                         <i class="fas fa-th-list me-2 text-brand-accent"></i> 
                         <span class="lang-es">Vista General del Portafolio (Detalles)</span><span class="lang-en" style="display:none;">Portfolio Overview (Details)</span> 
                     </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    
+                    <!-- Controles de Carrusel (Filtros en el Modal) -->
+                    <div class="ms-auto me-3" style="max-width: 50%;">
+                        <select id="modalFilterSelect" class="form-select form-select-sm" onchange="applyModalFilter(this.value)">
+                            <option value="Todos" class="lang-es">Todos los Productos</option>
+                            <option value="Todos" class="lang-en" style="display:none;">All Products</option>
+                            <optgroup label="Tipo" class="lang-es">
+                                <option value="Power Apps">Power Apps</option>
+                                <option value="Power Automate">Power Automate</option>
+                                <option value="Power BI">Power BI</option>
+                            </optgroup>
+                            <optgroup label="Prioridad" class="lang-es">
+                                <option value="Alta">Prioridad Alta</option>
+                                <option value="Media">Prioridad Media</option>
+                            </optgroup>
+                            <optgroup label="Duración" class="lang-es">
+                                <option value="+1 Mes">+1 Mes</option>
+                                <option value="+2 Meses">+2 Meses</option>
+                                <option value="+3 Meses">+3 Meses</option>
+                                <option value="+6 Meses">+6 Meses</option>
+                            </optgroup>
+                            <optgroup label="Type" class="lang-en" style="display:none;">
+                                <option value="Power Apps">Power Apps</option>
+                                <option value="Power Automate">Power Automate</option>
+                                <option value="Power BI">Power BI</option>
+                            </optgroup>
+                            <optgroup label="Priority" class="lang-en" style="display:none;">
+                                <option value="High">High Priority</option>
+                                <option value="Medium">Medium Priority</option>
+                            </optgroup>
+                            <optgroup label="Duration" class="lang-en" style="display:none;">
+                                <option value="+1 Month">+1 Month</option>
+                                <option value="+2 Months">+2 Months</option>
+                                <option value="+3 Months">+3 Months</option>
+                                <option value="+6 Months">+6 Months</option>
+                            </optgroup>
+                        </select>
+                    </div>
+
+                    <button type="button" class="btn-close m-0" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-0">
                     <div class="table-responsive m-0">
@@ -975,41 +1167,38 @@
                 esElements.forEach(el => {
                     if (el.tagName === 'TH' || el.tagName === 'TD') { el.style.display = 'table-cell'; }
                     else if (el.tagName === 'SPAN' || el.tagName === 'I') { el.style.display = 'inline'; }
+                    else if (el.tagName === 'OPTION' || el.tagName === 'OPTGROUP') { el.style.display = 'block'; }
                     else { el.style.display = 'block'; }
                 });
                 enElements.forEach(el => el.style.display = 'none');
+                
             } else {
                 esElements.forEach(el => el.style.display = 'none');
+                
                 enElements.forEach(el => {
                     if (el.tagName === 'TH' || el.tagName === 'TD') { el.style.display = 'table-cell'; }
                     else if (el.tagName === 'SPAN' || el.tagName === 'I') { el.style.display = 'inline'; }
+                    else if (el.tagName === 'OPTION' || el.tagName === 'OPTGROUP') { el.style.display = 'block'; }
                     else { el.style.display = 'block'; }
                 });
             }
 
-            // Refrescar Main Table (que no usa el carousel de filtros)
-            let mainActiveFilter = 'Todos';
-            document.querySelectorAll('#main-filter-buttons .filter-btn').forEach(btn => {
+            let activeFilter = 'Todos';
+            document.querySelectorAll('.filter-btn').forEach(btn => {
                 if(btn.classList.contains('active') && btn.style.display !== 'none') {
-                    mainActiveFilter = btn.innerText.trim();
+                    activeFilter = btn.innerText;
                 }
             });
-            applyMainFilter(mainActiveFilter, null, true);
-
-            // Refrescar Gantt/Modal (que usa el carousel de filtros)
-            let ganttActiveFilter = 'Todos';
-            document.querySelectorAll('#gantt-filters .filter-btn').forEach(btn => {
-                if(btn.classList.contains('active') && btn.style.display !== 'none') {
-                    ganttActiveFilter = btn.innerText.trim();
-                }
-            });
-            applyGanttFilter(ganttActiveFilter, null, true);
+            applyFilter(activeFilter, null, true);
+            
+            // Actualizar Modal si está abierto
+            const selectFilter = document.getElementById('modalFilterSelect').value;
+            applyModalFilter(selectFilter);
         }
 
         Chart.register(ChartDataLabels);
         const labelOptions = { color: '#ffffff', font: { weight: 'bold', size: 14 }, textShadowBlur: 4, textShadowColor: 'rgba(0,0,0,0.6)' };
 
-        // --- DATOS DEL PORTAFOLIO ---
         let portafolioApps = [
             { nombre: "Horarios Training App", tipo: "01. Power App", prioridad: "01 Alta", riesgo: "Riesgo Estratégico - Riesgo Financiero", herramienta: "Google AppScript", inicio: "2026-10-01", fin: "2027-06-28", detalle: "Riesgo tipificado en la asignación automática de salas para clases contratadas o próximas a contratación según TPHire, afectando directamente el inicio de las capacitaciones y su codificacion de horarios para la liquidacion de su nomina. (Customer Expert)" },
             { nombre: "Nomina - Apoyos", tipo: "01. Power App", prioridad: "01 Alta", riesgo: "Riesgo Estratégico - Riesgo Financiero", herramienta: "Google AppScript", inicio: "2026-10-01", fin: "2027-09-26", detalle: "Se tipifica el riesgo para este proceso, en que no lograrian hacer los filtro de seguridad para que las personas que se postulan para realizar apoyos cumplan con los requisitos para hacer el apoyo para el cliente Frisby." },
@@ -1055,7 +1244,6 @@
             { nombre: "Process Controller - Alerta horas altas y descuentos alt", tipo: "02. Power Automate", prioridad: "01 Alta", riesgo: "Riesgo Estratégico - Riesgo Financiero", herramienta: "Google AppScript", inicio: "2026-12-01", fin: "2027-08-28", detalle: "Alertas varias." }
         ];
 
-        // Se calcula duración y se ordena la base de datos
         function sortPortafolio() {
             portafolioApps.forEach(app => {
                 const start = new Date(app.inicio);

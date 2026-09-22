@@ -681,97 +681,6 @@
             </div>
         </div>
 
-        
-        <!-- Nueva Sección: Cronograma Gantt de Migración (CON CARRUSEL DE FILTROS) -->
-        <div class="row mb-5" id="seccion-gantt">
-            <div class="col-12">
-                <div class="card shadow-sm border-0" style="border-top: 4px solid var(--brand-highlight) !important;">
-                    
-                    <div class="card-header bg-white p-4 d-flex justify-content-between align-items-center flex-wrap">
-                        <h4 class="fw-bold text-brand-primary mb-0 lang-es"><i class="fas fa-tasks me-2"></i> Cronograma de Migración (Gantt)</h4>
-                        <h4 class="fw-bold text-brand-primary mb-0 lang-en" style="display:none;"><i class="fas fa-tasks me-2"></i> Migration Schedule (Gantt)</h4>
-                    </div>
-                    
-                    <!-- Carrusel de Filtros exclusivo para GANTT / Modal -->
-                    <div class="bg-white pb-3 px-4 border-bottom">
-                        <div class="filter-carousel" id="gantt-filters">
-                            <div class="filter-wrapper justify-content-end">
-                                <button class="btn filter-btn active lang-es" onclick="applyGanttFilter('Todos', this)">Todos</button>
-                                <button class="btn filter-btn active lang-en" style="display:none;" onclick="applyGanttFilter('Todos', this)">All</button>
-                            </div>
-                            
-                            <!-- Tipo de Desarrollo -->
-                            <div class="filter-wrapper">
-                                <span class="filter-group-label lang-es"><i class="fas fa-code me-1"></i> Tipo de Desarrollo</span>
-                                <span class="filter-group-label lang-en" style="display:none;"><i class="fas fa-code me-1"></i> Dev Type</span>
-                                <div class="d-flex mt-1">
-                                    <button class="btn filter-btn" onclick="applyGanttFilter('Power Apps', this)">Power Apps</button>
-                                    <button class="btn filter-btn" onclick="applyGanttFilter('Power Automate', this)">Power Automate</button>
-                                    <button class="btn filter-btn" onclick="applyGanttFilter('Power BI', this)">Power BI</button>
-                                </div>
-                            </div>
-                            
-                            <!-- Prioridad -->
-                            <div class="filter-wrapper">
-                                <span class="filter-group-label lang-es"><i class="fas fa-sort-amount-down me-1"></i> Prioridad</span>
-                                <span class="filter-group-label lang-en" style="display:none;"><i class="fas fa-sort-amount-down me-1"></i> Priority</span>
-                                <div class="d-flex mt-1">
-                                    <button class="btn filter-btn lang-es" onclick="applyGanttFilter('Alta', this)">Alta</button>
-                                    <button class="btn filter-btn lang-en" style="display:none;" onclick="applyGanttFilter('Alta', this)">High</button>
-                                    <button class="btn filter-btn lang-es" onclick="applyGanttFilter('Media', this)">Media</button>
-                                    <button class="btn filter-btn lang-en" style="display:none;" onclick="applyGanttFilter('Media', this)">Medium</button>
-                                </div>
-                            </div>
-                            
-                            <!-- Duración de Migración -->
-                            <div class="filter-wrapper">
-                                <span class="filter-group-label lang-es"><i class="far fa-clock me-1"></i> Duración</span>
-                                <span class="filter-group-label lang-en" style="display:none;"><i class="far fa-clock me-1"></i> Duration</span>
-                                <div class="d-flex mt-1">
-                                    <button class="btn filter-btn lang-es" onclick="applyGanttFilter('+1 Mes', this)">+1 Mes</button>
-                                    <button class="btn filter-btn lang-en" style="display:none;" onclick="applyGanttFilter('+1 Mes', this)">+1 Month</button>
-                                    <button class="btn filter-btn lang-es" onclick="applyGanttFilter('+2 Meses', this)">+2 Meses</button>
-                                    <button class="btn filter-btn lang-en" style="display:none;" onclick="applyGanttFilter('+2 Meses', this)">+2 Months</button>
-                                    <button class="btn filter-btn lang-es" onclick="applyGanttFilter('+3 Meses', this)">+3 Meses</button>
-                                    <button class="btn filter-btn lang-en" style="display:none;" onclick="applyGanttFilter('+3 Meses', this)">+3 Months</button>
-                                    <button class="btn filter-btn lang-es" onclick="applyGanttFilter('+6 Meses', this)">+6 Meses</button>
-                                    <button class="btn filter-btn lang-en" style="display:none;" onclick="applyGanttFilter('+6 Meses', this)">+6 Months</button>
-                                </div>
-                            </div>
-                            
-                            <!-- Riesgo -->
-                            <div class="filter-wrapper">
-                                <span class="filter-group-label lang-es"><i class="fas fa-exclamation-triangle me-1"></i> Riesgo</span>
-                                <span class="filter-group-label lang-en" style="display:none;"><i class="fas fa-exclamation-triangle me-1"></i> Risk</span>
-                                <div class="d-flex mt-1">
-                                    <button class="btn filter-btn lang-es" onclick="applyGanttFilter('Riesgo Financiero', this)">Financiero</button>
-                                    <button class="btn filter-btn lang-en" style="display:none;" onclick="applyGanttFilter('Riesgo Financiero', this)">Financial</button>
-                                    <button class="btn filter-btn lang-es" onclick="applyGanttFilter('Riesgo Estratégico', this)">Estratégico</button>
-                                    <button class="btn filter-btn lang-en" style="display:none;" onclick="applyGanttFilter('Riesgo Estratégico', this)">Strategic</button>
-                                    <button class="btn filter-btn lang-es" onclick="applyGanttFilter('Riesgo Legal', this)">Legal</button>
-                                    <button class="btn filter-btn lang-en" style="display:none;" onclick="applyGanttFilter('Riesgo Legal', this)">Legal</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card-body p-4">
-                        <p class="text-muted small mb-4 lang-es">Visualización de las fechas tentativas de inicio y fin para los desarrollos en proceso de migración hacia Google Workspace.</p>
-                        <p class="text-muted small mb-4 lang-en" style="display:none;">Visualization of tentative start and end dates for developments migrating to Google Workspace.</p>
-
-                        <div class="gantt-container">
-                            <canvas id="ganttChart"></canvas>
-                        </div>
-                    </div>
-                    <div class="text-center mb-4">
-                            <button class="btn-view-general shadow-sm m-0" onclick="openAllProductsModal()">
-                                <i class="fas fa-th-list me-2"></i> <span class="lang-es">Ver Todos los Detalles de Productos</span><span class="lang-en" style="display:none;">View All Product Details</span>
-                            </button>
-                        </div>
-                </div>
-            </div>
-        </div>
-
         <!-- Matriz de Carencias -->
         <div class="card-header bg-white d-flex flex-column flex-md-row justify-content-between align-items-md-center p-4">
         <div class="row mb-5">
@@ -991,6 +900,99 @@
             </div>
         </div>
         </div>
+        
+
+        
+        <!-- Nueva Sección: Cronograma Gantt de Migración (CON CARRUSEL DE FILTROS) -->
+        <div class="row mb-5" id="seccion-gantt">
+            <div class="col-12">
+                <div class="card shadow-sm border-0" style="border-top: 4px solid var(--brand-highlight) !important;">
+                    
+                    <div class="card-header bg-white p-4 d-flex justify-content-between align-items-center flex-wrap">
+                        <h4 class="fw-bold text-brand-primary mb-0 lang-es"><i class="fas fa-tasks me-2"></i> Cronograma de Migración (Gantt)</h4>
+                        <h4 class="fw-bold text-brand-primary mb-0 lang-en" style="display:none;"><i class="fas fa-tasks me-2"></i> Migration Schedule (Gantt)</h4>
+                    </div>
+                    
+                    <!-- Carrusel de Filtros exclusivo para GANTT / Modal -->
+                    <div class="bg-white pb-3 px-4 border-bottom">
+                        <div class="filter-carousel" id="gantt-filters">
+                            <div class="filter-wrapper justify-content-end">
+                                <button class="btn filter-btn active lang-es" onclick="applyGanttFilter('Todos', this)">Todos</button>
+                                <button class="btn filter-btn active lang-en" style="display:none;" onclick="applyGanttFilter('Todos', this)">All</button>
+                            </div>
+                            
+                            <!-- Tipo de Desarrollo -->
+                            <div class="filter-wrapper">
+                                <span class="filter-group-label lang-es"><i class="fas fa-code me-1"></i> Tipo de Desarrollo</span>
+                                <span class="filter-group-label lang-en" style="display:none;"><i class="fas fa-code me-1"></i> Dev Type</span>
+                                <div class="d-flex mt-1">
+                                    <button class="btn filter-btn" onclick="applyGanttFilter('Power Apps', this)">Power Apps</button>
+                                    <button class="btn filter-btn" onclick="applyGanttFilter('Power Automate', this)">Power Automate</button>
+                                    <button class="btn filter-btn" onclick="applyGanttFilter('Power BI', this)">Power BI</button>
+                                </div>
+                            </div>
+                            
+                            <!-- Prioridad -->
+                            <div class="filter-wrapper">
+                                <span class="filter-group-label lang-es"><i class="fas fa-sort-amount-down me-1"></i> Prioridad</span>
+                                <span class="filter-group-label lang-en" style="display:none;"><i class="fas fa-sort-amount-down me-1"></i> Priority</span>
+                                <div class="d-flex mt-1">
+                                    <button class="btn filter-btn lang-es" onclick="applyGanttFilter('Alta', this)">Alta</button>
+                                    <button class="btn filter-btn lang-en" style="display:none;" onclick="applyGanttFilter('Alta', this)">High</button>
+                                    <button class="btn filter-btn lang-es" onclick="applyGanttFilter('Media', this)">Media</button>
+                                    <button class="btn filter-btn lang-en" style="display:none;" onclick="applyGanttFilter('Media', this)">Medium</button>
+                                </div>
+                            </div>
+                            
+                            <!-- Duración de Migración -->
+                            <div class="filter-wrapper">
+                                <span class="filter-group-label lang-es"><i class="far fa-clock me-1"></i> Duración</span>
+                                <span class="filter-group-label lang-en" style="display:none;"><i class="far fa-clock me-1"></i> Duration</span>
+                                <div class="d-flex mt-1">
+                                    <button class="btn filter-btn lang-es" onclick="applyGanttFilter('+1 Mes', this)">+1 Mes</button>
+                                    <button class="btn filter-btn lang-en" style="display:none;" onclick="applyGanttFilter('+1 Mes', this)">+1 Month</button>
+                                    <button class="btn filter-btn lang-es" onclick="applyGanttFilter('+2 Meses', this)">+2 Meses</button>
+                                    <button class="btn filter-btn lang-en" style="display:none;" onclick="applyGanttFilter('+2 Meses', this)">+2 Months</button>
+                                    <button class="btn filter-btn lang-es" onclick="applyGanttFilter('+3 Meses', this)">+3 Meses</button>
+                                    <button class="btn filter-btn lang-en" style="display:none;" onclick="applyGanttFilter('+3 Meses', this)">+3 Months</button>
+                                    <button class="btn filter-btn lang-es" onclick="applyGanttFilter('+6 Meses', this)">+6 Meses</button>
+                                    <button class="btn filter-btn lang-en" style="display:none;" onclick="applyGanttFilter('+6 Meses', this)">+6 Months</button>
+                                </div>
+                            </div>
+                            
+                            <!-- Riesgo -->
+                            <div class="filter-wrapper">
+                                <span class="filter-group-label lang-es"><i class="fas fa-exclamation-triangle me-1"></i> Riesgo</span>
+                                <span class="filter-group-label lang-en" style="display:none;"><i class="fas fa-exclamation-triangle me-1"></i> Risk</span>
+                                <div class="d-flex mt-1">
+                                    <button class="btn filter-btn lang-es" onclick="applyGanttFilter('Riesgo Financiero', this)">Financiero</button>
+                                    <button class="btn filter-btn lang-en" style="display:none;" onclick="applyGanttFilter('Riesgo Financiero', this)">Financial</button>
+                                    <button class="btn filter-btn lang-es" onclick="applyGanttFilter('Riesgo Estratégico', this)">Estratégico</button>
+                                    <button class="btn filter-btn lang-en" style="display:none;" onclick="applyGanttFilter('Riesgo Estratégico', this)">Strategic</button>
+                                    <button class="btn filter-btn lang-es" onclick="applyGanttFilter('Riesgo Legal', this)">Legal</button>
+                                    <button class="btn filter-btn lang-en" style="display:none;" onclick="applyGanttFilter('Riesgo Legal', this)">Legal</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body p-4">
+                        <p class="text-muted small mb-4 lang-es">Visualización de las fechas tentativas de inicio y fin para los desarrollos en proceso de migración hacia Google Workspace.</p>
+                        <p class="text-muted small mb-4 lang-en" style="display:none;">Visualization of tentative start and end dates for developments migrating to Google Workspace.</p>
+
+                        <div class="gantt-container">
+                            <canvas id="ganttChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="text-center mb-4">
+                            <button class="btn-view-general shadow-sm m-0" onclick="openAllProductsModal()">
+                                <i class="fas fa-th-list me-2"></i> <span class="lang-es">Ver Todos los Detalles de Productos</span><span class="lang-en" style="display:none;">View All Product Details</span>
+                            </button>
+                        </div>
+                </div>
+            </div>
+        </div>
+
         
         
         <!-- Solución Estratégica: GCP 

@@ -535,7 +535,42 @@
             </div>
         </div>
 
-        <!-- Nueva Sección: Hoja de Ruta (Timeline) -->
+        
+
+        
+        <!-- Panel Desplegable del Portafolio (Tabla Principal - Estática) -->
+        <div class="row mb-5" id="seccion-detalles">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm" style="border-top: 4px solid var(--brand-highlight) !important;">
+                    
+                    <!-- Cabecera y Controles SIMPLES -->
+                    <div class="card-header bg-white d-flex flex-column flex-md-row justify-content-between align-items-md-center p-4">
+                        <div class="d-flex align-items-center mb-3 mb-md-0">
+                            <h4 class="fw-bold text-brand-primary mb-0 me-3 lang-es"><i class="fas fa-list-ul me-2"></i> Desglose de Portafolio</h4>
+                            <h4 class="fw-bold text-brand-primary mb-0 me-3 lang-en"><i class="fas fa-list-ul me-2"></i> Portfolio Breakdown</h4>
+                            <button class="btn-toggle-table" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMainTable" aria-expanded="true" aria-controls="collapseMainTable">
+                                <i class="fas fa-chevron-down me-1"></i> <span class="lang-es">Mostrar / Ocultar</span><span class="lang-en">Show / Hide</span>
+                            </button>
+                        </div>
+                        <div id="main-filter-buttons" class="d-flex flex-wrap justify-content-md-end mt-3 mt-md-0">
+                            <button class="btn filter-btn active lang-es" onclick="applyMainFilter('Todos', this)">Todos</button>
+                            <button class="btn filter-btn active lang-en" style="display:none;" onclick="applyMainFilter('Todos', this)">All</button>
+                            
+                            <button class="btn filter-btn" onclick="applyMainFilter('Power Apps', this)">Power Apps</button>
+                            <button class="btn filter-btn" onclick="applyMainFilter('Power Automate', this)">Power Automate</button>
+                            
+                            <button class="btn filter-btn lang-es" onclick="applyMainFilter('Riesgo Financiero', this)">Riesgo Financiero</button>
+                            <button class="btn filter-btn lang-en" style="display:none;" onclick="applyMainFilter('Riesgo Financiero', this)">Financial Risk</button>
+
+                            <button class="btn filter-btn lang-es" onclick="applyMainFilter('Riesgo Estratégico', this)">Riesgo Estratégico</button>
+                            <button class="btn filter-btn lang-en" style="display:none;" onclick="applyMainFilter('Riesgo Estratégico', this)">Strategic Risk</button>
+
+                            <button class="btn filter-btn lang-es" onclick="applyMainFilter('Riesgo Legal', this)">Riesgo Legal</button>
+                            <button class="btn filter-btn lang-en" style="display:none;" onclick="applyMainFilter('Riesgo Legal', this)">Legal Risk</button>
+                        </div>
+                    </div>
+
+                    <!-- Nueva Sección: Hoja de Ruta (Timeline) -->
         <div class="row mb-5">
             <div class="col-12">
                 <div class="roadmap-section">
@@ -602,39 +637,6 @@
                 </div>
             </div>
         </div>
-
-        
-        <!-- Panel Desplegable del Portafolio (Tabla Principal - Estática) -->
-        <div class="row mb-5" id="seccion-detalles">
-            <div class="col-12">
-                <div class="card border-0 shadow-sm" style="border-top: 4px solid var(--brand-highlight) !important;">
-                    
-                    <!-- Cabecera y Controles SIMPLES -->
-                    <div class="card-header bg-white d-flex flex-column flex-md-row justify-content-between align-items-md-center p-4">
-                        <div class="d-flex align-items-center mb-3 mb-md-0">
-                            <h4 class="fw-bold text-brand-primary mb-0 me-3 lang-es"><i class="fas fa-list-ul me-2"></i> Desglose de Portafolio</h4>
-                            <h4 class="fw-bold text-brand-primary mb-0 me-3 lang-en"><i class="fas fa-list-ul me-2"></i> Portfolio Breakdown</h4>
-                            <button class="btn-toggle-table" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMainTable" aria-expanded="true" aria-controls="collapseMainTable">
-                                <i class="fas fa-chevron-down me-1"></i> <span class="lang-es">Mostrar / Ocultar</span><span class="lang-en">Show / Hide</span>
-                            </button>
-                        </div>
-                        <div id="main-filter-buttons" class="d-flex flex-wrap justify-content-md-end mt-3 mt-md-0">
-                            <button class="btn filter-btn active lang-es" onclick="applyMainFilter('Todos', this)">Todos</button>
-                            <button class="btn filter-btn active lang-en" style="display:none;" onclick="applyMainFilter('Todos', this)">All</button>
-                            
-                            <button class="btn filter-btn" onclick="applyMainFilter('Power Apps', this)">Power Apps</button>
-                            <button class="btn filter-btn" onclick="applyMainFilter('Power Automate', this)">Power Automate</button>
-                            
-                            <button class="btn filter-btn lang-es" onclick="applyMainFilter('Riesgo Financiero', this)">Riesgo Financiero</button>
-                            <button class="btn filter-btn lang-en" style="display:none;" onclick="applyMainFilter('Riesgo Financiero', this)">Financial Risk</button>
-
-                            <button class="btn filter-btn lang-es" onclick="applyMainFilter('Riesgo Estratégico', this)">Riesgo Estratégico</button>
-                            <button class="btn filter-btn lang-en" style="display:none;" onclick="applyMainFilter('Riesgo Estratégico', this)">Strategic Risk</button>
-
-                            <button class="btn filter-btn lang-es" onclick="applyMainFilter('Riesgo Legal', this)">Riesgo Legal</button>
-                            <button class="btn filter-btn lang-en" style="display:none;" onclick="applyMainFilter('Riesgo Legal', this)">Legal Risk</button>
-                        </div>
-                    </div>
 
                     <!-- Contenido Desplegable (Collapse) - Tabla Principal Paginada -->
                     <div class="collapse show" id="collapseMainTable">
@@ -783,12 +785,12 @@
                                 <th class="lang-es ps-4" style="width: 16%; white-space: normal !important;">Herramienta Actual (Microsoft)</th>
                                 <th class="lang-es text-center" style="width: 16%; white-space: normal !important;">Herramienta Esperada (Google Workspace)</th>
                                 <th class="lang-es text-center" style="width: 8%; white-space: normal !important;">Cant</th>
-                                <th class="lang-es text-center" style="width: 10%; white-space: normal !important;">Homologada Yes/No</th>
+                                <th class="lang-es text-center" style="width: 10%; white-space: normal !important;">Habilitada</th>
                                 <th class="lang-es pe-4" style="width: 50%; white-space: normal !important;">Observación</th>
                                 <th class="lang-en ps-4" style="width: 16%; white-space: normal !important; display:none;">Current Tool (Microsoft Environment)</th>
                                 <th class="lang-en text-center" style="width: 16%; white-space: normal !important; display:none;">Expected Tool (Google Workspace)</th>
                                 <th class="lang-en text-center" style="width: 8%; white-space: normal !important; display:none;">Product Quantity</th>
-                                <th class="lang-en text-center" style="width: 10%; white-space: normal !important; display:none;">Homologated Yes/No</th>
+                                <th class="lang-en text-center" style="width: 10%; white-space: normal !important; display:none;">Enabled</th>
                                 <th class="lang-en pe-4" style="width: 50%; white-space: normal !important; display:none;">Observation</th>
                             </tr>
                         </thead>

@@ -570,6 +570,50 @@
                         </div>
                     </div>
 
+
+                    <!-- Contenido Desplegable (Collapse) - Tabla Principal Paginada -->
+                    <div class="collapse show" id="collapseMainTable">
+                        <div class="card-body p-0">
+                            <div class="table-responsive m-0 border-top">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th class="ps-4 lang-es" style="width: 35%;">Nombre del Producto</th>
+                                            <th class="lang-es text-center" style="width: 15%;">Tipo / Plataforma</th>
+                                            <th class="lang-es text-center" style="width: 10%;">Prioridad</th>
+                                            <th class="lang-es" style="width: 30%;">Tipo de Riesgo Identificado</th>
+                                            <th class="lang-es text-center" style="width: 10%;">Acción</th>
+                                            
+                                            <th class="ps-4 lang-en" style="width: 35%; display:none;">Product Name</th>
+                                            <th class="lang-en text-center" style="width: 15%; display:none;">Type / Platform</th>
+                                            <th class="lang-en text-center" style="width: 10%; display:none;">Priority</th>
+                                            <th class="lang-en" style="width: 30%; display:none;">Identified Risk Type</th>
+                                            <th class="lang-en text-center" style="width: 10%; display:none;">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="main-table-body">
+                                        <!-- Inyección JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="pagination-controls border-top">
+                                <button class="btn-page" id="main-btn-prev" onclick="prevMainPage()"><i class="fas fa-chevron-left"></i> <span class="lang-es">Anterior</span><span class="lang-en" style="display:none;">Previous</span></button>
+                                <span class="page-indicator" id="main-page-indicator">Página 1 / 1</span>
+                                <button class="btn-page" id="main-btn-next" onclick="nextMainPage()"><span class="lang-es">Siguiente</span><span class="lang-en" style="display:none;">Next</span> <i class="fas fa-chevron-right"></i></button>
+                            </div>
+                            
+                            <div class="p-3 text-center text-muted small bg-light rounded-bottom" id="table-footer-info">
+                                <span class="lang-es">Mostrando</span><span class="lang-en">Showing</span> 
+                                <span id="main-count-display" class="fw-bold">0</span> 
+                                <span class="lang-es">aplicativos encontrados.</span><span class="lang-en">applications found.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
                     <!-- Nueva Sección: Hoja de Ruta (Timeline) -->
         <div class="row mb-5">
             <div class="col-12">
@@ -631,49 +675,6 @@
                                     <span class="lang-es">Garantía de Seguridad Operativa y Pruebas.</span>
                                     <span class="lang-en" style="display:none;">Operational Security and Testing Guarantee.</span>
                                 </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-                    <!-- Contenido Desplegable (Collapse) - Tabla Principal Paginada -->
-                    <div class="collapse show" id="collapseMainTable">
-                        <div class="card-body p-0">
-                            <div class="table-responsive m-0 border-top">
-                                <table class="table table-hover align-middle mb-0">
-                                    <thead>
-                                        <tr>
-                                            <th class="ps-4 lang-es" style="width: 35%;">Nombre del Producto</th>
-                                            <th class="lang-es text-center" style="width: 15%;">Tipo / Plataforma</th>
-                                            <th class="lang-es text-center" style="width: 10%;">Prioridad</th>
-                                            <th class="lang-es" style="width: 30%;">Tipo de Riesgo Identificado</th>
-                                            <th class="lang-es text-center" style="width: 10%;">Acción</th>
-                                            
-                                            <th class="ps-4 lang-en" style="width: 35%; display:none;">Product Name</th>
-                                            <th class="lang-en text-center" style="width: 15%; display:none;">Type / Platform</th>
-                                            <th class="lang-en text-center" style="width: 10%; display:none;">Priority</th>
-                                            <th class="lang-en" style="width: 30%; display:none;">Identified Risk Type</th>
-                                            <th class="lang-en text-center" style="width: 10%; display:none;">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="main-table-body">
-                                        <!-- Inyección JS -->
-                                    </tbody>
-                                </table>
-                            </div>
-                            
-                            <div class="pagination-controls border-top">
-                                <button class="btn-page" id="main-btn-prev" onclick="prevMainPage()"><i class="fas fa-chevron-left"></i> <span class="lang-es">Anterior</span><span class="lang-en" style="display:none;">Previous</span></button>
-                                <span class="page-indicator" id="main-page-indicator">Página 1 / 1</span>
-                                <button class="btn-page" id="main-btn-next" onclick="nextMainPage()"><span class="lang-es">Siguiente</span><span class="lang-en" style="display:none;">Next</span> <i class="fas fa-chevron-right"></i></button>
-                            </div>
-                            
-                            <div class="p-3 text-center text-muted small bg-light rounded-bottom" id="table-footer-info">
-                                <span class="lang-es">Mostrando</span><span class="lang-en">Showing</span> 
-                                <span id="main-count-display" class="fw-bold">0</span> 
-                                <span class="lang-es">aplicativos encontrados.</span><span class="lang-en">applications found.</span>
                             </div>
                         </div>
                     </div>
